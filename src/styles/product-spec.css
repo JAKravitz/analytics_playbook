@@ -1,0 +1,247 @@
+/* In-app layout echoing Pixxel Product Specification PDF (May 2026) — document “sheet” */
+
+.product-spec-page {
+  max-width: 900px;
+  margin: 0 auto 48px;
+}
+
+.product-spec-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--cyan);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.product-spec-back:hover {
+  text-decoration: underline;
+}
+
+.product-spec-doc {
+  background: #fafaf8;
+  color: #1a1a1a;
+  border: 1px solid #d8d6d0;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  padding: 48px 56px 56px;
+  font-family: 'Barlow', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+body.light .product-spec-doc {
+  background: #fafaf8;
+  color: #1a1a1a;
+  border-color: #d8d6d0;
+}
+
+body:not(.light) .product-spec-doc {
+  /* Readable “paper” on dark app chrome */
+  background: #f2f1ec;
+  color: #1a1a1a;
+  border-color: #c9c6bc;
+}
+
+.product-spec-doc__cover-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #333;
+  margin: 0 0 8px;
+}
+
+.product-spec-doc__cover-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #0a0a0a;
+  margin: 0 0 20px;
+  line-height: 1.25;
+}
+
+.product-spec-doc__product-name {
+  font-size: 17px;
+  font-weight: 600;
+  color: #1b3a6b;
+  margin: 0 0 6px;
+}
+
+.product-spec-doc__product-id {
+  font-size: 12px;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  color: #555;
+  margin: 0 0 28px;
+}
+
+.product-spec-doc__rule {
+  height: 0;
+  border: none;
+  border-top: 2px solid #1a1a1a;
+  margin: 0 0 24px;
+}
+
+.product-spec-doc__footer-line {
+  font-size: 12px;
+  color: #444;
+  margin: 0 0 6px;
+}
+
+.product-spec-doc__version {
+  font-size: 12px;
+  color: #666;
+  margin: 20px 0 0;
+  text-align: right;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+.product-spec-doc__toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 32px 0 12px;
+  color: #0a0a0a;
+}
+
+.product-spec-doc__toc {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px;
+}
+
+.product-spec-doc__toc li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 4px 0;
+  font-size: 12px;
+  border-bottom: 1px dotted #bbb;
+}
+
+.product-spec-doc__toc a {
+  color: #1b3a6b;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.product-spec-doc__toc a:hover {
+  text-decoration: underline;
+}
+
+.product-spec-doc__toc-dots {
+  flex: 1;
+  border-bottom: 1px dotted #ccc;
+  min-width: 12px;
+  margin: 0 4px;
+  height: 1px;
+  align-self: center;
+}
+
+.product-spec-doc__section {
+  margin-top: 36px;
+  scroll-margin-top: 24px;
+}
+
+.product-spec-doc__section-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin: 0 0 16px;
+  color: #0a0a0a;
+}
+
+.product-spec-doc__subsection {
+  margin-bottom: 20px;
+}
+
+.product-spec-doc__subsection-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+  color: #222;
+}
+
+.product-spec-doc__p {
+  margin: 0 0 10px;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.product-spec-doc__p strong {
+  font-weight: 600;
+  color: #0a0a0a;
+}
+
+.product-spec-doc__table-wrap {
+  overflow-x: auto;
+  margin: 12px 0 16px;
+}
+
+.product-spec-doc table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.product-spec-doc th,
+.product-spec-doc td {
+  border: 1px solid #b8b5ad;
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.product-spec-doc th {
+  background: #e8e6e0;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 10px;
+  color: #222;
+}
+
+.product-spec-doc td:first-child {
+  font-weight: 600;
+  width: 28%;
+  background: #f5f4f0;
+  color: #333;
+}
+
+.product-spec-doc ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+.product-spec-doc li {
+  margin-bottom: 6px;
+}
+
+.product-spec-doc__glossary-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 40px 0 12px;
+  color: #0a0a0a;
+}
+
+.product-spec-doc__page-footer {
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid #ccc;
+  font-size: 11px;
+  color: #666;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  display: flex;
+  justify-content: space-between;
+}
