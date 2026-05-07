@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { ExternalLink } from 'lucide-react';
-import Callout from '../components/Callout.jsx';
+import Card from '../components/Card.jsx';
 
 const REQUEST_TYPES = [
   { value: '', label: 'Select type…' },
-  { value: 'Exhibit / booth', label: 'Exhibit / booth' },
-  { value: 'Slide / deck asset', label: 'Slide / deck asset' },
-  { value: 'One-pager / PDF', label: 'One-pager / PDF' },
-  { value: 'Customer-specific narrative', label: 'Customer-specific narrative' },
-  { value: 'Other', label: 'Other' },
+  { value: 'Exhibit', label: 'Exhibit' },
+  { value: 'Technical Feasibility', label: 'Technical Feasibility' },
+  { value: 'Slide Deck', label: 'Slide Deck' },
+  { value: 'Proposal', label: 'Proposal' },
 ];
 
 const VERTICALS = [
@@ -107,33 +106,47 @@ export default function CommercialRequests() {
       setRequesterEmail('');
     } catch (err) {
       setStatus('error');
-      setMessage(
-        err?.message ||
-          'Network error. If you are on localhost, run `npx vercel dev` so `/api` routes exist.'
-      );
+      setMessage(err?.message || 'Network error — try again, or ping the analytics team if it keeps failing.');
     }
   }
 
   return (
     <>
       <div className="eyebrow">Commercial · Requests</div>
-      <h1 className="section-title">Submit a Commercial or marketing request.</h1>
+      <h1 className="section-title">Commercial &amp; marketing requests.</h1>
       <p className="section-sub">
-        Exhibits, deck assets, one-pagers, and other requests tracked in Linear. Submissions hit
-        the team configured on Vercel via <code style={{ fontSize: 11 }}>LINEAR_TEAM_ID</code>.
+        Ask the analytics team for exhibit materials, technical feasibility write-ups, slide decks,
+        proposals, and other sales-facing deliverables. One form → one tracked ticket so nothing
+        gets lost in chat.
       </p>
 
-      <Callout type="info" label="Local development">
-        <code style={{ fontSize: 11 }}>npm run dev</code> does not serve{' '}
-        <code style={{ fontSize: 11 }}>/api/*</code>. From the repo root run{' '}
-        <code style={{ fontSize: 11 }}>npx vercel dev</code> to run the frontend and API together
-        (link the project once if prompted).
-      </Callout>
-
-      <Callout type="warn" label="Access control">
-        Turn on deployment protection so only teammates can load the deployed site — anyone who can
-        open the playbook can POST to this API once Linear env vars are set.
-      </Callout>
+      <Card title="What this is &amp; how to use it" accent="var(--cyan)" style={{ maxWidth: 720 }}>
+        <p style={{ marginTop: 0 }}>
+          <strong>What it is.</strong> A short intake form. When you submit, it creates an issue on
+          our Linear board (Commercial Requests project when configured) so the right people see
+          it, prioritize it, and attach work there.
+        </p>
+        <p>
+          <strong>How to use it.</strong> Pick the request type that best matches what you need.
+          Write a clear title someone could scan on a backlog. Use <strong>Needed by</strong> if you
+          have a hard deadline. Add vertical or audience context when it affects messaging or tech
+          depth.
+        </p>
+        <p style={{ marginBottom: 8 }}>
+          <strong>Include in the description</strong>
+        </p>
+        <ul style={{ margin: 0, paddingLeft: 20, color: 'var(--text)', lineHeight: 1.5 }}>
+          <li>Customer or opportunity name (if not sensitive); internal code name is fine</li>
+          <li>What “done” looks like — format, length, where it will be used (email, briefing, booth, RFx)</li>
+          <li>Deadlines including review cycles — when you need draft vs final</li>
+          <li>Must-have claims vs nice-to-have; anything we cannot say</li>
+          <li>Links to decks, transcripts, Slack threads, or prior versions to reuse</li>
+          <li>For exhibits: footprint, logistics, branding constraints, quantities</li>
+        </ul>
+        <p className="muted" style={{ fontSize: 12, marginTop: 14, marginBottom: 0 }}>
+          Name and email help us ping you without hunting directory — optional but appreciated.
+        </p>
+      </Card>
 
       <form onSubmit={onSubmit} style={{ maxWidth: 640, marginTop: 28 }}>
         <div style={{ marginBottom: 18 }}>
