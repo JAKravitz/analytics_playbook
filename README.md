@@ -35,8 +35,11 @@ Deploy on **Vercel** so the [`api/commercial-request.js`](api/commercial-request
 |----------|----------|-------------|
 | `LINEAR_API_KEY` | Yes | Linear → Settings → API → Personal API keys. Header: `Authorization: <key>`. |
 | `LINEAR_TEAM_ID` | Yes | UUID of the team where issues are created. |
-| `LINEAR_PROJECT_ID` | No | Default project UUID for new issues. |
+| `LINEAR_PROJECT_ID` | No | Explicit project UUID. If set, used as-is (**overrides** name lookup). |
+| `LINEAR_PROJECT_NAME` | No | Exact project **name** on that team (e.g. `Commercial Requests`). Looked up at request time — no UUID needed. |
 | `LINEAR_LABEL_IDS` | No | Comma-separated label UUIDs (e.g. `uuid1,uuid2`). |
+
+**Routing to a “Commercial Requests” project:** Create the project **on the same Linear team** as `LINEAR_TEAM_ID`, then set **`LINEAR_PROJECT_NAME`** to `Commercial Requests` (exact name match). If the project lives on a different team, use **`LINEAR_PROJECT_ID`** instead (fetch via GraphQL `projects { nodes { id name team { id } } }`).
 
 **Finding `LINEAR_TEAM_ID`:** In Linear → Team settings (or run a GraphQL `teams { nodes { id name } }` query against `https://api.linear.app/graphql` with the same API key).
 
