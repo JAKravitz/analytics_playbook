@@ -755,6 +755,11 @@ export const home = {
       title: 'Messaging & Objections',
       body: 'Language guide, differentiators, and answers to the questions you are going to get asked.',
     },
+    {
+      id: 'commercial-requests',
+      title: 'Commercial requests',
+      body: 'File exhibit and marketing asks; creates a Linear ticket when Vercel + Linear env are configured.',
+    },
   ],
   warn:
     'We are still primarily an R&D-stage analytics team delivering bespoke solutions while we build toward productized delivery. Never overclaim maturity.',

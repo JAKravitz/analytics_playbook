@@ -29,6 +29,7 @@ const groups = [
       { id: 'messaging', label: 'Messaging & Objections' },
       { id: 'revenue-models', label: 'Revenue models' },
       { id: 'ground-research', label: 'Ground research & validation' },
+      { id: 'commercial-requests', label: 'Commercial requests (Linear)' },
       { id: 'quoting', label: 'Pilot Pricing Calculator' },
       { id: 'resources', label: 'Resources' },
     ],

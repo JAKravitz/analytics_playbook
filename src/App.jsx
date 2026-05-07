@@ -18,6 +18,7 @@ import MicroClim from './sections/MicroClim.jsx';
 import Quoting from './sections/Quoting.jsx';
 import RevenueModels from './sections/RevenueModels.jsx';
 import GroundResearch from './sections/GroundResearch.jsx';
+import CommercialRequests from './sections/CommercialRequests.jsx';
 import { seed } from './data/seed.js';
 import { seedLayers, mergeStoredLayersWithSeed } from './data/layersCatalog.js';
 import { storage } from './data/storage.js';
@@ -39,6 +40,7 @@ const sectionMap = {
   messaging: Messaging,
   'revenue-models': RevenueModels,
   'ground-research': GroundResearch,
+  'commercial-requests': CommercialRequests,
   resources: Resources,
   quoting: Quoting,
 };
