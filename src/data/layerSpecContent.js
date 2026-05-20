@@ -26,13 +26,15 @@ export function gradeLine(layer) {
 function statusDisplay(status) {
   if (status === 'aurora') return 'Aurora';
   if (status === 'piloting') return 'Piloting';
+  if (status === 'scoping') return 'Scoping';
   if (status === 'r&d') return 'R&D';
   if (status === 'shipping') return 'Aurora';
   return status;
 }
 
 export function statusLine(layer) {
-  return `Catalog status: **${statusDisplay(layer.status)}**. Readiness note: **${layer.ready || 'TBD'}**.`;
+  const ready = layer.apiReady ?? layer.ready ?? 'TBD';
+  return `Catalog status: **${statusDisplay(layer.status)}**. API ready: **${ready}**.`;
 }
 
 export function purpose(layer) {
@@ -115,15 +117,10 @@ export function purpose(layer) {
     return 'Provide forward-looking or risk-oriented estimates with explicit time horizon; validate horizon and domain before operational reliance.';
   if (hasLayerKeyword(l, 'event', 'persistence', 'lifecycle', 'flood', 'waterlogging'))
     return 'Identify or track events and their persistence over time for alerting and post-event analysis.';
-  if (l.engine === 'Trait & Structure')
-    return 'Estimate canopy or surface structural/biophysical quantities or thematic classes from reflectance and fusion inputs.';
-  if (l.engine === 'Context')
-    return 'Establish baselines, seasonal state, or field-relative context so deviations are interpretable.';
-  if (l.engine === 'Data') return 'Foundational processing or context layers consumed by multiple downstream products.';
-  if (l.engine === 'Prediction')
-    return 'Produce estimates that extend beyond the observed present state into a defined forecast or risk window.';
-  if (l.engine === 'Scoring') return 'Combine multiple signals into a scalar or low-dimensional score for triage or ranking.';
-  if (l.engine === 'SSE') return 'Archive-centric search, segmentation, or embedding workflows over imagery collections.';
+  if (l.kind === 'core' || l.kind === 'data')
+    return 'Core API endpoint in the Field Stress Monitor base package — stress, identity, state, traits, and supporting signals that add-ons build on.';
+  if (l.kind === 'addon')
+    return 'Add-on API endpoint composed on top of the Core API base package; sold per-subscription.';
   return 'Deliver the named geospatial analytic layer as part of the Pixxel processing catalog, subject to tier and grade constraints.';
 }
 
@@ -166,7 +163,7 @@ export function methodSummary(layer) {
   const l = layer;
   if (hasLayerKeyword(l, 'hydrolight', 'iop', 'rrs', 'secchi', 'tsm', 'cdom'))
     return 'Aquatic radiative transfer and inversion stack (HydroLight-family) mapping water-leaving reflectance to IOPs and derived quantities.';
-  if (hasLayerKeyword(l, 'prosail', 'lai', 'cab', 'chlorophyll') && l.engine === 'Trait & Structure')
+  if (hasLayerKeyword(l, 'prosail', 'lai', 'cab', 'chlorophyll', 'trait'))
     return 'Canopy radiative transfer inversion (e.g. PROSAIL-class) or equivalent hybrid retrievals from multispectral/hyperspectral reflectance.';
   if (hasLayerKeyword(l, 'bfast', 'trend'))
     return 'Time-series breakpoint or trend analysis on spectral or index trajectories.';
@@ -178,11 +175,11 @@ export function methodSummary(layer) {
     return 'Uncertainty propagation via ensemble or Monte Carlo sampling over retrieval or model parameters (exploration-grade framing).';
   if (hasLayerKeyword(l, 'anomaly', 'hypotheses'))
     return 'Statistical or model-based deviation from baseline with optional ranked hypotheses from spectral library or expert rules.';
-  if (l.engine === 'Geology')
+  if (Array.isArray(l.verticals) && l.verticals.includes('geology'))
     return 'VNIR/SWIR spectral feature analysis and classification for alteration and mineral proxies; SWIR-dependent layers note Honeybee path.';
-  if (l.engine === 'Event')
+  if (hasLayerKeyword(l, 'event', 'change', 'persistence'))
     return 'Multi-temporal comparison, change magnitude/direction, and persistence filtering as specified for the layer.';
-  return 'Pipeline-specific retrieval or classifier consistent with the layer’s engine and tier; detailed algorithm version is tracked per release.';
+  return 'Pipeline-specific retrieval or classifier consistent with the API kind and tier; detailed algorithm version is tracked per release.';
 }
 
 export function outputs(layer) {
@@ -208,7 +205,10 @@ export function limitationsList(layer) {
     out.push('Scaffolding layer: scope and method finalized per engagement — do not assume default validation.');
   if (hasLayerKeyword(l, 'mrv', 'credit'))
     out.push('Not MRV/credit issuance grade unless separately contracted and validated.');
-  if (l.engine === 'Defense' || hasLayerKeyword(l, 'defense', 'denied', 'runway'))
+  if (
+    (Array.isArray(l.verticals) && l.verticals.includes('defense')) ||
+    hasLayerKeyword(l, 'defense', 'denied', 'runway')
+  )
     out.push('Operational and compliance use requires human review and organizational approval; outputs are analytic inputs.');
   if (out.length === 0)
     out.push(
@@ -247,13 +247,19 @@ export function buildLayerSpecModel(layer) {
     parametersTable: {
       headers: ['Parameter', 'Specification'],
       rows: [
-        ['Layer ID', layer.id],
-        ['Layer name', layer.name],
-        ['Processing engine', layer.engine],
-        ['Data source', layer.tier],
+        ['API ID', layer.id],
+        ['API name', layer.name],
+        ['Verticals', Array.isArray(layer.verticals) && layer.verticals.length ? layer.verticals.join(', ') : '—'],
+        ['Kind', layer.kind || '—'],
+        ...(layer.addonFamily ? [['Add-on family', layer.addonFamily]] : []),
+        ['Sensor / access tier', layer.tier],
         ['Product grade', layer.grade],
         ['Delivery status', layer.status],
-        ['Readiness target', layer.ready || 'TBD'],
+        ['API ready', layer.apiReady || layer.ready || 'TBD'],
+        ...(layer.provides ? [['Provides', layer.provides]] : []),
+        ...(Array.isArray(layer.requires) && layer.requires.length
+          ? [['Requires', layer.requires.join(', ')]]
+          : []),
         ['Catalog notes', notes || '—'],
       ],
     },
@@ -294,7 +300,7 @@ export function buildLayerSpecModel(layer) {
             number: '2.1',
             title: 'Summary',
             paragraphs: [
-              'Catalog parameters are listed in the **summary table** (under Table of contents). Values mirror the Layer Catalog row in the Analytics Playbook. Customer-specific statements of work may supersede playbook defaults.',
+              'Catalog parameters are listed in the **summary table** (under Table of contents). Values mirror the API Catalog row in the Analytics Playbook. Customer-specific statements of work may supersede playbook defaults.',
             ],
           },
         ],
@@ -307,12 +313,52 @@ export function buildLayerSpecModel(layer) {
             number: '3.1',
             title: 'Inputs and dependencies',
             paragraphs: [inputs(layer)],
+            ...(Array.isArray(layer.requires) && layer.requires.length
+              ? { bullets: layer.requires.map((r) => `Requires: ${r}`) }
+              : {}),
           },
           {
             number: '3.2',
             title: 'Processing approach',
             paragraphs: [methodSummary(layer)],
           },
+          ...(layer.upliftMsi || layer.upliftVnirHsi || layer.upliftVnirSwir
+            ? [
+                {
+                  number: '3.3',
+                  title: 'Spectral uplift (MSI · VNIR HSI · VNIR-SWIR HSI)',
+                  paragraphs: [
+                    `**MSI baseline:** ${layer.upliftMsi || '\u2014'}`,
+                    `**VNIR HSI adds:** ${layer.upliftVnirHsi || '\u2014'}`,
+                    `**VNIR-SWIR HSI adds:** ${layer.upliftVnirSwir || '\u2014'}`,
+                  ],
+                },
+              ]
+            : []),
+          ...(layer.traitDetail
+            ? [
+                {
+                  number: '3.4',
+                  title: 'Trait detail (per-trait MSI vs HSI uplift)',
+                  paragraphs: [
+                    'Per-trait sensitivity table for the Trait API. Use to scope which traits a customer\u2019s use case requires and which sensor tier supports them.',
+                  ],
+                  table: layer.traitDetail,
+                },
+              ]
+            : []),
+          ...(layer.structureDetail
+            ? [
+                {
+                  number: layer.traitDetail ? '3.5' : '3.4',
+                  title: 'Structure detail (per-metric MSI vs HSI uplift)',
+                  paragraphs: [
+                    'Per-metric sensitivity table for the Structure API. Use to scope structural outputs and which sensor tier supports them.',
+                  ],
+                  table: layer.structureDetail,
+                },
+              ]
+            : []),
         ],
       },
       {
@@ -388,15 +434,23 @@ export function buildLayerSpecModel(layer) {
 /** Markdown file body for docs/layers export. */
 export function buildLayerSpecMarkdown(layer) {
   const notes = layer.notes ? `\n\n**Catalog notes:** ${layer.notes}` : '';
+  const verticalsLine = Array.isArray(layer.verticals) && layer.verticals.length
+    ? layer.verticals.join(', ')
+    : '\u2014';
+  const upliftBlock =
+    layer.upliftMsi || layer.upliftVnirHsi || layer.upliftVnirSwir
+      ? `\n\n## Spectral uplift\n- **MSI baseline:** ${layer.upliftMsi || '\u2014'}\n- **VNIR HSI adds:** ${layer.upliftVnirHsi || '\u2014'}\n- **VNIR-SWIR HSI adds:** ${layer.upliftVnirSwir || '\u2014'}`
+      : '';
   return `# ${layer.name} (\`${layer.id}\`)
 
 ## Document control
-- **Layer ID:** ${layer.id}
-- **Engine:** ${layer.engine}
-- **Data source:** ${layer.tier}
+- **API ID:** ${layer.id}
+- **Verticals:** ${verticalsLine}
+- **Kind:** ${layer.kind || '—'}${layer.addonFamily ? ` (Add-on family: ${layer.addonFamily})` : ''}
+- **Sensor / access tier:** ${layer.tier}
 - **Grade:** ${layer.grade}
-- **Status:** ${layer.status} · **Readiness:** ${layer.ready || 'TBD'}
-- **Doc:** ${LAYER_SPEC_DOC_VERSION} — replace with owner-reviewed version as methods mature.
+- **Status:** ${layer.status} · **API ready:** ${layer.apiReady || layer.ready || 'TBD'}
+- **Doc:** ${LAYER_SPEC_DOC_VERSION} — replace with owner-reviewed version as methods mature.${upliftBlock}
 
 ## Purpose and scope
 ${purpose(layer)}${notes}
@@ -427,6 +481,6 @@ ${limitationsMarkdown(layer)}
 Indicative list rate in catalog: **$${layer.baseUsdPerKm2 ?? 0}/km²** (commercial placeholder until finance standardizes). Processing cadence and latency follow the order’s capture plan.
 
 ## Cross-links
-See Layer Catalog in the playbook app for package associations and editable checklist wiring.
+See API Catalog in the playbook app for package associations; package layer lists are defined in code.
 `;
 }

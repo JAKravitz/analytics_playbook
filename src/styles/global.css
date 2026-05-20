@@ -10,6 +10,8 @@
   --cyan: #02d3fe;
   --cyan-dim: #014d5a;
   --navy: #1b3a6b;
+  /** Text on --navy headers; not overridden in light mode (where `--white` is inverted for page titles). */
+  --on-navy: #ffffff;
   --white: #ffffff;
   --gray: #7a8fa0;
   --gray2: #1a2530;
@@ -25,6 +27,15 @@
 
   --grid-line: rgba(2, 211, 254, 0.04);
   --grid-bg: var(--bg);
+
+  /* Readable body scale (Pilot Revenue Model) */
+  --font-body: 15px;
+  --font-muted: 14px;
+  --font-small: 13px;
+  --font-label: 12px;
+  --font-micro: 11px;
+  --line-body: 1.65;
+  --line-ui: 1.55;
 }
 
 body.light {
@@ -63,8 +74,8 @@ body {
   color: var(--text);
   font-family: 'Barlow', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 1.55;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -133,9 +144,10 @@ button {
 
 .section-sub {
   color: var(--gray);
-  font-size: 14px;
+  font-size: var(--font-body);
+  line-height: var(--line-ui);
   margin: 0 0 36px;
-  max-width: 720px;
+  max-width: 820px;
 }
 
 h1,
@@ -154,7 +166,7 @@ h2 {
 }
 
 h3 {
-  font-size: 18px;
+  font-size: 20px;
   margin: 0 0 8px;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -169,11 +181,13 @@ h4 {
 
 p {
   margin: 0 0 14px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 
 code {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 12px;
+  font-size: var(--font-label);
   color: var(--cyan);
   background: var(--bg3);
   padding: 1px 6px;
@@ -197,6 +211,16 @@ code {
 .main-scroll {
   max-width: 1100px;
   padding: 48px 56px 96px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
+}
+
+.main-scroll .card,
+.main-scroll .callout,
+.main-scroll .pkg,
+.main-scroll .acc-body {
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 
 .section {
@@ -256,7 +280,8 @@ code {
 .sidebar-logo .brand {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 900;
-  font-size: 20px;
+  font-size: 28px;
+  line-height: 1;
   letter-spacing: 2px;
   color: var(--white);
   text-transform: uppercase;
@@ -264,8 +289,8 @@ code {
 
 .sidebar-logo .sub {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 9px;
-  letter-spacing: 2px;
+  font-size: 12px;
+  letter-spacing: 1.5px;
   color: var(--cyan);
   text-transform: uppercase;
   margin-top: 4px;
@@ -418,7 +443,7 @@ code {
 
 .badge {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 9px;
+  font-size: var(--font-micro);
   letter-spacing: 1px;
   text-transform: uppercase;
   padding: 3px 8px;
@@ -464,11 +489,13 @@ code {
   background: rgba(2, 211, 254, 0.05);
   padding: 16px 20px;
   margin: 18px 0;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 
 .callout .label {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 12px;
+  font-size: var(--font-label);
   letter-spacing: 2.5px;
   text-transform: uppercase;
   margin-bottom: 8px;
@@ -505,15 +532,16 @@ code {
 .ptable {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: var(--font-body);
   margin: 16px 0;
 }
 
 .ptable th {
   background: var(--navy);
-  color: #fff;
+  color: var(--on-navy);
+  font-weight: 700;
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 10px;
+  font-size: var(--font-label);
   text-transform: uppercase;
   letter-spacing: 1.5px;
   text-align: left;
@@ -584,8 +612,9 @@ code {
 
 .vert-hero .vert-desc {
   color: var(--text);
-  max-width: 760px;
-  font-size: 14px;
+  max-width: 820px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
   margin-bottom: 0;
 }
 
@@ -675,7 +704,8 @@ code {
 
 .pkg-header .pkg-tag {
   color: var(--gray);
-  font-size: 13px;
+  font-size: var(--font-muted);
+  line-height: var(--line-ui);
   margin-top: 2px;
 }
 
@@ -687,12 +717,14 @@ code {
 .pkg-body .body-text {
   color: var(--text);
   margin: 16px 0 18px;
-  max-width: 720px;
+  max-width: 820px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 
 .layer-label {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 9px;
+  font-size: var(--font-label);
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--gray);
@@ -708,7 +740,7 @@ code {
 
 .layer-pill {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 9.5px;
+  font-size: var(--font-micro);
   letter-spacing: 0.5px;
   background: var(--bg3);
   border: 1px solid var(--gray2);
@@ -731,19 +763,23 @@ code {
 
 .decision-block .label {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 9px;
+  font-size: var(--font-label);
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--cyan);
   margin-bottom: 4px;
 }
 
-.decision-block .text { color: var(--text); }
+.decision-block .text {
+  color: var(--text);
+  font-size: var(--font-body);
+  line-height: var(--line-body);
+}
 
 /* Package card section titles — consistent size between legacy .label variants */
 .pkg-section-label {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 10.5px;
+  font-size: var(--font-label);
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -790,7 +826,8 @@ code {
 
 .editable-row .text {
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 
 .editable-row textarea,
@@ -934,6 +971,8 @@ code {
 .acc-body {
   padding: 0 18px 16px;
   color: var(--text);
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 
 .acc-edit-row {
@@ -992,7 +1031,7 @@ code {
 
 .tagline {
   color: var(--gray);
-  font-size: 13px;
+  font-size: var(--font-muted);
   font-style: italic;
   margin: 0 0 12px;
 }
@@ -1061,7 +1100,8 @@ code {
   padding: 6px 0;
   border-bottom: 1px dashed var(--gray2);
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
 }
 
 .lang-list li:last-child { border-bottom: 0; }

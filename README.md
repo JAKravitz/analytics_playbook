@@ -29,13 +29,13 @@ The static site is emitted to `dist/`. Drag and drop that folder onto [Netlify D
 
 ## Editing content
 
-Most copy lives in [`src/data/seed.js`](src/data/seed.js). Update that file and redeploy.
+Most copy lives in [`src/data/seed.js`](src/data/seed.js), [`src/data/layersCatalog.js`](src/data/layersCatalog.js), and related modules — update and redeploy.
 
-The pages marked editable (`What We Can Claim`, `Messaging & Objections`, package badges/notes) can also be edited in-app. Those edits persist as follows:
+**In-app editing:** only **Commercial → Pilot Pricing Calculator** persists playbook state (with the same storage options as before: `window.storage`, Supabase when `VITE_SUPABASE_*` is set, or `localStorage`). Claims, messaging, layer catalog, and vertical package cards are **read-only** in the UI until an auth layer is added; change them in the repo.
 
-1. **Inside Claude’s artifact viewer** — `window.storage` shared state.
-2. **Hosted (Netlify) with Supabase configured** — set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` and create a `playbook_state` table with columns `id text primary key`, `value jsonb`, `updated_at timestamptz`. Edits sync across the team.
-3. **No env, no `window.storage`** — falls back to `localStorage` per browser (single-user demo only).
+1. **Inside Claude’s artifact viewer** — `window.storage` shared state (pricing / quote only when using that host).
+2. **Hosted with Supabase configured** — set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` and create a `playbook_state` table with columns `id text primary key`, `value jsonb`, `updated_at timestamptz`. Quote edits sync across the team.
+3. **No env, no `window.storage`** — falls back to `localStorage` per browser for quote state only.
 
 ## Aesthetic
 

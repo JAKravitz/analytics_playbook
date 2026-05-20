@@ -12,7 +12,7 @@ export const verticals = {
   agriculture: {
     name: 'Agriculture',
     sub: 'Precision Ag · Farm Risk Scoring · Agri-Finance',
-    color: '#00C46A',
+    color: '#D4A017',
     desc:
       'Field-level crop intelligence from MSI baseline and HSI precision upgrade. Covers both agronomic decision support and risk/insurance intelligence — unified under one vertical. Currently delivering bespoke integrated solutions; moving to productized packages by end of 2026.',
   },
@@ -21,10 +21,10 @@ export const verticals = {
     sub: 'Carbon MRV · Deforestation · Wildfire · Conservation',
     color: '#5BE584',
     desc:
-      'Forest intelligence spanning carbon stock, deforestation alerting, wildfire risk, and restoration monitoring. MSI-tier capability is operational today; SWIR (Honeybee) closes the structural-to-biochemical gap required for MRV-grade carbon claims.',
+      'Forest intelligence spanning carbon stock, deforestation alerting, wildfire risk, and restoration monitoring. Deliverable bespoke today: SAR fAGB, canopy height, species/type classification, PROSAIL inversion, and index-derived disturbance layers. Degradation trends, FIRMS corroboration, and productized alerting ship through 2026; MRV-grade carbon with Honeybee in 2027+.',
   },
-  aquatic: {
-    name: 'Aquatic',
+  water: {
+    name: 'Water',
     sub: 'Water Quality · HAB Intelligence · Benthic & Coastal',
     color: '#4FC3F7',
     desc:
@@ -32,17 +32,24 @@ export const verticals = {
   },
   geology: {
     name: 'Geology',
-    sub: 'Mineral Prospecting · REE Mapping · Mining Lifecycle',
+    sub: 'Mineral Prospecting · REE / Critical Minerals · SSE Campaign',
     color: '#F5A623',
     desc:
-      'Surface mineralogy and mining-lifecycle intelligence. VNIR prospecting is built and ready for deployment; full REE and rare-earth mapping awaits the SWIR Honeybee constellation. Mining lifecycle products are still in scoping.',
+      'Exploration-grade surface mineralogy sold as an SSE Campaign Package — episodic and target-driven, not a continuous subscription. VNIR iron-oxide and alteration mapping is built; full REE and sulfate discrimination awaits the SWIR Honeybee constellation. Prospectivity scoring and SSE similarity search are in scoping.',
+  },
+  mining: {
+    name: 'Mining Lifecycle',
+    sub: 'Tailings · Waste Dump · AMD · Rehabilitation',
+    color: '#9C6B2E',
+    desc:
+      'Continuous monitoring for operational mine sites: evaporation ponds, tailings storage facilities, waste dumps, pit walls, acid mine drainage precursors, and rehabilitation progress. Same subscription mechanics as Ag / Forestry / Water. Layers are in piloting; unified package and standard reporting templates are being defined.',
   },
   defense: {
-    name: 'Defense',
-    sub: 'Change Detection · Object Recognition · Terrain Intelligence',
+    name: 'Defense & Intelligence',
+    sub: 'Site Intelligence · Object Detection · Terrain Mobility',
     color: '#EF5350',
     desc:
-      'Persistent change, facility characterization, and terrain mobility intelligence powered by SSE embeddings and MSI/HSI fusion. All capabilities are in active piloting; productized packages and pricing are pending pilot graduation.',
+      'Contract-based (government / defense procurement, FMS, OTA). Site Intelligence Monitor covers persistent change, facility footprint, anomaly detection, and classified event types. Mobility & Terrain add-ons support trafficability and heavy platform assessment. Pricing TBD — not a standard SaaS subscription.',
   },
 };
 
@@ -289,7 +296,7 @@ export const packages = {
     },
   ],
 
-  aquatic: [
+  water: [
     {
       id: '01',
       name: 'General Water Quality',
@@ -297,7 +304,7 @@ export const packages = {
       badge: 'Live',
       badgeColor: 'green',
       body:
-        'Physics-first water-column analytics: HydroLight inversion yields chlorophyll-a, phycocyanin, CDOM, TSM, turbidity, Secchi depth, inherent optical properties, and remote-sensing reflectance — the full chain needed for regulatory and operational water-quality workflows, not just a single index. Non-optical extensions provide pH, dissolved oxygen, and ammonia where models are validated for your domain. Deployment assumes appropriate atmospheric correction and mask quality; shallow or optically complex waters may need AOI-specific calibration and field pairing before promises are made.',
+        'Physics-first water-column analytics: HydroLight inversion yields chlorophyll-a, phycocyanin, CDOM, TSM, turbidity, Secchi depth, inherent optical properties, and remote-sensing reflectance — the full chain needed for regulatory and operational water-quality workflows, not just a single index. Non-optical extensions provide pH, dissolved oxygen, and ammonia where models are validated for your domain. Shallow or optically complex waters may need AOI-specific calibration and field pairing before promises are made.',
       layers: [
         'Chlorophyll-a',
         'Phycocyanin',
@@ -360,7 +367,7 @@ export const packages = {
       warning: {
         type: 'warn',
         text:
-          'Not a fixed product package. Confirm science readiness, bathymetry availability, and validation plan with the aquatic team before quoting delivery or SLAs.',
+          'Not a fixed product package. Confirm science readiness, bathymetry availability, and validation plan with the water team before quoting delivery or SLAs.',
       },
       customerSegments:
         'Coastal and marine resource agencies; offshore wind, cable, and dredging developers; NGOs monitoring seagrass and shallow habitat; research programs with co-funded calibration.',
@@ -384,6 +391,60 @@ export const packages = {
       },
       customerSegments:
         'Coastal zone management agencies; wetland mitigation banks; ports and navigation authorities; climate adaptation programs tracking shoreline retreat.',
+    },
+  ],
+
+  mining: [
+    {
+      id: '01',
+      name: 'Mining Lifecycle Monitor',
+      tagline: 'Continuous site monitoring across the full mine lifecycle.',
+      badge: 'Piloting',
+      badgeColor: 'amber',
+      body:
+        'Base monitoring package for operational mine sites: evaporation pond condition, tailings storage facility change, waste dump characterization, pit wall surface condition, and acid mine drainage precursor signals. VNIR detects oxidation fronts and iron-sulfate precipitation well before surface change is visible in broadband imagery. SWIR (Honeybee) adds oxidation state discrimination and specific AMD mineral indicators (jarosite, schwertmannite). Designed for ESG reporting, regulatory compliance evidence, and operational safety — not geotechnical instrumentation replacement.',
+      layers: [
+        'Site Boundary API',
+        'Evaporation Pond Monitoring API',
+        'Tailings Monitoring API',
+        'Waste Dump Characterization API',
+        'Pit Wall / Slope Mapping API',
+        'Water / Contamination Indicator API',
+        'Confidence API',
+        'Evidence API',
+      ],
+      decision:
+        'Which surface change signals to operationalize for ESG, compliance, or safety workflows; how to integrate with site GIS and alert thresholds.',
+      warning: {
+        type: 'warn',
+        text:
+          'Unified package and standard reporting templates are still being finalized. Expect bespoke integration with site GIS, client-specific alert thresholds, and safety constraints on revisit and dissemination.',
+      },
+      customerSegments:
+        'Major mining operators and ESG teams; tailings and dam-safety engineers; environmental consultancies on long-term closure; regulators requiring periodic remote monitoring.',
+    },
+    {
+      id: '02',
+      name: 'Rehabilitation & Closure Monitor',
+      tagline: 'Restoration trajectory tracking for mine closure compliance.',
+      badge: 'Piloting',
+      badgeColor: 'amber',
+      body:
+        'Tracks vegetation re-establishment and surface recovery across rehabilitated mine areas. VNIR detects chlorophyll emergence and canopy water return earlier than MSI broadband greenness. SWIR on Honeybee adds structural recovery metrics (Cm, lignin return) needed to track progression from initial revegetation to structural maturity required for closure certification evidence. Add-on to the core Mining Lifecycle Monitor subscription.',
+      layers: [
+        'Site Boundary API',
+        'Rehabilitation Progress API',
+        'Confidence API',
+      ],
+      decision:
+        'Whether rehabilitation trajectories meet closure plan milestones; where targeted intervention or re-seeding is required.',
+      warning: {
+        type: 'warn',
+        text:
+          'Closure certification requires independent validation against approved closure plan. Pixxel outputs are supporting evidence, not regulatory certification.',
+      },
+      customerSegments:
+        'Mine closure teams; environmental compliance officers; regulators and government agencies requiring periodic rehabilitation evidence.',
     },
   ],
 
@@ -554,13 +615,17 @@ export const packages = {
   ],
 };
 
+/** Bump when default claims copy changes; stale persisted state resets from seed. */
+export const CLAIMS_VERSION = 4;
+
 export const claims = {
   agriculture: {
     now: [
-      'PROSAIL-derived LAI, Cab, FVC from MSI with calibrated uncertainty — inventory grade, deployable today',
+      'PROSAIL-derived LAI, Cab, FVC from MSI with calibrated uncertainty — deployable on bespoke AOIs; regional validation varies',
       'Full PROSAIL suite from HSI (Cw, Cm, Car, N/P/K) for tasked AOIs — inventory grade where validated',
-      'Farm boundary model and crop type classification — inventory grade',
-      'MSI-based anomaly detection over the 13+ year archive — deployable, Context Engine not yet live',
+      'Farm boundary model and crop type classification — deployable where regional models or ground-truth exist',
+      'Coarse field-level stress and health scoring from MSI traits and indices — severity-style signals, not ranked cause attribution',
+      'DINOv3 embedding-based change and anomaly detection on selected dates or short time stacks — AOI-scoped, not full-archive operational monitoring',
       'Individual layer delivery integrated into customer workflows on a bespoke per-engagement basis',
     ],
     eoy: [
@@ -572,31 +637,39 @@ export const claims = {
     ],
     never: [
       'Absolute yield forecast in bushels per acre — we produce yield risk scores, not yield predictions',
+      'Ranked stress driver attribution or insurance-grade cause-of-loss narrative before Field Stress Monitor ships',
+      'Full-archive MSI change monitoring or event typing — Context Engine and expected-state baselines not live yet',
       'Disease species identification without ground-truth validation data',
       'Real-time monitoring — we are task-triggered, not continuous global surveillance',
     ],
   },
   forestry: {
     now: [
-      'Deforestation and structural-loss alerts from MSI with sub-hectare detection — deployable today',
-      'BFAST-style degradation trends and FIRMS fire corroboration — deployable today',
-      'AGB and carbon stock estimation with Monte Carlo uncertainty bounds — exploration grade',
-      'Burn scar mapping and fire severity classification — deployable today',
-      'Individual layers delivered on a bespoke per-engagement basis',
+      'SAR-based forest above-ground biomass (fAGB) at 30 m — deployable on bespoke AOIs; exploration grade for carbon accounting, not credit issuance',
+      'Deep-learning canopy height model — deployable on bespoke AOIs; regional accuracy varies',
+      'Forest species and forest-type classification from optical stacks — deployable where training coverage exists; not registry-grade without validation',
+      'PROSAIL canopy inversion (LAI, cab, cw, and related traits) from MSI and tasked HSI',
+      'Index-derived burn scar, severity, and disturbance proxies (e.g. dNBR-class indices) on selected scenes — not a continuous fire monitoring product',
+      'AOI-scoped forest change and anomaly signals (including DINOv3 embeddings where used) — not full-archive operational alerting',
+      'Individual forest layers delivered on a bespoke per-engagement basis',
     ],
     eoy: [
-      'Deforestation & Degradation Alerting: productized monitoring with mechanical-vs-biological attribution',
-      'Wildfire Risk & Recovery: fuel state pre-fire, severity post-fire, recovery tracking',
-      'ARR & Restoration Monitoring: counterfactual baselines and AGB accumulation reporting',
-      'Carbon MRV (exploration): portfolio triage and additionality screening with explicit uncertainty',
+      'Deforestation & Degradation Alerting: persistent MSI monitoring, operational degradation-trend layers, FIRMS corroboration, and preliminary disturbance classes',
+      'Wildfire Risk & Recovery: fuel proxies, composite risk scoring, PROSAIL-informed severity, and recovery tracking (MSI backbone; HSI where tasked)',
+      'ARR & Restoration Monitoring: establishment, growth trajectories, and counterfactual baselines — exploration grade',
+      'Carbon MRV package: SAR fAGB + structure + uncertainty workflow for portfolio triage — still exploration until Honeybee validation',
     ],
     never: [
       'MRV-grade carbon stock estimates suitable for credit issuance — gated on SWIR (Honeybee), 2027+',
+      'Operational BFAST-style degradation trends or FIRMS-linked alert corroboration before D&D Alerting ships',
+      'Mechanical vs biological disturbance attribution at enforcement-grade confidence before D&D Alerting ships',
+      'Continuous global forest surveillance — monitoring is AOI- and archive-scoped, not planet-scale operations',
+      'Operational wildfire spread models or life-safety fire prediction — integrate official incident data',
       'Replacing carbon registry auditors or third-party verifiers',
-      'Species-level forest composition without ground-truth validation',
+      'Species or type maps sold as registry- or enforcement-grade without regional validation and ground-truth',
     ],
   },
-  aquatic: {
+  water: {
     now: [
       'Optical water quality (Chl-a, phycocyanin, CDOM, TSM, turbidity, Secchi, IOPs, Rrs) — deployable today',
       'Non-optical water quality models (pH, DO, ammonia) — deployable today',
@@ -605,46 +678,78 @@ export const claims = {
     ],
     eoy: [
       'General Water Quality: productized optical and non-optical state for inland and coastal waters',
-      'HAB Monitor: classification, severity scoring, and risk-zone mapping (forecasting still scoping)',
+      'HAB Monitor: bloom classification, extent, severity scoring, risk-zone mapping, and temporal trends',
+      'HAB Forecasting: forward-looking bloom risk and peak-timing products — methodology and validation per water body',
+      'Benthic Mapping: shallow-water substrate, seagrass extent and condition, and bathymetry-limited bottom characterization',
     ],
     never: [
-      'HAB forecasting before methodology and validation timeline are confirmed',
-      'Benthic and coastal change products before scoping is complete',
+      'HAB forecast horizons or regulatory-grade bloom predictions without validated methodology for that water body',
+      'Benthic or seagrass maps sold as survey- or regulatory-grade without bathymetry, field validation, and AOI scoping',
       'Drinking-water safety determinations — we provide signal, the utility makes the call',
+    ],
+  },
+  mining: {
+    now: [
+      'Tailings and waste-dump surface condition monitoring via VNIR mineralogical change signals — piloting',
+      'Evaporation pond extent and condition tracking — piloting',
+      'AMD / contamination proxy (iron oxide, sulfate precipitation) in drainage paths — piloting',
+    ],
+    eoy: [
+      'Mining Lifecycle Monitor: unified continuous-monitoring package with standardized ESG reporting templates',
+      'Rehabilitation Progress API: canopy water and chlorophyll emergence tracking for closure monitoring',
+    ],
+    never: [
+      'Geotechnical slope stability assessments requiring structural instruments — we provide surface signal, not subsurface',
+      'Regulatory compliance certification — we provide supporting evidence, client retains compliance responsibility',
+      'Drill-targeting or resource estimation from monitoring outputs',
     ],
   },
   geology: {
     now: [
-      'VNIR-based surface mineralogy, alteration mapping, and spectral anomaly detection — built, deployment TBD',
-      'REE and critical-mineral surface indicators with per-pixel spectral quality — exploration grade',
-      'Individual mining-lifecycle layers (evaporation ponds, tailings change, etc.) on a bespoke basis',
+      'VNIR-based surface mineralogy, alteration mapping, and iron oxide / gossan indicators — built, SSE Campaign packaging in scoping',
+      'REE and critical-mineral surface proxy indicators — exploration grade; explicit per-pixel spectral uncertainty included',
+      'Prospectivity scoring and spectral similarity search (SSE) — scoping',
     ],
     eoy: [
-      'Mineral Prospecting (VNIR): productized exploration-grade outputs coordinated through Aurora',
-      'REE Mapping: improved hypothesis ranking with explicit uncertainty reporting',
+      'Geology Campaign Package: productized SSE Campaign with defined delivery scope and Aurora dashboard access',
+      'REE Proxy API with VNIR Nd continuum removal and carbonatite / alkaline intrusion prospectivity',
     ],
     never: [
       'SWIR-grade mineral mapping or drill-ready resource estimation — gated on Honeybee, 2027+',
-      'MRV or critical-mineral certification beyond what the spectral evidence supports',
-      'Replacing field geological surveys or geophysical campaigns',
+      'Mineral certification or assay replacement — spectral output is screening, not ground-truth',
+      'Replacing field geological surveys or airborne geophysics campaigns',
+    ],
+  },
+  mining: {
+    now: [
+      'Tailings and waste-dump surface condition monitoring via VNIR mineralogical change signals — piloting',
+      'Evaporation pond extent and condition tracking — piloting',
+      'AMD / contamination proxy (iron oxide, sulfate precipitation) in drainage paths — piloting',
+    ],
+    eoy: [
+      'Mining Lifecycle Monitor: unified continuous-monitoring package with standardized ESG reporting templates',
+      'Rehabilitation Progress API: canopy water and chlorophyll emergence tracking for closure monitoring',
+    ],
+    never: [
+      'Geotechnical slope stability assessments requiring structural instruments — we provide surface signal, not subsurface',
+      'Regulatory compliance certification — we provide supporting evidence, client retains compliance responsibility',
+      'Drill-targeting or resource estimation from monitoring outputs',
     ],
   },
   defense: {
     now: [
-      'SSE-based change and anomaly detection over piloted AOIs — piloting',
-      'Runway, apron, and facility footprint extraction — piloting',
-      'Soil moisture, tankability, and trafficability proxies — piloting',
-      'Bespoke pilot-grade outputs delivered under customer-specific configurations',
+      'Site anomaly detection, change detection, and event classification over piloted AOIs — piloting',
+      'Object detection (vehicles, aircraft, vessels) and facility footprint extraction — piloting',
+      'Soil moisture, terrain classification, and trafficability proxies — piloting',
     ],
     eoy: [
-      'Productized Change & Anomaly Detection with documented uncertainty bounds',
-      'Productized Object & Facility Recognition tied to SSE cross-archive search',
-      'Productized Terrain & Mobility Analysis suitable for mission planning workflows',
+      'Site Intelligence Monitor: productized core API suite with documented uncertainty bounds and delivery SLAs',
+      'Mobility & Terrain add-ons: soil moisture, bearing capacity, terrain class, and trafficability assessments',
     ],
     never: [
       'Real-time targeting or kinetic decision support',
-      'Operational claims that exceed pilot-validated AOIs and conditions',
       'Personnel identification or face/biometric analysis',
+      'Operational claims that exceed pilot-validated AOIs and ITAR/export-control constraints',
     ],
   },
 };
@@ -699,8 +804,8 @@ export const home = {
   eyebrow: 'Analytics Division · Pixxel Space Technologies',
   title: "Building the world's first hyperspectral earth intelligence backbone.",
   body: [
-    'The Pixxel Analytics team is fifteen-plus people split across the US and India, working across five verticals: agriculture, forestry, aquatic, geology, and defense. We pair remote sensing physics with machine learning and applied earth science to turn satellite observations into decision-ready evidence.',
-    'This playbook is the commercial team\'s shared reference for what we sell today, what is shipping by end of 2026, and how to talk about it honestly. It is internal, editable in-place, and intended to evolve as we do.',
+    'The Pixxel Analytics team is a multinational team of people split across the US and India, working across five verticals: agriculture, forestry, water, geology, and defense. We pair remote sensing physics with machine learning and applied earth science to turn satellite observations into decision-ready evidence.',
+    'This playbook is the commercial team\'s shared reference for what we sell today, what is shipping by 2027, and how to talk about it honestly. It is internal and intended to evolve as we do — narrative and catalog updates ship through the repo; the Pilot Pricing Calculator stays editable in the app for pilots.',
   ],
   whatWeDo: [
     {
@@ -727,8 +832,8 @@ export const home = {
   howToUse: [
     {
       id: 'layers',
-      title: 'Layer Catalog',
-      body: 'Every analytics layer: engine, tier, status, ready date, and notes — editable and filterable.',
+      title: 'API Catalog',
+      body: 'Every analytics API endpoint in the seed catalog: vertical, kind (Core / Add-on), tier, status, API-ready date, and list rate — filterable; data lives in code.',
     },
     {
       id: 'nexus',
@@ -845,7 +950,7 @@ export const nexus = {
     phases: [
       { when: 'H1 2026', title: 'Foundation', body: 'MSI baseline operational; HSI tasking workflow; Context Engine v1; first vertical bespoke deliveries at scale.' },
       { when: 'Q3 2026', title: 'Intelligence', body: 'Context + Event + Attribution engines productized; Field Stress Monitor and Precision Intervention Advisor live.' },
-      { when: 'Q4 2026', title: 'Products', body: 'Productized vertical packages across Agriculture, Forestry, Aquatic; portfolio risk and cause-of-loss evidence GA.' },
+      { when: 'Q4 2026', title: 'Products', body: 'Productized vertical packages across Agriculture, Forestry, Water; portfolio risk and cause-of-loss evidence GA.' },
       { when: '2027+', title: 'Scale', body: 'SWIR (Honeybee) closes MRV-grade carbon and SWIR mineral mapping; Aurora platform expands to full self-serve.' },
     ],
   },
@@ -855,7 +960,7 @@ export const messaging = {
   framing: {
     label: 'Where we are right now — say this honestly',
     body:
-      'Pixxel Analytics is in active transition from R&D and bespoke delivery to a productized platform. Deployed today: PROSAIL trait retrievals, HydroLight water quality, SSE object recognition, change detection. The full NEXUS engine stack ships through 2026. We need early-adopter pilots to validate regional accuracy, refine attribution models, and build the evidence base for inventory-grade claims. Customers who engage now get closer collaboration and first-mover advantage in exchange for accepting that some outputs are still exploration grade.',
+      'Pixxel Analytics is in active transition from R&D and bespoke delivery to a productized platform. Deployed today: PROSAIL trait retrievals, HydroLight water quality, SSE object recognition, and AOI-scoped DINOv3 change and anomaly models — not yet full-archive operational monitoring. The full NEXUS engine stack ships through 2026. We need early-adopter pilots to validate regional accuracy, refine attribution models, and build the evidence base for inventory-grade claims. Customers who engage now get closer collaboration and first-mover advantage in exchange for accepting that some outputs are still exploration grade.',
   },
   differentiators: [
     {

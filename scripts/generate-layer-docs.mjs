@@ -1,5 +1,5 @@
 /**
- * Generates docs/layers/lXX.md from src/data/layersCatalog.js seed rows.
+ * Generates docs/layers/<id>.md from src/data/layersCatalog.js seed rows.
  * Run: npm run gen:layer-docs
  */
 import { writeFileSync, mkdirSync } from 'fs';
@@ -26,7 +26,7 @@ Auto-generated from \`src/data/layerSpecContent.js\` — same copy as the in-app
 npm run gen:layer-docs
 \`\`\`
 
-Files: \`l01.md\` … \`l111.md\` matching \`id\` in \`src/data/layersCatalog.js\`.
+Files: one Markdown file per catalog \`id\` (e.g. \`field-stress-api.md\`).
 
 **These are drafts:** have science/product owners replace generic method text with release-specific detail and validation pointers.
 `,

@@ -17,17 +17,17 @@ export default function LayerSpecPage({ state, layerSpecId, navigate }) {
     <div className="product-spec-page">
       <button type="button" className="product-spec-back" onClick={goCatalog}>
         <ArrowLeft size={16} />
-        Back to Layer Catalog
+        Back to API Catalog
       </button>
 
       {!layerSpecId && (
-        <p className="section-sub">No layer selected. Open a specification from the Layer Catalog.</p>
+        <p className="section-sub">No API selected. Open a specification from the API Catalog.</p>
       )}
 
       {layerSpecId && !layer && (
         <>
           <p className="section-sub">
-            No layer found for ID <code>{layerSpecId}</code>. It may have been removed or the link is invalid.
+            No API found for ID <code>{layerSpecId}</code>. It may have been removed or the link is invalid.
           </p>
         </>
       )}
