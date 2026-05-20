@@ -6,7 +6,7 @@ const groups = [
     label: 'Overview',
     items: [
       { id: 'home', label: 'Home' },
-      { id: 'layers', label: 'Layer Catalog' },
+      { id: 'layers', label: 'API Catalog' },
       { id: 'nexus', label: 'NEXUS' },
       { id: 'sse', label: 'Semantic Search Engine' },
       { id: 'microclim', label: 'MicroClim' },
@@ -17,9 +17,10 @@ const groups = [
     items: [
       { id: 'agriculture', label: 'Agriculture' },
       { id: 'forestry', label: 'Forestry' },
-      { id: 'aquatic', label: 'Aquatic' },
+      { id: 'water', label: 'Water' },
       { id: 'geology', label: 'Geology' },
-      { id: 'defense', label: 'Defense' },
+      { id: 'mining', label: 'Mining Lifecycle' },
+      { id: 'defense', label: 'Defense & Intelligence' },
     ],
   },
   {
@@ -27,10 +28,11 @@ const groups = [
     items: [
       { id: 'claims', label: 'What We Can Claim' },
       { id: 'messaging', label: 'Messaging & Objections' },
-      { id: 'revenue-models', label: 'Revenue models' },
+      { id: 'revenue-models', label: 'Product revenue model' },
+      { id: 'pilot-revenue-model', label: 'Pilot revenue model' },
       { id: 'ground-research', label: 'Ground research & validation' },
-      { id: 'commercial-requests', label: 'Commercial requests (Linear)' },
-      { id: 'quoting', label: 'Pilot Pricing Calculator' },
+      { id: 'commercial-requests', label: 'Analytics ticket request' },
+      { id: 'quoting', label: 'Pilot Proposal Generator' },
       { id: 'resources', label: 'Resources' },
     ],
   },
@@ -56,7 +58,7 @@ export default function Sidebar({ section, onSelect, theme, onToggleTheme }) {
     <aside className="sidebar">
       <div className="sidebar-logo">
         <div className="brand">Pixxel</div>
-        <div className="sub">Analytics Playbook · v1</div>
+        <div className="sub">Analytics Playbook · v2</div>
       </div>
       <div className="sidebar-search">
         <input

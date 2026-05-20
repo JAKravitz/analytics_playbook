@@ -25,7 +25,7 @@ export default function LayerProductSpecDocument({ layer }) {
       <p className="product-spec-doc__cover-kicker">{model.cover.kicker}</p>
       <h1 className="product-spec-doc__cover-title">{model.cover.title}</h1>
       <p className="product-spec-doc__product-name">{model.cover.productName}</p>
-      <p className="product-spec-doc__product-id">Layer ID: {model.cover.productId}</p>
+      <p className="product-spec-doc__product-id">API ID: {model.cover.productId}</p>
       <hr className="product-spec-doc__rule" />
       <p className="product-spec-doc__footer-line">{model.cover.inquiries}</p>
       <p className="product-spec-doc__footer-line">{model.cover.copyright}</p>

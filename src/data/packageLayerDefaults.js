@@ -1,90 +1,118 @@
 /**
- * Default catalog layer ids per solution package (`${verticalId}.${packageId}`).
- * Editable selections persist in `state.packages[thatKey].layerIds` / `hsiLayerIds`.
+ * Default catalog API ids per solution package (`${verticalId}.${packageId}`).
+ * Used by PkgCard when editable package state has no saved layer ids.
+ *
+ * Agriculture, Forestry, and Water use catalog-backed defaults; other verticals return
+ * empty lists until their API catalogs are rebuilt.
  */
+
+/** Billable Core API ids included in every agriculture base package. */
+const AG_CORE = [
+  'field-boundary-api',
+  'field-stress-api',
+  'attribution-api',
+  'confidence-api',
+];
+
+/** Billable Core API ids included in every forestry base package. */
+const FOREST_CORE = [
+  'forest-area-boundary-api',
+  'forest-cover-forest-type-api',
+  'forest-degradation-detection-api',
+  'forest-deforestation-detection-api',
+  'forest-fire-corroboration-api',
+  'forest-attribution-api',
+  'forest-confidence-api',
+  'forest-evidence-api',
+];
+
+const WATER_CORE = [
+  'water-waterbody-boundary-api',
+  'water-surface-water-mask-api',
+  'water-water-quality-constituent-api',
+  'water-non-optical-estimation-api',
+  'water-water-quality-anomaly-api',
+  'water-threshold-exceedance-api',
+  'water-confidence-api',
+  'water-optical-inversion-api',
+];
 
 export const PACKAGE_CATALOG_DEFAULTS = {
   'agriculture.01': {
-    included: ['l66', 'l14', 'l01', 'l02', 'l03', 'l20', 'l67', 'l21', 'l22', 'l24', 'l17'],
-    hsi: ['l04', 'l09', 'l10', 'l25'],
+    included: [...AG_CORE, 'intervention-api', 'threshold-alert-api'],
+    hsi: [],
   },
   'agriculture.02': {
-    included: [
-      'l66', 'l14', 'l01', 'l02', 'l03', 'l20', 'l67', 'l21', 'l22', 'l24', 'l17',
-      'l06', 'l07', 'l08', 'l25', 'l04', 'l30',
-    ],
+    included: [...AG_CORE, 'intervention-api', 'vra-prescription-api', 'harvest-timing-api'],
     hsi: [],
   },
   'agriculture.03': {
-    included: ['l20', 'l21', 'l14', 'l70', 'l26', 'l22', 'l30', 'l27'],
+    included: [...AG_CORE, 'yield-risk-api', 'loss-probability-api', 'evidence-api'],
     hsi: [],
   },
   'agriculture.04': {
-    included: ['l22', 'l29', 'l17', 'l68', 'l69', 'l18', 'l21', 'l27'],
+    included: [...AG_CORE, 'evidence-api'],
     hsi: [],
   },
   'agriculture.05': {
-    included: ['l71', 'l72', 'l70', 'l14', 'l27'],
+    included: [...AG_CORE, 'harvest-timing-api'],
     hsi: [],
   },
-
   'forestry.01': {
-    included: ['l12', 'l64', 'l65', 'l01', 'l111', 'l34'],
+    included: [
+      ...FOREST_CORE,
+      'forest-carbon-conversion-api',
+      'forest-carbon-stock-change-api',
+      'forest-mrv-scoring-delivery-api',
+    ],
     hsi: [],
   },
   'forestry.02': {
-    included: ['l55', 'l32', 'l56', 'l57', 'l58'],
+    included: [...FOREST_CORE, 'forest-threshold-alert-api', 'forest-webhook-delivery-api'],
     hsi: [],
   },
   'forestry.03': {
-    included: ['l59', 'l12', 'l60', 'l33', 'l61'],
+    included: [
+      ...FOREST_CORE,
+      'forest-fuel-moisture-api',
+      'forest-wildfire-composite-risk-api',
+      'forest-burn-severity-api',
+      'forest-recovery-monitoring-api',
+    ],
     hsi: [],
   },
   'forestry.04': {
-    included: ['l62', 'l01', 'l03', 'l12', 'l63', 'l13'],
+    included: [
+      ...FOREST_CORE,
+      'forest-establishment-detection-api',
+      'forest-canopy-establishment-api',
+      'forest-growth-trajectory-api',
+      'forest-counterfactual-baseline-api',
+      'forest-carbon-accumulation-api',
+    ],
     hsi: [],
   },
-
-  'aquatic.01': {
-    included: ['l35', 'l36', 'l37', 'l38', 'l39', 'l40', 'l41', 'l42', 'l43', 'l44', 'l45'],
+  'water.01': {
+    included: [...WATER_CORE],
     hsi: [],
   },
-  'aquatic.02': {
-    included: ['l46', 'l47', 'l48', 'l36', 'l49', 'l50'],
+  'water.02': {
+    included: [
+      ...WATER_CORE,
+      'water-hab-classification-api',
+      'water-bloom-extent-api',
+      'water-bloom-severity-api',
+      'water-risk-zone-api',
+      'water-temporal-trend-api',
+    ],
     hsi: [],
   },
-  'aquatic.03': {
-    included: ['l51', 'l52'],
-    hsi: [],
-  },
-  'aquatic.04': {
-    included: ['l53', 'l54'],
-    hsi: [],
-  },
-
-  'geology.01': {
-    included: ['l73', 'l74', 'l75', 'l76', 'l77', 'l78'],
-    hsi: [],
-  },
-  'geology.02': {
-    included: ['l79', 'l80', 'l81', 'l82', 'l83'],
-    hsi: [],
-  },
-  'geology.03': {
-    included: ['l84', 'l85', 'l86', 'l87', 'l88', 'l89'],
-    hsi: [],
-  },
-
-  'defense.01': {
-    included: ['l90', 'l91', 'l92', 'l93', 'l94', 'l95', 'l96'],
-    hsi: [],
-  },
-  'defense.02': {
-    included: ['l97', 'l98', 'l99', 'l100', 'l101', 'l102', 'l103'],
-    hsi: [],
-  },
-  'defense.03': {
-    included: ['l104', 'l105', 'l106', 'l107', 'l108', 'l109', 'l110'],
+  'water.03': {
+    included: [
+      ...WATER_CORE,
+      'water-benthic-habitat-classification-api',
+      'water-bleaching-indicator-api',
+    ],
     hsi: [],
   },
 };

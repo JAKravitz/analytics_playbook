@@ -1,52 +1,34 @@
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
-import EditableItem from '../components/EditableItem.jsx';
 import Callout from '../components/Callout.jsx';
 import { seed } from '../data/seed.js';
 
 const COLUMNS = [
   { key: 'now', label: 'Now · Bespoke delivery', cls: 'now' },
-  { key: 'eoy', label: 'End of 2026 · NEXUS productized', cls: 'eoy' },
+  { key: 'eoy', label: 'Early 2027+ · NEXUS productized', cls: 'eoy' },
 ];
 
-export default function Claims({ state, setState }) {
+const claimLineStyle = {
+  padding: '10px 0',
+  borderBottom: '1px dashed var(--gray2)',
+  fontSize: 13,
+  lineHeight: 1.5,
+  color: 'var(--text)',
+};
+
+export default function Claims({ state }) {
   const [activeVert, setActiveVert] = useState(Object.keys(seed.verticals)[0]);
 
   const claims = state.claims || {};
   const verticals = seed.verticals;
 
-  const updateClaim = (vert, col, idx, value) => {
-    setState((s) => {
-      const next = structuredClone(s.claims);
-      next[vert][col][idx] = value;
-      return { ...s, claims: next };
-    });
-  };
-
-  const removeClaim = (vert, col, idx) => {
-    setState((s) => {
-      const next = structuredClone(s.claims);
-      next[vert][col].splice(idx, 1);
-      return { ...s, claims: next };
-    });
-  };
-
-  const addClaim = (vert, col) => {
-    setState((s) => {
-      const next = structuredClone(s.claims);
-      next[vert][col].push('');
-      return { ...s, claims: next };
-    });
-  };
-
   return (
     <>
       <div className="eyebrow">Commercial · Claims</div>
-      <h1 className="section-title">What we can claim today vs end of 2026.</h1>
+      <h1 className="section-title">What we can claim today vs early 2027+.</h1>
       <p className="section-sub">
         Per vertical: what we can deliver today on a bespoke per-engagement basis, and what
-        becomes a productized NEXUS package by end of 2026. Every line is editable inline — keep
-        them honest and specific.
+        becomes a productized NEXUS package by 2027. Content is maintained in the codebase
+        and deployed with the app.
       </p>
 
       <Callout type="stop" label="Hard rules">
@@ -97,24 +79,10 @@ export default function Claims({ state, setState }) {
             <div className="never-block" style={{ marginBottom: 24 }}>
               <div className="label">Never claim · {v.name}</div>
               {(c.never || []).map((text, idx) => (
-                <EditableItem
-                  key={idx}
-                  value={text}
-                  onChange={(val) => updateClaim(id, 'never', idx, val)}
-                  onRemove={() => removeClaim(id, 'never', idx)}
-                  placeholder="New never-claim…"
-                />
+                <div key={idx} style={claimLineStyle}>
+                  {text}
+                </div>
               ))}
-              <div style={{ padding: '10px 0 0' }}>
-                <button
-                  className="add-btn"
-                  style={{ borderColor: 'rgba(239,83,80,0.4)', color: 'var(--red)' }}
-                  onClick={() => addClaim(id, 'never')}
-                >
-                  <Plus size={11} style={{ marginRight: 4, verticalAlign: '-2px' }} />
-                  Add never-claim
-                </button>
-              </div>
             </div>
 
             <div className="claims-grid">
@@ -123,20 +91,10 @@ export default function Claims({ state, setState }) {
                   <div className="col-head">{col.label}</div>
                   <div>
                     {(c[col.key] || []).map((text, idx) => (
-                      <EditableItem
-                        key={idx}
-                        value={text}
-                        onChange={(val) => updateClaim(id, col.key, idx, val)}
-                        onRemove={() => removeClaim(id, col.key, idx)}
-                        placeholder="New claim…"
-                      />
+                      <div key={idx} style={{ ...claimLineStyle, padding: '10px 12px' }}>
+                        {text}
+                      </div>
                     ))}
-                    <div style={{ padding: '10px 12px' }}>
-                      <button className="add-btn" onClick={() => addClaim(id, col.key)}>
-                        <Plus size={11} style={{ marginRight: 4, verticalAlign: '-2px' }} />
-                        Add claim
-                      </button>
-                    </div>
                   </div>
                 </div>
               ))}

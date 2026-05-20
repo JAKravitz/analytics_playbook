@@ -6,6 +6,6 @@ Auto-generated from `src/data/layerSpecContent.js` — same copy as the in-app *
 npm run gen:layer-docs
 ```
 
-Files: `l01.md` … `l111.md` matching `id` in `src/data/layersCatalog.js`.
+Files: one Markdown file per catalog `id` (e.g. `field-stress-api.md`).
 
 **These are drafts:** have science/product owners replace generic method text with release-specific detail and validation pointers.

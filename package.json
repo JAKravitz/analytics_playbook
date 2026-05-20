@@ -7,10 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test src/data/pricingEngine.test.js",
     "gen:layer-docs": "node scripts/generate-layer-docs.mjs"
   },
   "dependencies": {
+    "docx": "^9.6.1",
     "lucide-react": "^0.383.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

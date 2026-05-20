@@ -13,10 +13,11 @@ const REQUEST_TYPES = [
 const VERTICALS = [
   { value: '', label: '—' },
   { value: 'Agriculture', label: 'Agriculture' },
-  { value: 'Forestry / carbon', label: 'Forestry / carbon' },
-  { value: 'Aquatic', label: 'Aquatic' },
+  { value: 'Forestry', label: 'Forestry' },
+  { value: 'Water', label: 'Water' },
   { value: 'Geology', label: 'Geology' },
-  { value: 'Defense', label: 'Defense' },
+  { value: 'Mining Lifecycle', label: 'Mining Lifecycle' },
+  { value: 'Defense & Intelligence', label: 'Defense & Intelligence' },
   { value: 'Cross-vertical', label: 'Cross-vertical' },
 ];
 
@@ -106,14 +107,17 @@ export default function CommercialRequests() {
       setRequesterEmail('');
     } catch (err) {
       setStatus('error');
-      setMessage(err?.message || 'Network error — try again, or ping the analytics team if it keeps failing.');
+      setMessage(
+        err?.message ||
+          'Network error — try again, or ping the analytics team if it keeps failing.'
+      );
     }
   }
 
   return (
     <>
-      <div className="eyebrow">Commercial · Requests</div>
-      <h1 className="section-title">Commercial &amp; marketing requests.</h1>
+      <div className="eyebrow">Commercial · Analytics requests</div>
+      <h1 className="section-title">Analytics ticket request.</h1>
       <p className="section-sub">
         Ask the analytics team for exhibit materials, technical feasibility write-ups, slide decks,
         proposals, and other sales-facing deliverables. One form → one tracked ticket so nothing
@@ -137,7 +141,10 @@ export default function CommercialRequests() {
         </p>
         <ul style={{ margin: 0, paddingLeft: 20, color: 'var(--text)', lineHeight: 1.5 }}>
           <li>Customer or opportunity name (if not sensitive); internal code name is fine</li>
-          <li>What “done” looks like — format, length, where it will be used (email, briefing, booth, RFx)</li>
+          <li>
+            What “done” looks like — format, length, where it will be used (email, briefing, booth,
+            RFx)
+          </li>
           <li>Deadlines including review cycles — when you need draft vs final</li>
           <li>Must-have claims vs nice-to-have; anything we cannot say</li>
           <li>Links to decks, transcripts, Slack threads, or prior versions to reuse</li>
@@ -195,7 +202,12 @@ export default function CommercialRequests() {
           </div>
           <div>
             <label style={labelStyle}>Needed by (optional)</label>
-            <input style={iStyle} type="date" value={neededBy} onChange={(ev) => setNeededBy(ev.target.value)} />
+            <input
+              style={iStyle}
+              type="date"
+              value={neededBy}
+              onChange={(ev) => setNeededBy(ev.target.value)}
+            />
           </div>
         </div>
 
@@ -209,14 +221,25 @@ export default function CommercialRequests() {
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 22 }}>
+        <div
+          style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 22 }}
+        >
           <div>
             <label style={labelStyle}>Your name (optional)</label>
-            <input style={iStyle} value={requesterName} onChange={(ev) => setRequesterName(ev.target.value)} />
+            <input
+              style={iStyle}
+              value={requesterName}
+              onChange={(ev) => setRequesterName(ev.target.value)}
+            />
           </div>
           <div>
             <label style={labelStyle}>Email (optional)</label>
-            <input style={iStyle} type="email" value={requesterEmail} onChange={(ev) => setRequesterEmail(ev.target.value)} />
+            <input
+              style={iStyle}
+              type="email"
+              value={requesterEmail}
+              onChange={(ev) => setRequesterEmail(ev.target.value)}
+            />
           </div>
         </div>
 
@@ -254,7 +277,9 @@ export default function CommercialRequests() {
               borderRadius: 4,
             }}
           >
-            <p style={{ margin: '0 0 8px', color: 'var(--green-soft)', fontWeight: 600 }}>{message}</p>
+            <p style={{ margin: '0 0 8px', color: 'var(--green-soft)', fontWeight: 600 }}>
+              {message}
+            </p>
             {identifier && issueUrl ? (
               <a
                 href={issueUrl}

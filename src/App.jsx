@@ -5,8 +5,9 @@ import Home from './sections/Home.jsx';
 import NexusWhitePaper from './sections/NexusWhitePaper.jsx';
 import Agriculture from './sections/Agriculture.jsx';
 import Forestry from './sections/Forestry.jsx';
-import Aquatic from './sections/Aquatic.jsx';
+import Water from './sections/Water.jsx';
 import Geology from './sections/Geology.jsx';
+import Mining from './sections/Mining.jsx';
 import Defense from './sections/Defense.jsx';
 import Claims from './sections/Claims.jsx';
 import Messaging from './sections/Messaging.jsx';
@@ -15,14 +16,18 @@ import LayerCatalog from './sections/LayerCatalog.jsx';
 import LayerSpecPage from './sections/LayerSpecPage.jsx';
 import SemanticSearchEngine from './sections/SemanticSearchEngine.jsx';
 import MicroClim from './sections/MicroClim.jsx';
-import Quoting from './sections/Quoting.jsx';
-import RevenueModels from './sections/RevenueModels.jsx';
-import GroundResearch from './sections/GroundResearch.jsx';
+import PilotProposalGenerator from './sections/PilotProposalGenerator.jsx';
 import CommercialRequests from './sections/CommercialRequests.jsx';
-import { seed } from './data/seed.js';
-import { seedLayers, mergeStoredLayersWithSeed } from './data/layersCatalog.js';
+import RevenueModels from './sections/RevenueModels.jsx';
+import PilotRevenueModel from './sections/PilotRevenueModel.jsx';
+import GroundResearch from './sections/GroundResearch.jsx';
+import { seed, CLAIMS_VERSION } from './data/seed.js';
+import {
+  seedLayers,
+  mergeStoredLayersWithSeed,
+  CATALOG_VERSION,
+} from './data/layersCatalog.js';
 import { storage } from './data/storage.js';
-import { DEFAULT_QUOTE, mergeQuoteInputs, normalizeQuoteLine } from './data/pricingPresets.js';
 
 const sectionMap = {
   home: Home,
@@ -33,16 +38,18 @@ const sectionMap = {
   nexus: NexusWhitePaper,
   agriculture: Agriculture,
   forestry: Forestry,
-  aquatic: Aquatic,
+  water: Water,
   geology: Geology,
+  mining: Mining,
   defense: Defense,
   claims: Claims,
   messaging: Messaging,
   'revenue-models': RevenueModels,
+  'pilot-revenue-model': PilotRevenueModel,
   'ground-research': GroundResearch,
   'commercial-requests': CommercialRequests,
   resources: Resources,
-  quoting: Quoting,
+  quoting: PilotProposalGenerator,
 };
 
 function parseRouteFromHash() {
@@ -52,6 +59,7 @@ function parseRouteFromHash() {
     const layerSpecId = raw.slice('layer-spec/'.length).trim() || null;
     return { section: 'layer-spec', layerSpecId };
   }
+  if (raw === 'aquatic') return { section: 'water', layerSpecId: null };
   if (sectionMap[raw]) return { section: raw, layerSpecId: null };
   return { section: 'home', layerSpecId: null };
 }
@@ -64,37 +72,44 @@ function buildInitialState() {
     layers: structuredClone(seedLayers),
     /** Seed catalog ids removed in the UI — kept here so they do not reappear after code updates. */
     removedSeedLayerIds: [],
-    quote: structuredClone(DEFAULT_QUOTE),
+    catalogVersion: CATALOG_VERSION,
+    claimsVersion: CLAIMS_VERSION,
   };
 }
 
 function mergeWithSeed(stored) {
   const base = buildInitialState();
   if (!stored || typeof stored !== 'object') return base;
-  const storedQuote = stored.quote && typeof stored.quote === 'object' ? stored.quote : null;
   const removedRaw = Array.isArray(stored.removedSeedLayerIds) ? stored.removedSeedLayerIds : [];
   const removedSeedLayerIds = [...new Set(removedRaw)].filter((id) =>
     seedLayers.some((l) => l.id === id)
   );
+  const catalogStale =
+    stored.catalogVersion == null || stored.catalogVersion !== CATALOG_VERSION;
+
+  // Claims are read-only in the UI — always ship from seed.js (never merge persisted copy).
+  const claims = structuredClone(base.claims);
+
+  const storedPackages =
+    stored.packages && typeof stored.packages === 'object' ? { ...stored.packages } : {};
+  if (storedPackages.aquatic && !storedPackages.water) {
+    storedPackages.water = storedPackages.aquatic;
+    delete storedPackages.aquatic;
+  }
+
+  const layers = mergeStoredLayersWithSeed(
+    catalogStale ? base.layers : Array.isArray(stored.layers) ? stored.layers : base.layers,
+    removedSeedLayerIds
+  );
+
   return {
-    claims: { ...base.claims, ...(stored.claims || {}) },
+    claims,
     objections: Array.isArray(stored.objections) ? stored.objections : base.objections,
-    packages: stored.packages && typeof stored.packages === 'object' ? stored.packages : {},
-    layers: mergeStoredLayersWithSeed(
-      Array.isArray(stored.layers) ? stored.layers : base.layers,
-      removedSeedLayerIds
-    ),
+    packages: storedPackages,
+    layers,
     removedSeedLayerIds,
-    quote: storedQuote
-      ? {
-          ...base.quote,
-          ...storedQuote,
-          inputs: mergeQuoteInputs(base.quote.inputs, storedQuote.inputs || {}),
-          lines: Array.isArray(storedQuote.lines)
-            ? storedQuote.lines.map(normalizeQuoteLine)
-            : base.quote.lines,
-        }
-      : base.quote,
+    catalogVersion: CATALOG_VERSION,
+    claimsVersion: CLAIMS_VERSION,
   };
 }
 
@@ -121,7 +136,8 @@ export default function App() {
     if (!hydrated) return;
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
-      storage.set(undefined, state);
+      const { claims: _claims, ...persisted } = state;
+      storage.set(undefined, { ...persisted, claimsVersion: CLAIMS_VERSION });
     }, 350);
     return () => clearTimeout(saveTimer.current);
   }, [state, hydrated]);

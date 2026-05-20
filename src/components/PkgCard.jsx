@@ -37,7 +37,8 @@ function CatalogLayerPills({ label, catalogLayers, selectedIds, onAddId, onRemov
           !qq ||
           l.name.toLowerCase().includes(qq) ||
           (l.id && l.id.toLowerCase().includes(qq)) ||
-          (l.engine && l.engine.toLowerCase().includes(qq))
+          (Array.isArray(l.verticals) && l.verticals.some((v) => v.toLowerCase().includes(qq))) ||
+          (l.addonFamily && l.addonFamily.toLowerCase().includes(qq))
       )
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [catalogLayers, selectedSet, q]);
@@ -57,7 +58,7 @@ function CatalogLayerPills({ label, catalogLayers, selectedIds, onAddId, onRemov
         {label}
       </div>
       {subtitle && (
-        <p style={{ margin: '6px 0 10px', fontSize: 12, color: 'var(--gray)', lineHeight: 1.45 }}>
+        <p style={{ margin: '6px 0 10px', fontSize: 14, color: 'var(--gray)', lineHeight: 1.5 }}>
           {subtitle}
         </p>
       )}
@@ -300,7 +301,7 @@ export default function PkgCard({
               selectedIds={layerIds}
               onAddId={addLayerId}
               onRemoveId={removeLayerId}
-              subtitle="Boxes mirror the old layout. Remove with ×, or use Add from catalog to attach layers from the Layer Catalog (saved in playbook state)."
+              subtitle="Boxes mirror the old layout. Remove with ×, or use Add from catalog to attach APIs from the API Catalog (saved in playbook state)."
             />
           )}
 
