@@ -856,6 +856,11 @@ export const home = {
       body: 'Crop trait retrieval, phenology, PROSAIL biophysical variables, and monitoring subscription.',
     },
     {
+      id: 'bespoke-projects',
+      title: 'Bespoke projects & pipeline',
+      body: 'Contract-based work, sales pipeline stages, and where defense and intelligence use cases fit outside standard product tracks.',
+    },
+    {
       id: 'commercial-requests',
       title: 'Commercial requests',
       body: 'File exhibit and marketing asks; creates a Linear ticket when Vercel + Linear env are configured.',

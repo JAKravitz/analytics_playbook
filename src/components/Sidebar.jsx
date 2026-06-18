@@ -23,6 +23,7 @@ const groups = [
   {
     label: 'Commercial',
     items: [
+      { id: 'bespoke-projects', label: 'Bespoke projects & pipeline' },
       { id: 'ground-research', label: 'Ground research & validation' },
       { id: 'commercial-requests', label: 'Analytics ticket request' },
       { id: 'quoting', label: 'Pilot Proposal Generator' },
