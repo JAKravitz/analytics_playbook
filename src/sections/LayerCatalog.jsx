@@ -1,29 +1,15 @@
 import { useMemo, useState } from 'react';
-import { Search, FileText, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
+import { Search, ExternalLink } from 'lucide-react';
 import {
-  seedLayers,
-  LAYER_STATUSES,
-  LAYER_STATUS_LABELS,
-  layerStatusColor,
-  LAYER_VERTICALS,
-  LAYER_VERTICAL_LABELS,
-  CATALOG_ACCESS_LABELS,
-  catalogAccessForLayer,
-} from '../data/layersCatalog.js';
+  API_CATALOG_PRODUCTS,
+  API_STATUS_COLORS,
+  API_STATUS_LABELS,
+  API_STATUSES,
+  apiCatalogEntries,
+} from '../data/apiCatalog.js';
 
-/** Matches `seed.verticals.*.color` for consistent vertical branding. */
-const VERTICAL_COLORS = {
-  agriculture: '#D4A017',
-  forestry: '#5BE584',
-  water: '#4FC3F7',
-  geology: '#F5A623',
-  mining: '#9C6B2E',
-  defense: '#EF5350',
-};
-
-/** API / Layer · Verticals · Access · Status · API ready · Spec */
 const gridCols =
-  'minmax(200px, 1.75fr) minmax(120px, 1.1fr) minmax(4.5rem, 0.7fr) minmax(7.5rem, 1fr) minmax(4.5rem, 0.75fr) 40px';
+  'minmax(5.5rem, 0.65fr) minmax(110px, 0.9fr) minmax(200px, 1.5fr) minmax(180px, 1.35fr) minmax(7.5rem, 0.95fr) minmax(120px, 1fr) 36px';
 
 function FilterSelect({ value, onChange, options }) {
   return (
@@ -50,90 +36,31 @@ function FilterSelect({ value, onChange, options }) {
   );
 }
 
-function StatusPill({ status, children }) {
-  const color = layerStatusColor(status);
-  const bg =
-    status === 'aurora'
-      ? 'rgba(0,196,106,0.12)'
-      : status === 'piloting'
-        ? 'rgba(245,166,35,0.12)'
-        : status === 'scoping'
-          ? 'rgba(168,85,247,0.12)'
-          : 'rgba(79,195,247,0.12)';
-  const Icon =
-    status === 'aurora' ? CheckCircle2 : status === 'piloting' ? Clock : AlertCircle;
+function StatusPill({ status }) {
+  const color = API_STATUS_COLORS[status] || 'var(--gray)';
   return (
     <span
       style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 4,
+        display: 'inline-block',
         padding: '2px 8px',
         borderRadius: 3,
-        background: bg,
+        border: `1px solid ${color}`,
         color,
-        fontSize: 11,
-        fontWeight: 500,
+        fontSize: 10,
+        fontWeight: 600,
         fontFamily: 'IBM Plex Mono, ui-monospace, monospace',
-        letterSpacing: '0.02em',
+        textTransform: 'uppercase',
+        letterSpacing: '0.06em',
+        whiteSpace: 'nowrap',
       }}
     >
-      <Icon size={11} />
-      {children}
+      {API_STATUS_LABELS[status] || status}
     </span>
   );
 }
 
-function VerticalsCell({ verticals }) {
-  if (!Array.isArray(verticals) || verticals.length === 0) {
-    return <span style={{ color: 'var(--gray)', fontSize: 11 }}>—</span>;
-  }
-  return (
-    <span style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-      {verticals.map((v) => {
-        const accent = VERTICAL_COLORS[v] || '#4FC3F7';
-        const isHex = typeof accent === 'string' && /^#[0-9A-Fa-f]{6}$/.test(accent);
-        const bg = isHex ? `${accent}22` : 'rgba(79, 195, 247, 0.12)';
-        return (
-          <span
-            key={v}
-            style={{
-              fontSize: 10,
-              fontFamily: 'IBM Plex Mono, ui-monospace, monospace',
-              padding: '3px 8px',
-              borderRadius: 3,
-              border: `1px solid ${accent}`,
-              color: accent,
-              background: bg,
-              textTransform: 'uppercase',
-              letterSpacing: 0.6,
-              fontWeight: 600,
-            }}
-          >
-            {LAYER_VERTICAL_LABELS[v] || v}
-          </span>
-        );
-      })}
-    </span>
-  );
-}
-
-function AccessCell({ layer }) {
-  const access = catalogAccessForLayer(layer);
-  return (
-    <span
-      style={{
-        color: 'var(--white)',
-        fontSize: 12,
-        fontFamily: 'IBM Plex Mono, ui-monospace, monospace',
-      }}
-    >
-      {CATALOG_ACCESS_LABELS[access]}
-    </span>
-  );
-}
-
-function LayerRow({ layer }) {
+function CatalogRow({ entry }) {
+  const productHref = `#${entry.productSection}/api`;
   return (
     <div
       style={{
@@ -141,88 +68,116 @@ function LayerRow({ layer }) {
         gridTemplateColumns: gridCols,
         padding: '12px 16px',
         borderBottom: '1px solid var(--gray2)',
-        columnGap: 16,
-        rowGap: 8,
-        alignItems: 'center',
-        fontSize: 15,
+        columnGap: 14,
+        alignItems: 'start',
+        fontSize: 14,
       }}
     >
       <div>
-        <div style={{ fontWeight: 600, color: 'var(--white)' }}>{layer.name}</div>
-        {layer.provides && (
-          <div style={{ fontSize: 14, color: 'var(--gray)', marginTop: 2, lineHeight: 1.45 }}>
-            {layer.provides}
-          </div>
-        )}
+        <span
+          style={{
+            fontFamily: 'IBM Plex Mono, ui-monospace, monospace',
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: '0.08em',
+            color: entry.productColor,
+          }}
+        >
+          {entry.productName}
+        </span>
       </div>
+      <div style={{ fontSize: 12, color: 'var(--gray)', lineHeight: 1.45 }}>{entry.group}</div>
       <div>
-        <VerticalsCell verticals={layer.verticals} />
+        <div
+          style={{
+            fontFamily: 'IBM Plex Mono, ui-monospace, monospace',
+            fontSize: 11,
+            color: entry.productColor,
+            lineHeight: 1.45,
+          }}
+        >
+          {entry.method} {entry.path}
+        </div>
+        <div style={{ fontWeight: 600, color: 'var(--white)', marginTop: 4 }}>{entry.name}</div>
       </div>
+      <div style={{ color: 'var(--text)', lineHeight: 1.5, fontSize: 13 }}>{entry.returns}</div>
       <div>
-        <AccessCell layer={layer} />
+        <StatusPill status={entry.status} />
       </div>
-      <div style={{ paddingLeft: 8 }}>
-        <StatusPill status={layer.status}>
-          {LAYER_STATUS_LABELS[layer.status] || layer.status}
-        </StatusPill>
-      </div>
-      <div style={{ fontFamily: 'IBM Plex Mono, ui-monospace, monospace', color: 'var(--gray)', fontSize: 13 }}>
-        {layer.apiReady || '—'}
+      <div style={{ fontSize: 12, color: 'var(--gray)', lineHeight: 1.45 }}>
+        {entry.sensors || '—'}
       </div>
       <a
-        href={`#layer-spec/${layer.id}`}
-        title="Open API specification"
+        href={productHref}
+        title={`Open ${entry.productName} API schema`}
         style={{
           display: 'flex',
           justifyContent: 'center',
           color: 'var(--cyan)',
           padding: 4,
+          marginTop: 2,
         }}
-        aria-label="API specification"
+        aria-label={`${entry.productName} API schema`}
       >
-        <FileText size={16} />
+        <ExternalLink size={15} />
       </a>
     </div>
   );
 }
 
-export default function LayerCatalog({ state }) {
-  const layers = Array.isArray(state.layers) ? state.layers : seedLayers;
+export default function LayerCatalog() {
   const [search, setSearch] = useState('');
-  const [filterVertical, setFilterVertical] = useState('all');
+  const [filterProduct, setFilterProduct] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return layers.filter((l) => {
-      const notes = (l.notes || '').toLowerCase();
-      const provides = (l.provides || '').toLowerCase();
-      if (q && !l.name.toLowerCase().includes(q) && !notes.includes(q) && !provides.includes(q))
-        return false;
-      if (
-        filterVertical !== 'all' &&
-        !(Array.isArray(l.verticals) && l.verticals.includes(filterVertical))
-      )
-        return false;
-      if (filterStatus !== 'all' && l.status !== filterStatus) return false;
-      return true;
+    return apiCatalogEntries.filter((e) => {
+      if (filterProduct !== 'all' && e.productId !== filterProduct) return false;
+      if (filterStatus !== 'all' && e.status !== filterStatus) return false;
+      if (!q) return true;
+      const hay = [e.productName, e.group, e.name, e.path, e.returns, e.sensors]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return hay.includes(q);
     });
-  }, [layers, search, filterVertical, filterStatus]);
+  }, [search, filterProduct, filterStatus]);
+
+  const productCounts = useMemo(() => {
+    const counts = Object.fromEntries(API_CATALOG_PRODUCTS.map(({ product }) => [product.id, 0]));
+    for (const e of apiCatalogEntries) counts[e.productId] = (counts[e.productId] || 0) + 1;
+    return counts;
+  }, []);
 
   return (
     <>
       <div className="eyebrow">Overview · API catalog</div>
-      <h1 className="section-title">{layers.length} Analytics APIs</h1>
+      <h1 className="section-title">{apiCatalogEntries.length} product API endpoints</h1>
       <p className="section-sub">
-        Analytics API endpoints in the seed catalog across verticals, with{' '}
-        <strong>verticals</strong>, <strong>Access</strong> (internal — on request at no extra charge
-        vs external), delivery <strong>status</strong>, and API-ready milestone. Pricing follows the{' '}
-        <a href="#revenue-models" style={{ color: 'var(--cyan)' }}>
-          revenue model
-        </a>{' '}
-        (subscription tier, campaigns, contracting) — list $/km² is no longer the primary framing on
-        this page.
+        REST surface across TRACE, SWIPE, SCOPE, and LENS — sourced from each product&apos;s{' '}
+        <strong>API schema</strong> tab. LENS exposes search, SpotDiff change detection, labeling,
+        anomaly detection (V3 roadmap), and hosted GeoFM embeddings; the vertical products expose
+        analysis-ready layer endpoints. Pricing is on each product&apos;s <strong>Pricing</strong> tab.
+        Paths and statuses are indicative for internal scoping.
       </p>
+
+      <div
+        style={{
+          display: 'flex',
+          gap: 10,
+          marginBottom: 16,
+          flexWrap: 'wrap',
+          fontSize: 12,
+          color: 'var(--gray)',
+        }}
+      >
+        {API_CATALOG_PRODUCTS.map(({ product }) => (
+          <span key={product.id}>
+            <strong style={{ color: product.color }}>{product.name}</strong> {productCounts[product.id]}
+          </span>
+        ))}
+      </div>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
         <div style={{ position: 'relative', flex: '1 1 240px' }}>
@@ -237,7 +192,7 @@ export default function LayerCatalog({ state }) {
             }}
           />
           <input
-            placeholder="Search name, notes, or what it provides…"
+            placeholder="Search product, path, endpoint, or returns…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{
@@ -252,11 +207,11 @@ export default function LayerCatalog({ state }) {
           />
         </div>
         <FilterSelect
-          value={filterVertical}
-          onChange={setFilterVertical}
+          value={filterProduct}
+          onChange={setFilterProduct}
           options={[
-            ['all', 'All verticals'],
-            ...LAYER_VERTICALS.map((v) => [v, LAYER_VERTICAL_LABELS[v] || v]),
+            ['all', 'All products'],
+            ...API_CATALOG_PRODUCTS.map(({ product }) => [product.id, product.name]),
           ]}
         />
         <FilterSelect
@@ -264,7 +219,7 @@ export default function LayerCatalog({ state }) {
           onChange={setFilterStatus}
           options={[
             ['all', 'All status'],
-            ...LAYER_STATUSES.map((s) => [s, LAYER_STATUS_LABELS[s] || s]),
+            ...API_STATUSES.map((s) => [s, API_STATUS_LABELS[s] || s]),
           ]}
         />
       </div>
@@ -272,7 +227,7 @@ export default function LayerCatalog({ state }) {
       <div style={{ overflowX: 'auto', marginBottom: 24 }}>
         <div
           style={{
-            minWidth: 760,
+            minWidth: 960,
             background: 'var(--bg2)',
             border: '1px solid var(--gray2)',
             borderRadius: 4,
@@ -291,24 +246,25 @@ export default function LayerCatalog({ state }) {
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
               color: 'var(--on-navy)',
-              columnGap: 16,
+              columnGap: 14,
               alignItems: 'center',
               fontFamily: 'IBM Plex Mono, ui-monospace, monospace',
             }}
           >
-            <div>API / Layer</div>
-            <div>Verticals</div>
-            <div>Access</div>
-            <div style={{ paddingLeft: 8 }}>Status</div>
-            <div>API ready</div>
-            <div>Spec</div>
+            <div>Product</div>
+            <div>Group</div>
+            <div>Endpoint</div>
+            <div>Returns</div>
+            <div>Status</div>
+            <div>Sensors</div>
+            <div />
           </div>
-          {filtered.map((l) => (
-            <LayerRow key={l.id} layer={l} />
+          {filtered.map((entry) => (
+            <CatalogRow key={entry.id} entry={entry} />
           ))}
           {filtered.length === 0 && (
             <div style={{ padding: 40, textAlign: 'center', color: 'var(--gray)', fontSize: 13 }}>
-              No APIs match these filters.
+              No endpoints match these filters.
             </div>
           )}
         </div>

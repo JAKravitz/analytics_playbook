@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Basmati Rice Intelligence - Pixxel Analytics</title>
+<style>
+:root {
+  --bg: #0a0e14; --bg-elevated: #11161e; --bg-card: #151b25;
+  --border: #1f2937; --border-bright: #2d3748;
+  --text-primary: #e6edf3; --text-secondary: #8b95a5; --text-tertiary: #5a6470;
+  --accent: #00d4ff; --accent-dim: #007a99; --accent-warm: #ff8c42;
+  --rice-gold: #c9a84c; --rice-gold-dim: #8a7030;
+  --success: #4ade80; --warning: #fbbf24; --danger: #ef4444;
+  --mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--text-primary); font-family:apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.65; font-size: 16px; }
+.container { max-width: 960px; margin: 0 auto; padding: 60px 40px; }
+.header-bar { border-left: 3px solid var(--rice-gold); padding: 20px 24px; margin-bottom: 40px; background: linear-gradient(90deg, rgba(201,168,76,0.10) 0%, transparent 100%); }
+.header-bar .label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; color: var(--rice-gold); margin-bottom: 6px; }
+.header-bar .text { font-size: 14px; color: var(--text-secondary); }
+.illustrative-banner { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.3); border-radius: 4px; padding: 14px 20px; margin-bottom: 40px; font-family: var(--mono); font-size: 12px; color: var(--rice-gold); letter-spacing: 0.04em; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 24px; display: flex; align-items: center; gap: 16px; }
+.eyebrow::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent-dim) 0%, transparent 100%); }
+h1 { font-size: 46px; line-height: 1.15; font-weight: 700; margin-bottom: 24px; letter-spacing:0.02em; }
+.lede { font-size: 19px; line-height: 1.55; color: var(--text-secondary); margin-bottom: 48px; max-width: 780px; }
+h2 { font-size: 28px; line-height: 1.25; font-weight: 700; margin-top: 80px; margin-bottom: 24px; letter-spacing:0.01em; }
+h2 .section-num { font-family: var(--mono); font-size: 14px; color: var(--accent); display: block; margin-bottom: 8px; letter-spacing: 0.1em; }
+h3 { font-size: 19px; font-weight: 600; margin-top: 36px; margin-bottom: 12px; }
+p { margin-bottom: 18px; }
+.figure { background: var(--bg-card); border: 1px solid var(--border-bright); border-radius: 6px; padding: 32px; margin: 32px 0; page-break-inside: avoid; break-inside: avoid; }
+.figure-label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.15em; color: var(--accent); margin-bottom: 6px; }
+.figure-title { font-size: 16px; font-weight: 600; margin-bottom: 24px; color: var(--text-primary); }
+.figure-caption { font-family: var(--mono); font-size: 13px; color: #aab4c2; margin-top: 22px; letter-spacing: 0.01em; line-height: 1.7; }
+.callout { background: var(--bg-card); border: 1px solid var(--border-bright); border-left: 3px solid var(--rice-gold); padding: 20px 24px; margin: 28px 0; border-radius: 4px; }
+.callout p:last-child { margin-bottom: 0; }
+.stack-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 32px 0; }
+.stack-card { background: var(--bg-elevated); border: 1px solid var(--border-bright); border-radius: 6px; padding: 22px; }
+.stack-card .stack-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; color: var(--accent); margin-bottom: 10px; }
+.stack-card h4 { font-size: 16px; font-weight: 600; margin-bottom: 10px; color: var(--text-primary); }
+.stack-card p { font-size: 13px; color: var(--text-secondary); margin-bottom: 0; line-height: 1.55; }
+.meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 28px 0; }
+.meta-card { background: var(--bg-card); border: 1px solid var(--border-bright); border-radius: 6px; padding: 18px; }
+.meta-card .meta-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; color: var(--text-tertiary); margin-bottom: 8px; }
+.meta-card .meta-value { font-size: 15px; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
+.meta-card .meta-sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+table { width: 100%; border-collapse: collapse; margin: 28px 0; font-size: 14px; }
+table th { text-align: left; padding: 12px 14px; background: var(--bg-elevated); border-bottom: 2px solid var(--border-bright); font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--accent); font-weight: 500; }
+table td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 14px; }
+table tr:last-child td { border-bottom: none; }
+.outcome-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 28px 0; }
+.outcome-card { background: var(--bg-card); border: 1px solid var(--border-bright); border-radius: 6px; padding: 20px; }
+.outcome-card .outcome-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; color: var(--accent); margin-bottom: 10px; }
+.outcome-card h4 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+.outcome-card p { font-size: 13px; color: var(--text-secondary); margin-bottom: 0; line-height: 1.55; }
+ul { margin: 16px 0 16px 24px; }
+ul li { margin-bottom: 8px; padding-left: 8px; }
+ul li::marker { color: var(--rice-gold); }
+.footer-note { margin-top: 100px; padding-top: 32px; border-top: 1px solid var(--border); font-family: var(--mono); font-size: 12px; color: var(--text-tertiary); letter-spacing: 0.05em; }
+strong { color: var(--text-primary); font-weight: 600; }
+em { color: var(--rice-gold); font-style: normal; }
+svg { display: block; max-width: 100%; height: auto; }
+.figure-screenshot { padding: 24px; }
+.figure-screenshot img { display: block; width: 100%; height: auto; border-radius: 4px; border: 1px solid var(--border-bright); }
+.figure-screenshot .platform-note { font-family: var(--mono); font-size: 11px; color: var(--rice-gold); letter-spacing: 0.04em; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header-bar">
+ <div class="label">INTERNAL &middot; CONFIDENTIAL</div>
+ <div class="text">Forward-looking product narrative. Reflects target capabilities of the Pixxel analytics stack. Not all components are operational today.</div>
+</div>
+
+<div class="illustrative-banner">
+ ILLUSTRATIVE CASE STUDY Data and findings are representative examples of Pixxel&apos;s analytical outputs. Not derived from a live customer engagement. Platform screenshots (Figures 01, 03&ndash;05, 09, 12) show the product UI on a reference AOI; Datia District maps use the same layer architecture.
+</div>
+
+<div class="eyebrow">WHITE PAPER &middot; PRECISION AGRICULTURE &middot; BASMATI RICE</div>
+
+<h1>Ten Days to Save a Harvest</h1>
+
+<p class="lede">A crop stress intelligence case study from Datia District, Madhya Pradesh. Kharif 2025. Grain filling stage. 69,200 hectares of farmland monitored across four taluks 33,000 of them basmati rice, five concurrent stress types, and a ten-day window before yield potential is locked in permanently.</p>
+
+<h2><span class="section-num">00 / THE INTELLIGENCE STACK</span>Architecture for Field-Level Intelligence</h2>
+
+<p>Most crop monitoring systems treat fields as grids of pixels. Each new satellite pass produces a new map. Analysts compare maps over time and infer what changed. This approach is fundamentally limited: it has no memory, no field identity, and no understanding of what a field is supposed to look like.</p>
+
+<p>Pixxel operates on a different principle. A field is a persistent object with an identity, history, and trajectory. The job of an intelligence system is not to produce maps. It is to know an individual field's  biophysical state, their stress history, their response patterns deeply enough so that anomalies become detectable and interpretable as specific problems, not generic changes in pixel color.</p>
+
+<p>This requires three integrated systems creating our NEXUS product, each solving a specific part of the problem: acquisition and retrieval of biophysical state, integration of environmental forcing context, and semantic search across the field's complete history.</p>
+
+<div class="stack-grid">
+ <div class="stack-card">
+ <div class="stack-label">NEXUS CUBE</div>
+ <h4>Field-level intelligence object</h4>
+ <ul>
+ <li>Persistent identity for every monitored field</li>
+ <li>Multimodal time series: optical, SAR, climate, ancillary</li>
+ <li>ISOFIT atmospheric correction + PROSAIL inversion</li>
+ <li>Full season history from transplanting to harvest</li>
+ <li>Biophysical retrieval at every acquisition</li>
+ </ul>
+ </div>
+ <div class="stack-card">
+ <div class="stack-label">MICROCLIM</div>
+ <h4>Climate forcing integration</h4>
+ <ul>
+ <li>Field-level climate downscaling</li>
+ <li>Growing degree days, precipitation deficit, VPD</li>
+ <li>Actual vs reference evapotranspiration (ETa/ET0)</li>
+ <li>Conditions biological interpretation against realized weather</li>
+ <li>Fused into NEXUS as forcing layer</li>
+ </ul>
+ </div>
+ <div class="stack-card">
+ <div class="stack-label">SEMANTIC SEARCH ENGINE</div>
+ <h4>Queryable field state history</h4>
+ <ul>
+ <li>DINOv3 embeddings fine-tuned on Pixxel hyperspectral data</li>
+ <li>Every biophysical observation encoded in semantic space</li>
+ <li>Query by similarity: find fields matching current trajectory</li>
+ <li>Surface historical stress events and outcomes</li>
+ <li>No pre-specified alert rules needed</li>
+ </ul>
+ </div>
+</div>
+
+<div class="figure figure-screenshot">
+<div class="figure-label">FIGURE 01</div>
+<div class="figure-title">Farm boundary detection - field identity layer</div>
+<p class="platform-note">ILLUSTRATIVE PLATFORM VIEW &middot; McDonald Island Region, CA &middot; Same layer delivered for Datia District AOIs</p>
+<img src="assets/farm_boundary.png" alt="Pixxel platform map showing automated farm boundary detection with per-field IDs and areas" width="896" loading="lazy"/>
+<div class="figure-caption">Every monitored field receives a persistent boundary object: automated delineation, unique farm ID, and area in square metres. This is the foundation of the NEXUS cube field-level identity that all subsequent layers attach to. In production deployments, boundaries are ingested once per season and updated only when parcel geometry changes.</div>
+</div>
+
+<p>The case study that follows illustrates what this stack produces when applied to real-world precision agriculture: 69,200 hectares of farmland monitored, 33,000 hectares of it basmati rice at grain filling stage, five concurrent stress types, and a ten-day intervention window.</p>
+
+<h2><span class="section-num">01 / THE SITUATION</span>Why This Ten Days Matters</h2>
+
+<p>Basmati rice at grain filling is one of the most time-sensitive situations in precision agriculture. The grain filling stage when the plant transfers photosynthate from leaves and stems into the developing grain lasts roughly three to four weeks. Stress during this window does not delay the harvest. It reduces it permanently. Yield that is lost at grain filling cannot be recovered.</p>
+
+<p>In October 2025, the Bhander region of Datia District, Madhya Pradesh spans 69,200 hectares of monitored farmland across four taluks 52,600 hectares classified as rice and 33,000 hectares of it confirmed basmati at this stage. Post-monsoon soil moisture is uneven. Nitrogen levels are declining. Blast disease pressure is building in Bhander. Bacterial Leaf Blight is confirmed in Seondha. In Indergarh, SAR anomalies are flagging early lodging risk in the lowest-lying fields. Five stress types. Four taluks. A regional yield risk of 12&ndash;18% below potential if nothing changes in the next ten days.</p>
+
+<div class="meta-grid">
+ <div class="meta-card"><div class="meta-label">REGION</div><div class="meta-value">Datia District</div><div class="meta-sub">Madhya Pradesh, India</div></div>
+ <div class="meta-card"><div class="meta-label">MONITORED AREA</div><div class="meta-value">69,200 Ha</div><div class="meta-sub">33,000 Ha basmati &middot; 4 taluks</div></div>
+ <div class="meta-card"><div class="meta-label">SEASON</div><div class="meta-value">Kharif 2025</div><div class="meta-sub">01&ndash;10 October 2025</div></div>
+ <div class="meta-card"><div class="meta-label">GROWTH STAGE</div><div class="meta-value">Grain Filling</div><div class="meta-sub">Critical yield window</div></div>
+</div>
+
+<div class="callout">
+ <p><strong>Why grain filling?</strong> At heading through grain filling, basmati rice transfers stored carbohydrates into the developing grain while simultaneously building the aromatic compounds that define basmati quality. Water stress reduces grain weight. Nitrogen depletion reduces protein content. Disease pressure disrupts the photosynthetic machinery driving both. A single week of unaddressed compound stress at this stage can cost 15&ndash;20% of yield and significantly degrade the aromatic quality that commands the basmati price premium.</p>
+</div>
+
+<p>Before a single stress signal is interpreted, the intelligence model first establishes <em>what is actually growing where</em>. Hyperspectral classification separates basmati from non-basmati rice and from other crops across the full 69,200-hectare footprint, with per-taluk confidence scores and uncertainty bounds that scale with crop development stage.</p>
+
+<div class="figure">
+<div class="figure-label">FIGURE 02</div>
+<div class="figure-title">Acreage classification - farmland to rice to basmati, taluk-wise</div>
+<svg viewBox="0 0 880 410" xmlns="http://www.w3.org/2000/svg">
+<!-- Funnel -->
+<text x="60" y="22" font-family="monospace" font-size="12" fill="#00d4ff" letter-spacing="1.5">CLASSIFICATION FUNNEL &#183; REGION TOTAL</text>
+<rect x="60" y="32" width="760" height="30" rx="3" fill="#3a4452"/>
+<text x="74" y="52" font-family="monospace" font-size="13" fill="#e6edf3" font-weight="600">Total farmland</text>
+<text x="806" y="52" text-anchor="end" font-family="monospace" font-size="13" fill="#e6edf3" font-weight="600">69,200 Ha</text>
+<rect x="151" y="70" width="578" height="30" rx="3" fill="#c9a84c" fill-opacity="0.8"/>
+<text x="165" y="90" font-family="monospace" font-size="13" fill="#0a0e14" font-weight="700">Rice-classified</text>
+<text x="715" y="90" text-anchor="end" font-family="monospace" font-size="13" fill="#0a0e14" font-weight="700">52,600 Ha &#183; 76%</text>
+<rect x="259" y="108" width="362" height="30" rx="3" fill="#00d4ff" fill-opacity="0.85"/>
+<text x="273" y="128" font-family="monospace" font-size="13" fill="#0a0e14" font-weight="700">Basmati</text>
+<text x="607" y="128" text-anchor="end" font-family="monospace" font-size="13" fill="#0a0e14" font-weight="700">33,000 Ha &#183; 47.7%</text>
+
+<line x1="60" y1="160" x2="820" y2="160" stroke="#1f2937" stroke-width="1"/>
+<text x="12" y="184" font-family="monospace" font-size="12" fill="#00d4ff" letter-spacing="1.5">TALUK-WISE BREAKDOWN</text>
+
+<!-- Bhander -->
+<text x="12" y="206" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Bhander</text>
+<text x="12" y="220" font-family="monospace" font-size="10" fill="#8b95a5">22,400 Ha total</text>
+<rect x="150" y="196" width="470" height="20" rx="2" fill="#2d3748"/>
+<rect x="150" y="196" width="374" height="20" rx="2" fill="#c9a84c" fill-opacity="0.5"/>
+<rect x="150" y="196" width="235" height="20" rx="2" fill="#00d4ff" fill-opacity="0.9"/>
+<text x="640" y="205" font-family="monospace" font-size="12" fill="#e6edf3" font-weight="600">11,200 Ha &#183; 62.9%</text>
+<text x="640" y="219" font-family="monospace" font-size="10" fill="#8b95a5">87% conf &#183; &#177;672 Ha</text>
+
+<!-- Datia -->
+<text x="12" y="254" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Datia</text>
+<text x="12" y="268" font-family="monospace" font-size="10" fill="#8b95a5">18,600 Ha total</text>
+<rect x="150" y="244" width="391" height="20" rx="2" fill="#2d3748"/>
+<rect x="150" y="244" width="298" height="20" rx="2" fill="#c9a84c" fill-opacity="0.5"/>
+<rect x="150" y="244" width="187" height="20" rx="2" fill="#4ade80" fill-opacity="0.9"/>
+<text x="640" y="253" font-family="monospace" font-size="12" fill="#e6edf3" font-weight="600">8,900 Ha &#183; 62.7%</text>
+<text x="640" y="267" font-family="monospace" font-size="10" fill="#8b95a5">91% conf &#183; &#177;445 Ha</text>
+
+<!-- Seondha -->
+<text x="12" y="302" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Seondha</text>
+<text x="12" y="316" font-family="monospace" font-size="10" fill="#8b95a5">15,800 Ha total</text>
+<rect x="150" y="292" width="332" height="20" rx="2" fill="#2d3748"/>
+<rect x="150" y="292" width="239" height="20" rx="2" fill="#c9a84c" fill-opacity="0.5"/>
+<rect x="150" y="292" width="149" height="20" rx="2" fill="#fbbf24" fill-opacity="0.9"/>
+<text x="640" y="301" font-family="monospace" font-size="12" fill="#e6edf3" font-weight="600">7,100 Ha &#183; 62.3%</text>
+<text x="640" y="315" font-family="monospace" font-size="10" fill="#8b95a5">84% conf &#183; &#177;325 Ha</text>
+
+<!-- Indergarh -->
+<text x="12" y="350" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Indergarh</text>
+<text x="12" y="364" font-family="monospace" font-size="10" fill="#8b95a5">12,400 Ha total</text>
+<rect x="150" y="340" width="260" height="20" rx="2" fill="#2d3748"/>
+<rect x="150" y="340" width="193" height="20" rx="2" fill="#c9a84c" fill-opacity="0.5"/>
+<rect x="150" y="340" width="122" height="20" rx="2" fill="#a78bfa" fill-opacity="0.9"/>
+<text x="640" y="349" font-family="monospace" font-size="12" fill="#e6edf3" font-weight="600">5,800 Ha &#183; 63.0%</text>
+<text x="640" y="363" font-family="monospace" font-size="10" fill="#8b95a5">93% conf &#183; &#177;232 Ha</text>
+
+<!-- Legend -->
+<g transform="translate(12, 392)">
+  <rect x="0" y="-9" width="14" height="11" rx="1.5" fill="#2d3748"/>
+  <text x="20" y="1" font-family="monospace" font-size="12" fill="#8b95a5">Total farmland</text>
+  <rect x="160" y="-9" width="14" height="11" rx="1.5" fill="#c9a84c" fill-opacity="0.5"/>
+  <text x="180" y="1" font-family="monospace" font-size="12" fill="#8b95a5">Rice-classified</text>
+  <rect x="320" y="-9" width="14" height="11" rx="1.5" fill="#00d4ff" fill-opacity="0.9"/>
+  <text x="340" y="1" font-family="monospace" font-size="12" fill="#8b95a5">Basmati (taluk-coloured)</text>
+</g>
+</svg>
+<div class="figure-caption">Basmati cultivation spans 33,000 Ha 62.7% of all rice-classified farmland and 47.7% of total agricultural area surveyed. Total rice coverage reaches 76.0% of farmland, reflecting Kharif 2025 as a strong paddy season aided by normal monsoon rainfall. Indergarh records the highest basmati intensity at 63.0%, marginally ahead of Bhander (62.9%), Datia (62.7%), and Seondha (62.3%). Classification confidence averages 89%; uncertainty bounds widen at earlier development stages.</div>
+</div>
+
+<div class="figure figure-screenshot">
+<div class="figure-label">FIGURE 03</div>
+<div class="figure-title">Crop classification - variety and acreage layer</div>
+<p class="platform-note">ILLUSTRATIVE PLATFORM VIEW &middot; McDonald Island Region, CA &middot; Same layer delivered for Datia District AOIs</p>
+<img src="assets/crop_classification.png" alt="Pixxel platform crop classification map with per-crop area breakdown" width="896" loading="lazy"/>
+<div class="figure-caption">Hyperspectral and multispectral fusion classifies each field boundary by crop type with area totals in km&sup2; and percent of the AOI. In the Datia case study, this layer separates basmati from non-basmati rice and other crops the 62.7% basmati share and per-taluk confidence scores in Figure 02 derive from this classification pipeline.</div>
+</div>
+
+<h2><span class="section-num">02 / WHY THIS STAGE</span>The Kharif Season in Full</h2>
+
+<p>The ten-day reporting window does not exist in isolation. It is the culmination of a full kharif season of observation. The NEXUS cube has been accumulating data since transplanting in June every cloud-free Sentinel-2 pass, every Firefly hyperspectral acquisition, every MicroClim climate update. The intelligence model knows what each field looked like at every prior stage, which makes current anomalies interpretable as anomalies rather than just numbers.</p>
+
+<div class="figure figure-screenshot">
+<div class="figure-label">FIGURE 04</div>
+<div class="figure-title">Gap-filled NDVI - continuous season time series per field</div>
+<p class="platform-note">ILLUSTRATIVE PLATFORM VIEW &middot; McDonald Island Region, CA &middot; Same layer delivered for Datia District AOIs</p>
+<img src="assets/ndvi_gap_fill.png" alt="Pixxel platform gap-filled NDVI time series chart for an individual farm" width="896" loading="lazy"/>
+<div class="figure-caption">Cloud gaps and missed acquisitions are interpolated to produce a continuous NDVI trajectory for every field in the NEXUS cube. Analysts compare the current curve against the field&apos;s own prior-season shape rather than a single before/after image pair the mechanism that makes October anomalies interpretable against a June-through-September baseline.</div>
+</div>
+
+<div class="figure figure-screenshot">
+<div class="figure-label">FIGURE 05</div>
+<div class="figure-title">Crop growth monitoring - phenology and peak-of-season statistics</div>
+<p class="platform-note">ILLUSTRATIVE PLATFORM VIEW &middot; McDonald Island Region, CA &middot; Same layer delivered for Datia District AOIs</p>
+<img src="assets/phenology.png" alt="Pixxel platform crop growth monitoring map and peak-of-season farm count chart" width="896" loading="lazy"/>
+<div class="figure-caption">Phenology layers track where fields sit in the crop calendar. Cycle statistics (e.g. peak-of-season counts by month) summarise how many farms reach each growth stage across the AOI. In Datia, grain-filling coverage at the reporting window (60&ndash;72% by taluk) is derived from this phenological state, not from a single snapshot date.</div>
+</div>
+
+<div class="figure">
+<div class="figure-label">FIGURE 06</div>
+<div class="figure-title">Kharif basmati rice full season timeline with current reporting window</div>
+<svg viewBox="0 0 880 430" xmlns="http://www.w3.org/2000/svg">
+<defs>
+ <linearGradient id="kharifGrad" x1="0" y1="0" x2="1" y2="0">
+ <stop offset="0%" stop-color="#4ade80" stop-opacity="0.5"/>
+ <stop offset="30%" stop-color="#00d4ff" stop-opacity="0.5"/>
+ <stop offset="65%" stop-color="#c9a84c" stop-opacity="0.6"/>
+ <stop offset="85%" stop-color="#ff8c42" stop-opacity="0.6"/>
+ <stop offset="100%" stop-color="#fbbf24" stop-opacity="0.5"/>
+ </linearGradient>
+</defs>
+<rect x="60" y="30" width="780" height="14" rx="3" fill="url(#kharifGrad)"/>
+<g font-family="monospace" font-size="10" fill="#8b95a5">
+ <text x="60" y="62" text-anchor="start">JUN</text><text x="190" y="62" text-anchor="middle">JUL</text><text x="320" y="62" text-anchor="middle">AUG</text>
+ <text x="450" y="62" text-anchor="middle">SEP</text><text x="580" y="62" text-anchor="middle">OCT</text><text x="710" y="62" text-anchor="middle">NOV</text><text x="840" y="62" text-anchor="end">DEC</text>
+</g>
+<rect x="540" y="18" width="100" height="36" rx="3" fill="rgba(201,168,76,0.25)" stroke="#c9a84c" stroke-width="1.5"/>
+<text x="590" y="16" text-anchor="middle" font-family="monospace" font-size="10" fill="#c9a84c">01-10 OCT</text>
+<text x="590" y="6" text-anchor="middle" font-family="monospace" font-size="10" fill="#c9a84c">NOW &#8595;</text>
+<line x1="80" y1="85" x2="80" y2="415" stroke="#2d3748" stroke-width="1"/>
+<g transform="translate(80,98)">
+ <circle cx="0" cy="0" r="7" fill="#0a0e14" stroke="#4ade80" stroke-width="2"/>
+ <text x="20" y="-2" font-family="monospace" font-size="11" fill="#4ade80" letter-spacing="1.5">NURSERY + TRANSPLANTING &#183; JUNE TO JULY</text>
+ <text x="20" y="20" font-family="sans-serif" font-size="15" font-weight="600" fill="#e6edf3">Establishment &amp; early root development</text>
+ <text x="20" y="40" font-family="sans-serif" font-size="13" fill="#8b95a5">Soil preparation, seedling health, stand uniformity NEXUS cube initialized</text>
+</g>
+<g transform="translate(80,178)">
+ <circle cx="0" cy="0" r="7" fill="#0a0e14" stroke="#00d4ff" stroke-width="2"/>
+ <text x="20" y="-2" font-family="monospace" font-size="11" fill="#00d4ff" letter-spacing="1.5">VEGETATIVE GROWTH &#183; JULY TO AUGUST</text>
+ <text x="20" y="20" font-family="sans-serif" font-size="15" font-weight="600" fill="#e6edf3">Canopy development &amp; nitrogen uptake</text>
+ <text x="20" y="40" font-family="sans-serif" font-size="13" fill="#8b95a5">LAI build-up, chlorophyll accumulation biophysical baseline established</text>
+</g>
+<g transform="translate(80,258)">
+ <circle cx="0" cy="0" r="7" fill="#0a0e14" stroke="#c9a84c" stroke-width="2"/>
+ <text x="20" y="-2" font-family="monospace" font-size="11" fill="#c9a84c" letter-spacing="1.5">HEADING + FLOWERING &#183; SEPTEMBER</text>
+ <text x="20" y="20" font-family="sans-serif" font-size="15" font-weight="600" fill="#e6edf3">Panicle emergence &amp; pollination</text>
+ <text x="20" y="40" font-family="sans-serif" font-size="13" fill="#8b95a5">Critical humidity window blast pressure begins to build in Bhander</text>
+</g>
+<g transform="translate(80,338)">
+ <circle cx="0" cy="0" r="10" fill="#c9a84c" stroke="#c9a84c" stroke-width="2"/>
+ <rect x="16" y="-20" width="730" height="60" rx="4" fill="rgba(201,168,76,0.08)" stroke="rgba(201,168,76,0.35)" stroke-width="1"/>
+ <text x="30" y="-2" font-family="monospace" font-size="11" fill="#c9a84c" letter-spacing="1.5">GRAIN FILLING &#183; 01-10 OCTOBER &#8592; CURRENT STAGE</text>
+ <text x="30" y="20" font-family="sans-serif" font-size="15" font-weight="700" fill="#e6edf3">Yield and quality locked in 10-day intervention window</text>
+ <text x="30" y="40" font-family="sans-serif" font-size="13" fill="#c9a84c">Water stress, N depletion, blast, BLB, lodging all active simultaneously</text>
+</g>
+<g transform="translate(80,405)">
+ <circle cx="0" cy="0" r="7" fill="#0a0e14" stroke="#fbbf24" stroke-width="2"/>
+ <text x="20" y="-2" font-family="monospace" font-size="10" fill="#fbbf24" letter-spacing="1.5">RIPENING + HARVEST &#183; NOVEMBER</text>
+ <text x="20" y="18" font-family="sans-serif" font-size="14" font-weight="600" fill="#8b95a5">Grain desiccation, harvest logistics, yield monitor ingestion into NEXUS</text>
+</g>
+</svg>
+<div class="figure-caption">The 01-10 October reporting window sits at the most consequential point in the kharif calendar. The NEXUS cube has been accumulating observations since June current anomalies are interpreted against a full-season baseline, not a single image comparison.</div>
+</div>
+
+<h2><span class="section-num">03 / WHAT PIXXEL SEES</span>The Spectral Foundation</h2>
+
+<p>Basmati rice at grain filling has a spectral signature that encodes multiple stress signals simultaneously. Standard satellite indices see the canopy as a whole and flag when it is generally declining. They cannot distinguish the nitrogen depletion signal from the water stress signal from the disease-driven chlorophyll disruption. Pixxel&apos;s Firefly sensor resolves these signals individually 400 contiguous spectral bands across the visible and near-infrared, each one a narrow window into a specific physical or biochemical process.</p>
+
+<div class="figure">
+<div class="figure-label">FIGURE 07</div>
+<div class="figure-title">Rice canopy reflectance at grain filling - key diagnostic spectral features</div>
+<svg viewBox="0 0 880 410" xmlns="http://www.w3.org/2000/svg">
+<line x1="80" y1="300" x2="840" y2="300" stroke="#2d3748" stroke-width="1"/>
+<line x1="80" y1="60" x2="80" y2="300" stroke="#2d3748" stroke-width="1"/>
+<text x="30" y="180" text-anchor="middle" font-family="monospace" font-size="11" fill="#8b95a5" letter-spacing="1" transform="rotate(-90,30,180)">REFLECTANCE</text>
+
+<!-- X-axis: 470 to 2500 nm -->
+<g font-family="monospace" font-size="11" fill="#8b95a5">
+  <text x="80" y="320" text-anchor="middle">470</text>
+  <text x="232" y="320" text-anchor="middle">700</text>
+  <text x="384" y="320" text-anchor="middle">1100</text>
+  <text x="536" y="320" text-anchor="middle">1500</text>
+  <text x="688" y="320" text-anchor="middle">2000</text>
+  <text x="840" y="320" text-anchor="middle">2500</text>
+  <text x="460" y="348" text-anchor="middle" letter-spacing="2">WAVELENGTH (nm)</text>
+</g>
+
+<!-- Firefly VNIR region (470-900) -->
+<rect x="80" y="50" width="280" height="255" rx="2" fill="#00d4ff" fill-opacity="0.08" stroke="#00d4ff" stroke-opacity="0.4" stroke-width="1" stroke-dasharray="3,2"/>
+<text x="95" y="70" font-family="monospace" font-size="10" fill="#00d4ff" letter-spacing="1">FIREFLY VNIR</text>
+
+<!-- Honeybee SWIR extension (900-2500) -->
+<rect x="359" y="50" width="481" height="255" rx="2" fill="#fbbf24" fill-opacity="0.06" stroke="#fbbf24" stroke-opacity="0.4" stroke-width="1" stroke-dasharray="3,2"/>
+<text x="750" y="70" font-family="monospace" font-size="10" fill="#fbbf24" letter-spacing="1">HONEYBEE SWIR</text>
+
+<!-- Grid lines for wavelength -->
+<g stroke="#2d3748" stroke-width="0.5" stroke-opacity="0.5">
+  <line x1="100" y1="60" x2="100" y2="300"/><line x1="120" y1="60" x2="120" y2="300"/><line x1="140" y1="60" x2="140" y2="300"/>
+  <line x1="160" y1="60" x2="160" y2="300"/><line x1="180" y1="60" x2="180" y2="300"/><line x1="200" y1="60" x2="200" y2="300"/>
+  <line x1="220" y1="60" x2="220" y2="300"/><line x1="240" y1="60" x2="240" y2="300"/><line x1="260" y1="60" x2="260" y2="300"/>
+  <line x1="280" y1="60" x2="280" y2="300"/><line x1="300" y1="60" x2="300" y2="300"/><line x1="320" y1="60" x2="320" y2="300"/>
+  <line x1="340" y1="60" x2="340" y2="300"/><line x1="360" y1="60" x2="360" y2="300"/><line x1="380" y1="60" x2="380" y2="300"/>
+  <line x1="400" y1="60" x2="400" y2="300"/><line x1="420" y1="60" x2="420" y2="300"/><line x1="440" y1="60" x2="440" y2="300"/>
+  <line x1="460" y1="60" x2="460" y2="300"/><line x1="480" y1="60" x2="480" y2="300"/><line x1="500" y1="60" x2="500" y2="300"/>
+  <line x1="520" y1="60" x2="520" y2="300"/><line x1="540" y1="60" x2="540" y2="300"/><line x1="560" y1="60" x2="560" y2="300"/>
+  <line x1="580" y1="60" x2="580" y2="300"/><line x1="600" y1="60" x2="600" y2="300"/><line x1="620" y1="60" x2="620" y2="300"/>
+  <line x1="640" y1="60" x2="640" y2="300"/><line x1="660" y1="60" x2="660" y2="300"/><line x1="680" y1="60" x2="680" y2="300"/>
+  <line x1="700" y1="60" x2="700" y2="300"/><line x1="720" y1="60" x2="720" y2="300"/><line x1="740" y1="60" x2="740" y2="300"/>
+  <line x1="760" y1="60" x2="760" y2="300"/><line x1="780" y1="60" x2="780" y2="300"/><line x1="800" y1="60" x2="800" y2="300"/>
+  <line x1="820" y1="60" x2="820" y2="300"/>
+</g>
+
+<!-- Reflectance curve -->
+<path d="M 80 275 Q 120 270 148 262 Q 178 252 198 238 Q 216 222 230 232 Q 244 244 260 268 Q 276 288 300 258 Q 322 218 346 145 Q 368 88 412 80 Q 468 78 528 82 Q 568 90 592 112 Q 612 132 618 110 Q 634 92 652 102 Q 685 128 712 148 Q 742 168 772 188 Q 800 205 830 222" stroke="#c9a84c" stroke-width="2.5" fill="none"/>
+
+<!-- Diagnostic markers -->
+<line x1="115" y1="60" x2="115" y2="245" stroke="#ef4444" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="115" y="50" text-anchor="middle" font-family="monospace" font-size="11" fill="#ef4444" font-weight="600">550 nm</text>
+<text x="115" y="36" text-anchor="middle" font-family="monospace" font-size="10" fill="#ef4444">BLAST</text>
+
+<line x1="270" y1="60" x2="270" y2="162" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="270" y="50" text-anchor="middle" font-family="monospace" font-size="11" fill="#fbbf24" font-weight="600">RED EDGE</text>
+<text x="270" y="36" text-anchor="middle" font-family="monospace" font-size="10" fill="#fbbf24">700-730 nm CCC/N</text>
+
+<line x1="540" y1="60" x2="540" y2="112" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="540" y="50" text-anchor="middle" font-family="monospace" font-size="11" fill="#fbbf24" font-weight="600">970 nm</text>
+<text x="540" y="36" text-anchor="middle" font-family="monospace" font-size="10" fill="#fbbf24">water CWC</text>
+
+<line x1="680" y1="60" x2="680" y2="155" stroke="#ff8c42" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="680" y="50" text-anchor="middle" font-family="monospace" font-size="11" fill="#ff8c42" font-weight="600">SWIR</text>
+<text x="680" y="36" text-anchor="middle" font-family="monospace" font-size="10" fill="#ff8c42">anomaly BLB</text>
+
+<!-- Legend -->
+<g transform="translate(80,365)">
+  <line x1="0" y1="-4" x2="22" y2="-4" stroke="#c9a84c" stroke-width="2.5"/>
+  <text x="30" y="0" font-family="monospace" font-size="12" fill="#8b95a5">Basmati rice canopy</text>
+  
+  <rect x="220" y="-8" width="14" height="12" fill="#00d4ff" fill-opacity="0.3" stroke="#00d4ff" stroke-opacity="0.6"/>
+  <text x="240" y="0" font-family="monospace" font-size="12" fill="#8b95a5">VNIR 470-900 (Firefly)</text>
+  
+  <rect x="490" y="-8" width="14" height="12" fill="#fbbf24" fill-opacity="0.25" stroke="#fbbf24" stroke-opacity="0.5"/>
+  <text x="510" y="0" font-family="monospace" font-size="12" fill="#8b95a5">SWIR 900-2500 (Honeybee)</text>
+</g>
+</svg>
+<div class="figure-caption">Firefly covers VNIR (470-900 nm), resolving visible and near-infrared stress signatures. Honeybee extends into SWIR (900-2500 nm), detecting water absorption and mineral changes invisible to VNIR. BLB and water stress are SWIR-dependent signals.</div>
+</div>
+
+<h2><span class="section-num">04 / THE INTELLIGENCE MODEL</span>Four Data Streams, One Picture</h2>
+
+<p>Spectral signals reveal what the canopy is doing. Attribution, the difference between an observation and an actionable diagnosis, requires context that optical sensors cannot provide alone. SAR penetrates cloud and reads canopy structure and soil moisture. MicroClim supplies the climate forcing that conditions every biological process. The field's own NEXUS history provides the expected-state baseline that makes an anomaly interpretable as an anomaly rather than just a number.</p>
+
+<div class="figure">
+<div class="figure-label">FIGURE 08</div>
+<div class="figure-title">Multimodal fusion over Datia District - what each data stream contributes</div>
+<svg viewBox="0 0 880 430" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="modA2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00d4ff" stop-opacity="0.18"/><stop offset="100%" stop-color="#00d4ff" stop-opacity="0.03"/></linearGradient>
+<linearGradient id="modB2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff8c42" stop-opacity="0.18"/><stop offset="100%" stop-color="#ff8c42" stop-opacity="0.03"/></linearGradient>
+<linearGradient id="modC2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4ade80" stop-opacity="0.18"/><stop offset="100%" stop-color="#4ade80" stop-opacity="0.03"/></linearGradient>
+<linearGradient id="modD2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c9a84c" stop-opacity="0.18"/><stop offset="100%" stop-color="#c9a84c" stop-opacity="0.03"/></linearGradient>
+</defs>
+<g transform="translate(30,20)">
+  <rect x="0" y="0" width="200" height="210" rx="6" fill="url(#modA2)" stroke="#00d4ff" stroke-opacity="0.6"/>
+  <text x="16" y="28" font-family="monospace" font-size="11" fill="#00d4ff" letter-spacing="1.5">OPTICAL / HSI</text>
+  <text x="16" y="54" font-family="sans-serif" font-size="15" font-weight="600" fill="#e6edf3">Canopy chemistry</text>
+  <line x1="16" y1="64" x2="184" y2="64" stroke="#00d4ff" stroke-opacity="0.3"/>
+  <text x="16" y="90" font-family="sans-serif" font-size="13" fill="#8b95a5">CCC: 112-148 ug/cm2</text>
+  <text x="16" y="112" font-family="sans-serif" font-size="13" fill="#8b95a5">CWSI: 0.38-0.61</text>
+  <text x="16" y="134" font-family="sans-serif" font-size="13" fill="#8b95a5">Blast: 550 nm anomaly</text>
+  <text x="16" y="156" font-family="sans-serif" font-size="13" fill="#8b95a5">BLB: SWIR confirmed</text>
+  <text x="16" y="186" font-family="monospace" font-size="11" fill="#5a6470">SIGNAL: 5 concurrent</text>
+  <text x="16" y="202" font-family="monospace" font-size="11" fill="#5a6470">stress types active</text>
+</g>
+<g transform="translate(240,20)">
+  <rect x="0" y="0" width="200" height="210" rx="6" fill="url(#modB2)" stroke="#ff8c42" stroke-opacity="0.6"/>
+  <text x="16" y="28" font-family="monospace" font-size="11" fill="#ff8c42" letter-spacing="1.5">SAR - SENTINEL-1</text>
+  <text x="16" y="54" font-family="sans-serif" font-size="15" font-weight="600" fill="#e6edf3">Structure + lodging</text>
+  <line x1="16" y1="64" x2="184" y2="64" stroke="#ff8c42" stroke-opacity="0.3"/>
+  <text x="16" y="90" font-family="sans-serif" font-size="13" fill="#8b95a5">VH/VV anomaly</text>
+  <text x="16" y="112" font-family="sans-serif" font-size="13" fill="#8b95a5">detected in Indergarh</text>
+  <text x="16" y="134" font-family="sans-serif" font-size="13" fill="#8b95a5">730 Ha at risk</text>
+  <text x="16" y="156" font-family="sans-serif" font-size="13" fill="#8b95a5">Soil moisture mapped</text>
+  <text x="16" y="186" font-family="monospace" font-size="11" fill="#5a6470">SIGNAL: lodging onset,</text>
+  <text x="16" y="202" font-family="monospace" font-size="11" fill="#5a6470">drain within 48 hrs</text>
+</g>
+<g transform="translate(450,20)">
+  <rect x="0" y="0" width="200" height="210" rx="6" fill="url(#modC2)" stroke="#4ade80" stroke-opacity="0.6"/>
+  <text x="16" y="28" font-family="monospace" font-size="11" fill="#4ade80" letter-spacing="1.5">CLIMATE - MICROCLIM</text>
+  <text x="16" y="54" font-family="sans-serif" font-size="15" font-weight="600" fill="#e6edf3">Forcing context</text>
+  <line x1="16" y1="64" x2="184" y2="64" stroke="#4ade80" stroke-opacity="0.3"/>
+  <text x="16" y="90" font-family="sans-serif" font-size="13" fill="#8b95a5">Post-monsoon deficit</text>
+  <text x="16" y="112" font-family="sans-serif" font-size="13" fill="#8b95a5">Humidity &gt;75% Bhander</text>
+  <text x="16" y="134" font-family="sans-serif" font-size="13" fill="#8b95a5">ET demand elevated</text>
+  <text x="16" y="156" font-family="sans-serif" font-size="13" fill="#8b95a5">ETa/ET0 0.64-0.82</text>
+  <text x="16" y="186" font-family="monospace" font-size="11" fill="#5a6470">SIGNAL: drought south,</text>
+  <text x="16" y="202" font-family="monospace" font-size="11" fill="#5a6470">blast humidity north</text>
+</g>
+<g transform="translate(660,20)">
+  <rect x="0" y="0" width="200" height="210" rx="6" fill="url(#modD2)" stroke="#c9a84c" stroke-opacity="0.6"/>
+  <text x="16" y="28" font-family="monospace" font-size="11" fill="#c9a84c" letter-spacing="1.5">NEXUS FIELD HISTORY</text>
+  <text x="16" y="54" font-family="sans-serif" font-size="15" font-weight="600" fill="#e6edf3">District memory</text>
+  <line x1="16" y1="64" x2="184" y2="64" stroke="#c9a84c" stroke-opacity="0.3"/>
+  <text x="16" y="90" font-family="sans-serif" font-size="13" fill="#8b95a5">Prior blast events</text>
+  <text x="16" y="112" font-family="sans-serif" font-size="13" fill="#8b95a5">in Bhander confirmed</text>
+  <text x="16" y="134" font-family="sans-serif" font-size="13" fill="#8b95a5">Indergarh: low-lying</text>
+  <text x="16" y="156" font-family="sans-serif" font-size="13" fill="#8b95a5">lodging history</text>
+  <text x="16" y="186" font-family="monospace" font-size="11" fill="#5a6470">SIGNAL: repeat-risk</text>
+  <text x="16" y="202" font-family="monospace" font-size="11" fill="#5a6470">zones flagged early</text>
+</g>
+<path d="M 130 230 Q 130 285 440 315" stroke="#00d4ff" stroke-width="1.5" stroke-opacity="0.5" fill="none"/>
+<path d="M 340 230 Q 340 285 440 315" stroke="#ff8c42" stroke-width="1.5" stroke-opacity="0.5" fill="none"/>
+<path d="M 550 230 Q 550 285 440 315" stroke="#4ade80" stroke-width="1.5" stroke-opacity="0.5" fill="none"/>
+<path d="M 760 230 Q 760 285 440 315" stroke="#c9a84c" stroke-width="1.5" stroke-opacity="0.5" fill="none"/>
+<rect x="160" y="315" width="560" height="100" rx="8" fill="#151b25" stroke="#c9a84c" stroke-width="1.5"/>
+<text x="440" y="342" text-anchor="middle" font-family="monospace" font-size="12" fill="#c9a84c" letter-spacing="2">FUSED DISTRICT INTELLIGENCE</text>
+<text x="440" y="368" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="600" fill="#e6edf3">Five concurrent stress types - four taluks - one 10-day window</text>
+<text x="440" y="390" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#8b95a5">Each taluk has a different primary stress, each needs a different first action</text>
+<text x="440" y="408" text-anchor="middle" font-family="monospace" font-size="12" fill="#fbbf24">Estimated yield risk: 12-18% below potential without intervention</text>
+</svg>
+<div class="figure-caption">The diagnosis is multimodal by necessity. Blast is confirmed by spectral anomaly plus humidity forcing plus historical occurrence in the NEXUS record. Lodging is flagged by SAR structure anomaly plus field topography memory. Water stress is confirmed by CWC retrieval plus soil moisture deficit plus ETa/ET0 ratio. No single sensor carries all three.</div>
+</div>
+
+<h2><span class="section-num">05 / WHAT THE SYSTEM FOUND</span>Biophysical State Across Four Taluks</h2>
+
+<p>The intelligence model retrieves the actual biophysical state of the rice canopy using advanced radiative transfer modeling (PROSAIL, ISOFIT) combined with weather modeling. These are the physical variables that directly govern yield and quality: what the plant is doing biologically at the cellular and leaf level, not what colour it appears from space.</p>
+
+<div class="figure figure-screenshot">
+<div class="figure-label">FIGURE 09</div>
+<div class="figure-title">Crop bio-parameter layer - LAI and canopy structure retrieval</div>
+<p class="platform-note">ILLUSTRATIVE PLATFORM VIEW &middot; McDonald Island Region, CA &middot; Same layer delivered for Datia District AOIs</p>
+<img src="assets/biophysical_params.png" alt="Pixxel platform LAI heatmap with area coverage distribution chart" width="896" loading="lazy"/>
+<div class="figure-caption">PROSAIL inversion delivers per-pixel biophysical parameters (here, Leaf Area Index) as map layers with AOI-level distribution statistics. The Datia taluk summaries in Figure 10 (CCC, CWC, LAI, ETa/ET0) are the district-aggregated expression of this same retrieval pipeline, ground-validated with LAI-2200 and SPAD measurements.</div>
+</div>
+
+<div class="figure">
+<div class="figure-label">FIGURE 10</div>
+<div class="figure-title">Biophysical state across taluks - pigments, structure, water</div>
+<svg viewBox="0 0 880 460" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="bhanderGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#00d4ff" stop-opacity="0.95"/><stop offset="100%" stop-color="#00d4ff" stop-opacity="0.55"/></linearGradient>
+  <linearGradient id="datiaGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#4ade80" stop-opacity="0.95"/><stop offset="100%" stop-color="#4ade80" stop-opacity="0.55"/></linearGradient>
+  <linearGradient id="seondhaGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#fbbf24" stop-opacity="0.95"/><stop offset="100%" stop-color="#fbbf24" stop-opacity="0.55"/></linearGradient>
+  <linearGradient id="indergarhGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#a78bfa" stop-opacity="0.95"/><stop offset="100%" stop-color="#a78bfa" stop-opacity="0.55"/></linearGradient>
+</defs>
+
+<!-- GROUP 1: LEAF PIGMENTS -->
+<g transform="translate(10, 10)">
+  <rect x="0" y="0" width="280" height="360" rx="4" fill="#0a0e14" stroke="#2d3748" stroke-width="1"/>
+  <text x="12" y="22" font-family="monospace" font-size="13" fill="#00d4ff" letter-spacing="1">LEAF PIGMENTS</text>
+  <line x1="12" y1="30" x2="268" y2="30" stroke="#00d4ff" stroke-opacity="0.3"/>
+
+  <text x="12" y="52" font-family="sans-serif" font-size="13" fill="#e6edf3">Carotenoids</text>
+  <rect x="12" y="60" width="215" height="10" rx="1.5" fill="url(#bhanderGrad)"/><text x="240" y="69" font-family="monospace" font-size="12" fill="#4ade80" font-weight="700">↑↑</text>
+  <rect x="12" y="73" width="165" height="10" rx="1.5" fill="url(#datiaGrad)"/><text x="240" y="82" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="86" width="140" height="10" rx="1.5" fill="url(#seondhaGrad)"/><text x="240" y="95" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓</text>
+  <rect x="12" y="99" width="180" height="10" rx="1.5" fill="url(#indergarhGrad)"/><text x="240" y="108" font-family="monospace" font-size="12" fill="#4ade80" font-weight="700">↑</text>
+
+  <text x="12" y="131" font-family="sans-serif" font-size="13" fill="#e6edf3">Anthocyanins</text>
+  <rect x="12" y="139" width="140" height="10" rx="1.5" fill="url(#bhanderGrad)"/><text x="240" y="148" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="152" width="125" height="10" rx="1.5" fill="url(#datiaGrad)"/><text x="240" y="161" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓</text>
+  <rect x="12" y="165" width="160" height="10" rx="1.5" fill="url(#seondhaGrad)"/><text x="240" y="174" font-family="monospace" font-size="12" fill="#4ade80" font-weight="700">↑</text>
+  <rect x="12" y="178" width="95" height="10" rx="1.5" fill="url(#indergarhGrad)"/><text x="240" y="187" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓↓</text>
+
+  <text x="12" y="210" font-family="sans-serif" font-size="13" fill="#e6edf3">Chlorophyll (CCC)</text>
+  <rect x="12" y="218" width="115" height="10" rx="1.5" fill="url(#bhanderGrad)"/><text x="240" y="227" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓</text>
+  <rect x="12" y="231" width="170" height="10" rx="1.5" fill="url(#datiaGrad)"/><text x="240" y="240" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="244" width="130" height="10" rx="1.5" fill="url(#seondhaGrad)"/><text x="240" y="253" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓</text>
+  <rect x="12" y="257" width="80" height="10" rx="1.5" fill="url(#indergarhGrad)"/><text x="240" y="266" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓↓</text>
+
+  <text x="12" y="289" font-family="sans-serif" font-size="13" fill="#e6edf3">Nitrogen</text>
+  <rect x="12" y="297" width="105" height="10" rx="1.5" fill="url(#bhanderGrad)"/><text x="240" y="306" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="310" width="145" height="10" rx="1.5" fill="url(#datiaGrad)"/><text x="240" y="319" font-family="monospace" font-size="12" fill="#4ade80" font-weight="700">↑</text>
+  <rect x="12" y="323" width="135" height="10" rx="1.5" fill="url(#seondhaGrad)"/><text x="240" y="332" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="336" width="90" height="10" rx="1.5" fill="url(#indergarhGrad)"/><text x="240" y="345" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓</text>
+</g>
+
+<!-- GROUP 2: CANOPY STRUCTURE -->
+<g transform="translate(300, 10)">
+  <rect x="0" y="0" width="280" height="360" rx="4" fill="#0a0e14" stroke="#2d3748" stroke-width="1"/>
+  <text x="12" y="22" font-family="monospace" font-size="13" fill="#00d4ff" letter-spacing="1">CANOPY STRUCTURE</text>
+  <line x1="12" y1="30" x2="268" y2="30" stroke="#00d4ff" stroke-opacity="0.3"/>
+
+  <text x="12" y="52" font-family="sans-serif" font-size="13" fill="#e6edf3">LAI (leaf area)</text>
+  <rect x="12" y="60" width="175" height="10" rx="1.5" fill="url(#bhanderGrad)"/><text x="240" y="69" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="73" width="185" height="10" rx="1.5" fill="url(#datiaGrad)"/><text x="240" y="82" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="86" width="155" height="10" rx="1.5" fill="url(#seondhaGrad)"/><text x="240" y="95" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓</text>
+  <rect x="12" y="99" width="90" height="10" rx="1.5" fill="url(#indergarhGrad)"/><text x="240" y="108" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓↓</text>
+
+  <text x="12" y="131" font-family="sans-serif" font-size="13" fill="#e6edf3">fAPAR (light)</text>
+  <rect x="12" y="139" width="170" height="10" rx="1.5" fill="url(#bhanderGrad)"/><text x="240" y="148" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="152" width="165" height="10" rx="1.5" fill="url(#datiaGrad)"/><text x="240" y="161" font-family="monospace" font-size="12" fill="#4ade80" font-weight="700">↑</text>
+  <rect x="12" y="165" width="145" height="10" rx="1.5" fill="url(#seondhaGrad)"/><text x="240" y="174" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="178" width="100" height="10" rx="1.5" fill="url(#indergarhGrad)"/><text x="240" y="187" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓</text>
+
+  <text x="12" y="210" font-family="sans-serif" font-size="13" fill="#e6edf3">AGB (biomass)</text>
+  <rect x="12" y="218" width="150" height="10" rx="1.5" fill="url(#bhanderGrad)"/><text x="240" y="227" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓</text>
+  <rect x="12" y="231" width="160" height="10" rx="1.5" fill="url(#datiaGrad)"/><text x="240" y="240" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="244" width="130" height="10" rx="1.5" fill="url(#seondhaGrad)"/><text x="240" y="253" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓</text>
+  <rect x="12" y="257" width="75" height="10" rx="1.5" fill="url(#indergarhGrad)"/><text x="240" y="266" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓↓</text>
+
+  <text x="12" y="289" font-family="sans-serif" font-size="13" fill="#e6edf3">Light efficiency</text>
+  <rect x="12" y="297" width="140" height="10" rx="1.5" fill="url(#bhanderGrad)"/><text x="240" y="306" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="310" width="150" height="10" rx="1.5" fill="url(#datiaGrad)"/><text x="240" y="319" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="323" width="115" height="10" rx="1.5" fill="url(#seondhaGrad)"/><text x="240" y="332" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓</text>
+  <rect x="12" y="336" width="100" height="10" rx="1.5" fill="url(#indergarhGrad)"/><text x="240" y="345" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓</text>
+</g>
+
+<!-- GROUP 3: WATER STATUS -->
+<g transform="translate(590, 10)">
+  <rect x="0" y="0" width="280" height="360" rx="4" fill="#0a0e14" stroke="#2d3748" stroke-width="1"/>
+  <text x="12" y="22" font-family="monospace" font-size="13" fill="#00d4ff" letter-spacing="1">WATER STATUS</text>
+  <line x1="12" y1="30" x2="268" y2="30" stroke="#00d4ff" stroke-opacity="0.3"/>
+
+  <text x="12" y="52" font-family="sans-serif" font-size="13" fill="#e6edf3">CWC (canopy water)</text>
+  <rect x="12" y="60" width="165" height="10" rx="1.5" fill="url(#bhanderGrad)"/><text x="240" y="69" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="73" width="180" height="10" rx="1.5" fill="url(#datiaGrad)"/><text x="240" y="82" font-family="monospace" font-size="12" fill="#4ade80" font-weight="700">↑</text>
+  <rect x="12" y="86" width="125" height="10" rx="1.5" fill="url(#seondhaGrad)"/><text x="240" y="95" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓</text>
+  <rect x="12" y="99" width="85" height="10" rx="1.5" fill="url(#indergarhGrad)"/><text x="240" y="108" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓↓</text>
+
+  <text x="12" y="131" font-family="sans-serif" font-size="13" fill="#e6edf3">Leaf water thick.</text>
+  <rect x="12" y="139" width="140" height="10" rx="1.5" fill="url(#bhanderGrad)"/><text x="240" y="148" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓</text>
+  <rect x="12" y="152" width="155" height="10" rx="1.5" fill="url(#datiaGrad)"/><text x="240" y="161" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="165" width="100" height="10" rx="1.5" fill="url(#seondhaGrad)"/><text x="240" y="174" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓↓</text>
+  <rect x="12" y="178" width="75" height="10" rx="1.5" fill="url(#indergarhGrad)"/><text x="240" y="187" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓↓</text>
+
+  <text x="12" y="210" font-family="sans-serif" font-size="13" fill="#e6edf3">ETa / ET0</text>
+  <rect x="12" y="218" width="185" height="10" rx="1.5" fill="url(#bhanderGrad)"/><text x="240" y="227" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="231" width="200" height="10" rx="1.5" fill="url(#datiaGrad)"/><text x="240" y="240" font-family="monospace" font-size="12" fill="#4ade80" font-weight="700">↑</text>
+  <rect x="12" y="244" width="150" height="10" rx="1.5" fill="url(#seondhaGrad)"/><text x="240" y="253" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="257" width="115" height="10" rx="1.5" fill="url(#indergarhGrad)"/><text x="240" y="266" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓</text>
+
+  <text x="12" y="289" font-family="sans-serif" font-size="13" fill="#e6edf3">LCC (leaf chloro.)</text>
+  <rect x="12" y="297" width="155" height="10" rx="1.5" fill="url(#bhanderGrad)"/><text x="240" y="306" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="310" width="170" height="10" rx="1.5" fill="url(#datiaGrad)"/><text x="240" y="319" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓</text>
+  <rect x="12" y="323" width="140" height="10" rx="1.5" fill="url(#seondhaGrad)"/><text x="240" y="332" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓</text>
+  <rect x="12" y="336" width="105" height="10" rx="1.5" fill="url(#indergarhGrad)"/><text x="240" y="345" font-family="monospace" font-size="12" fill="#ef4444" font-weight="700">↓↓</text>
+</g>
+
+<!-- Legend -->
+<g transform="translate(10, 395)">
+  <rect x="0" y="0" width="16" height="11" rx="2" fill="#00d4ff" fill-opacity="0.9"/>
+  <text x="24" y="9" font-family="monospace" font-size="13" fill="#e6edf3">Bhander</text>
+
+  <rect x="120" y="0" width="16" height="11" rx="2" fill="#4ade80" fill-opacity="0.9"/>
+  <text x="144" y="9" font-family="monospace" font-size="13" fill="#e6edf3">Datia</text>
+
+  <rect x="220" y="0" width="16" height="11" rx="2" fill="#fbbf24" fill-opacity="0.9"/>
+  <text x="244" y="9" font-family="monospace" font-size="13" fill="#e6edf3">Seondha</text>
+
+  <rect x="340" y="0" width="16" height="11" rx="2" fill="#a78bfa" fill-opacity="0.9"/>
+  <text x="364" y="9" font-family="monospace" font-size="13" fill="#e6edf3">Indergarh</text>
+
+  <text x="0" y="38" font-family="monospace" font-size="13" fill="#e6edf3">↑ green = increasing  |  ↓ red = decreasing  |  ↑↑/↓↓ or more = extreme</text>
+</g>
+</svg>
+<div class="figure-caption">Leaf pigments track nitrogen and stress response. Canopy structure shows LAI and biomass declines proportional to overall stress. Water status reflects both irrigation deficit and physiological stress response. Indergarh shows extreme declines (↓↓) in biomass and leaf water. Carotenoid increase in Bhander (↑↑) indicates nitrogen-stress compensation.</div>
+</div>
+
+
+<h2><span class="section-num">06 / ATTRIBUTION</span>Five Stress Types, Five Signatures</h2>
+
+<p>The intelligence model decomposes the combined spectral and multimodal anomaly into its constituent causes, each traceable to a specific set of signals. In a fully realized SSE-integrated deployment, the system also searches the district's NEXUS history for field states that preceded known stress events in prior seasons, surfacing early compound stress signatures before any individual threshold is crossed.</p>
+
+<div class="figure">
+<div class="figure-label">FIGURE 11</div>
+<div class="figure-title">Multi-stress attribution signal to diagnosis to action</div>
+<svg viewBox="0 0 940 470" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arr3" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+ <path d="M 0 0 L 9 4.5 L 0 9 z" fill="#6b7685"/>
+</marker>
+</defs>
+<rect x="370" y="16" width="200" height="62" rx="6" fill="#151b25" stroke="#c9a84c" stroke-width="1.5"/>
+<text x="470" y="42" text-anchor="middle" font-family="monospace" font-size="11" fill="#c9a84c" letter-spacing="1.5">COMPOUND STRESS</text>
+<text x="470" y="64" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#aab4c2">Multi-parameter anomaly</text>
+<line x1="470" y1="78" x2="470" y2="102" stroke="#6b7685" stroke-width="1.5"/>
+<line x1="94" y1="102" x2="846" y2="102" stroke="#6b7685" stroke-width="1.5"/>
+
+<!-5 cols: 94, 282, 470, 658, 846->
+<!-Col 1: Water->
+<line x1="94" y1="102" x2="94" y2="130" stroke="#6b7685" stroke-width="1.5" marker-end="url(#arr3)"/>
+<rect x="14" y="134" width="156" height="106" rx="6" fill="#151b25" stroke="#4a5568" stroke-width="2"/>
+<text x="94" y="158" text-anchor="middle" font-family="monospace" font-size="10" fill="#fbbf24" letter-spacing="1.5">SIGNAL</text>
+<text x="94" y="180" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="600" fill="#e6edf3">CWSI 0.52-0.61</text>
+<text x="94" y="200" text-anchor="middle" font-family="monospace" font-size="13" fill="#aab4c2">CWC below threshold</text>
+<text x="94" y="218" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#aab4c2">+ soil deficit</text>
+<text x="94" y="232" text-anchor="middle" font-family="monospace" font-size="10" fill="#8b95a5">Seondha + Indergarh</text>
+<line x1="94" y1="244" x2="94" y2="272" stroke="#6b7685" stroke-width="1.5" marker-end="url(#arr3)"/>
+<rect x="18" y="276" width="152" height="56" rx="6" fill="#151b25" stroke="#00d4ff" stroke-width="1.5"/>
+<text x="94" y="300" text-anchor="middle" font-family="monospace" font-size="11" fill="#00d4ff" letter-spacing="1.5">DIAGNOSIS</text>
+<text x="94" y="322" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="600" fill="#e6edf3">Water stress</text>
+<line x1="94" y1="336" x2="94" y2="360" stroke="#6b7685" stroke-width="1.5" marker-end="url(#arr3)"/>
+<text x="94" y="382" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#aab4c2">Irrigate 40-50 mm</text>
+<text x="94" y="400" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#aab4c2">within 48 hrs</text>
+
+<!-Col 2: N deficiency->
+<line x1="282" y1="102" x2="282" y2="130" stroke="#6b7685" stroke-width="1.5" marker-end="url(#arr3)"/>
+<rect x="200" y="134" width="156" height="106" rx="6" fill="#151b25" stroke="#4a5568" stroke-width="2"/>
+<text x="282" y="158" text-anchor="middle" font-family="monospace" font-size="10" fill="#fbbf24" letter-spacing="1.5">SIGNAL</text>
+<text x="282" y="180" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="600" fill="#e6edf3">CCC &lt;131 &#181;g/cm&#178;</text>
+<text x="282" y="200" text-anchor="middle" font-family="monospace" font-size="13" fill="#aab4c2">Red-edge depression</text>
+<text x="282" y="218" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#aab4c2">NDRE declining</text>
+<text x="282" y="232" text-anchor="middle" font-family="monospace" font-size="10" fill="#8b95a5">Datia + Seondha</text>
+<line x1="282" y1="244" x2="282" y2="272" stroke="#6b7685" stroke-width="1.5" marker-end="url(#arr3)"/>
+<rect x="206" y="276" width="152" height="56" rx="6" fill="#151b25" stroke="#00d4ff" stroke-width="1.5"/>
+<text x="282" y="300" text-anchor="middle" font-family="monospace" font-size="11" fill="#00d4ff" letter-spacing="1.5">DIAGNOSIS</text>
+<text x="282" y="322" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="600" fill="#e6edf3">N deficiency</text>
+<line x1="282" y1="336" x2="282" y2="360" stroke="#6b7685" stroke-width="1.5" marker-end="url(#arr3)"/>
+<text x="282" y="382" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#aab4c2">Urea top-dress</text>
+<text x="282" y="400" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#aab4c2">20 kg/ha</text>
+
+<!-Col 3: Blast->
+<line x1="470" y1="102" x2="470" y2="130" stroke="#6b7685" stroke-width="1.5" marker-end="url(#arr3)"/>
+<rect x="388" y="134" width="156" height="106" rx="6" fill="#151b25" stroke="#4a5568" stroke-width="2"/>
+<text x="470" y="158" text-anchor="middle" font-family="monospace" font-size="10" fill="#fbbf24" letter-spacing="1.5">SIGNAL</text>
+<text x="470" y="180" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="600" fill="#e6edf3">550 nm anomaly</text>
+<text x="470" y="200" text-anchor="middle" font-family="monospace" font-size="13" fill="#aab4c2">MCARI elevated 0.42</text>
+<text x="470" y="218" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#aab4c2">+ humidity &gt;75%</text>
+<text x="470" y="232" text-anchor="middle" font-family="monospace" font-size="10" fill="#8b95a5">Bhander &#183; 2,567 Ha</text>
+<line x1="470" y1="244" x2="470" y2="272" stroke="#6b7685" stroke-width="1.5" marker-end="url(#arr3)"/>
+<rect x="394" y="276" width="152" height="56" rx="6" fill="#151b25" stroke="#ef4444" stroke-width="1.8"/>
+<text x="470" y="300" text-anchor="middle" font-family="monospace" font-size="11" fill="#ef4444" letter-spacing="1.5">HIGH RISK</text>
+<text x="470" y="322" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="600" fill="#e6edf3">Blast disease</text>
+<line x1="470" y1="336" x2="470" y2="360" stroke="#6b7685" stroke-width="1.5" marker-end="url(#arr3)"/>
+<text x="470" y="382" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#aab4c2">Fungicide</text>
+<text x="470" y="400" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#aab4c2">immediate</text>
+
+<!-Col 4: BLB->
+<line x1="658" y1="102" x2="658" y2="130" stroke="#6b7685" stroke-width="1.5" marker-end="url(#arr3)"/>
+<rect x="576" y="134" width="156" height="106" rx="6" fill="#151b25" stroke="#4a5568" stroke-width="2"/>
+<text x="658" y="158" text-anchor="middle" font-family="monospace" font-size="10" fill="#fbbf24" letter-spacing="1.5">SIGNAL</text>
+<text x="658" y="180" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="600" fill="#e6edf3">SWIR anomaly</text>
+<text x="658" y="200" text-anchor="middle" font-family="monospace" font-size="13" fill="#aab4c2">Cell disruption pattern</text>
+<text x="658" y="218" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#aab4c2">Ground-confirmed</text>
+<text x="658" y="232" text-anchor="middle" font-family="monospace" font-size="10" fill="#8b95a5">Seondha &#183; 1,534 Ha</text>
+<line x1="658" y1="244" x2="658" y2="272" stroke="#6b7685" stroke-width="1.5" marker-end="url(#arr3)"/>
+<rect x="582" y="276" width="152" height="56" rx="6" fill="#151b25" stroke="#00d4ff" stroke-width="1.5"/>
+<text x="658" y="300" text-anchor="middle" font-family="monospace" font-size="11" fill="#00d4ff" letter-spacing="1.5">DIAGNOSIS</text>
+<text x="658" y="322" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="600" fill="#e6edf3">Bacterial Leaf Blight</text>
+<line x1="658" y1="336" x2="658" y2="360" stroke="#6b7685" stroke-width="1.5" marker-end="url(#arr3)"/>
+<text x="658" y="382" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#aab4c2">Copper spray</text>
+<text x="658" y="400" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#aab4c2">within 5 days</text>
+
+<!-Col 5: Lodging->
+<line x1="846" y1="102" x2="846" y2="130" stroke="#6b7685" stroke-width="1.5" marker-end="url(#arr3)"/>
+<rect x="764" y="134" width="156" height="106" rx="6" fill="#151b25" stroke="#4a5568" stroke-width="2"/>
+<text x="846" y="158" text-anchor="middle" font-family="monospace" font-size="10" fill="#fbbf24" letter-spacing="1.5">SIGNAL</text>
+<text x="846" y="180" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="600" fill="#e6edf3">SAR VH/VV</text>
+<text x="846" y="200" text-anchor="middle" font-family="monospace" font-size="13" fill="#aab4c2">Canopy structure shift</text>
+<text x="846" y="218" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#aab4c2">+ low-lying fields</text>
+<text x="846" y="232" text-anchor="middle" font-family="monospace" font-size="10" fill="#8b95a5">Indergarh &#183; 730 Ha</text>
+<line x1="846" y1="244" x2="846" y2="272" stroke="#6b7685" stroke-width="1.5" marker-end="url(#arr3)"/>
+<rect x="770" y="276" width="152" height="56" rx="6" fill="#151b25" stroke="#00d4ff" stroke-width="1.5"/>
+<text x="846" y="300" text-anchor="middle" font-family="monospace" font-size="11" fill="#00d4ff" letter-spacing="1.5">DIAGNOSIS</text>
+<text x="846" y="322" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="600" fill="#e6edf3">Lodging risk</text>
+<line x1="846" y1="336" x2="846" y2="360" stroke="#6b7685" stroke-width="1.5" marker-end="url(#arr3)"/>
+<text x="846" y="382" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#aab4c2">Drain stagnant</text>
+<text x="846" y="400" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#aab4c2">water within 48 hrs</text>
+</svg>
+<div class="figure-caption">Each stress type carries a distinct spectral and multimodal signature. Blast is confirmed by 550 nm anomaly plus high humidity from MicroClim plus historical occurrence in the NEXUS record. BLB is confirmed by SWIR pattern plus ground truth. Lodging is flagged by SAR VH/VV structure shift completely invisible to any optical sensor. In a fully realized SSE deployment, the system would also surface historical field states from the NEXUS cube matching the current trajectory, giving the analyst data-driven context for what unfolded the last time conditions looked like this.</div>
+</div>
+
+<h2><span class="section-num">07 / STRESS AREA</span>Where It Is and How Much</h2>
+
+<p>Knowing the stress type is necessary. Knowing which hectares are affected is what makes the prescription actionable. The intelligence model maps every stress class at pixel level and aggregates to taluk-level acreage the geographic resolution at which a cooperative, government department, or insurance assessor can act.</p>
+
+<div class="figure figure-screenshot">
+<div class="figure-label">FIGURE 12</div>
+<div class="figure-title">Crop stress layer - spatial stress map and area coverage</div>
+<p class="platform-note">ILLUSTRATIVE PLATFORM VIEW &middot; McDonald Island Region, CA &middot; Same layer delivered for Datia District AOIs</p>
+<img src="assets/crop_stress.png" alt="Pixxel platform crop stress map with high moderate and no stress area breakdown" width="896" loading="lazy"/>
+<div class="figure-caption">Compound stress is surfaced as a classified map (high, moderate, no stress) with taluk- or AOI-level area percentages. The McDonald Island example shows 36.5% high stress and 44.5% no stress across 226 km&sup2;. In Datia, the same layer produces the taluk-wise acreage totals in Figure 13 (e.g. Seondha 30% high stress, Indergarh 8% high stress with severe per-hectare biophysical decline).</div>
+</div>
+
+<div class="figure">
+<div class="figure-label">FIGURE 13</div>
+<div class="figure-title">Stress area distribution taluk-wise acreage breakdown</div>
+<svg viewBox="0 0 900 470" xmlns="http://www.w3.org/2000/svg">
+<!-Axis. Plot x: 170..830 = 660px = 12,000 Ha (so 1 Ha = 0.055px; 1,000 Ha = 55px)->
+<line x1="170" y1="400" x2="830" y2="400" stroke="#3a4452" stroke-width="1.5"/>
+<line x1="170" y1="40" x2="170" y2="400" stroke="#3a4452" stroke-width="1.5"/>
+<text x="500" y="432" text-anchor="middle" font-family="monospace" font-size="13" fill="#aab4c2" letter-spacing="1">AREA (Ha)</text>
+<text x="38" y="220" text-anchor="middle" font-family="monospace" font-size="13" fill="#aab4c2" letter-spacing="1" transform="rotate(-90,38,220)">TALUK</text>
+
+<!-Gridlines + scale ticks->
+<g font-family="monospace" font-size="10" fill="#8b95a5">
+ <line x1="170" y1="40" x2="170" y2="400" stroke="#1f2937"/>
+ <text x="170" y="420" text-anchor="middle">0</text>
+ <line x1="335" y1="40" x2="335" y2="405" stroke="#1f2937"/>
+ <text x="335" y="420" text-anchor="middle">3,000</text>
+ <line x1="500" y1="40" x2="500" y2="405" stroke="#1f2937"/>
+ <text x="500" y="420" text-anchor="middle">6,000</text>
+ <line x1="665" y1="40" x2="665" y2="405" stroke="#1f2937"/>
+ <text x="665" y="420" text-anchor="middle">9,000</text>
+ <line x1="830" y1="40" x2="830" y2="405" stroke="#1f2937"/>
+ <text x="830" y="420" text-anchor="middle">12,000</text>
+</g>
+
+<!-Each taluk: a single full-width stacked bar (high|moderate|none). Bar height 30, row pitch 86.->
+<!-Scale factor: px = Ha * 0.055->
+
+<!-BHANDER 11,200 Ha: High 1,680(92.4) Mod 3,920(215.6) No 5,600(308.0)->
+<text x="158" y="78" text-anchor="end" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Bhander</text>
+<text x="158" y="95" text-anchor="end" font-family="monospace" font-size="10" fill="#8b95a5">11,200 Ha</text>
+<rect x="170" y="62" width="92.4" height="30" rx="2" fill="#ef4444" fill-opacity="0.78"/>
+<rect x="262.4" y="62" width="215.6" height="30" rx="2" fill="#ff8c42" fill-opacity="0.68"/>
+<rect x="478" y="62" width="308" height="30" rx="2" fill="#4ade80" fill-opacity="0.5"/>
+<text x="216" y="81" text-anchor="middle" font-family="monospace" font-size="11" fill="#0a0e14" font-weight="700">1,680</text>
+<text x="370" y="81" text-anchor="middle" font-family="monospace" font-size="11" fill="#0a0e14" font-weight="700">3,920</text>
+<text x="632" y="81" text-anchor="middle" font-family="monospace" font-size="11" fill="#0a0e14" font-weight="700">5,600</text>
+
+<!-DATIA 8,900 Ha: High 890(49.0) Mod 2,670(146.9) No 5,340(293.7)->
+<text x="158" y="164" text-anchor="end" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Datia</text>
+<text x="158" y="181" text-anchor="end" font-family="monospace" font-size="10" fill="#8b95a5">8,900 Ha</text>
+<rect x="170" y="148" width="49" height="30" rx="2" fill="#ef4444" fill-opacity="0.78"/>
+<rect x="219" y="148" width="146.9" height="30" rx="2" fill="#ff8c42" fill-opacity="0.68"/>
+<rect x="365.9" y="148" width="293.7" height="30" rx="2" fill="#4ade80" fill-opacity="0.5"/>
+<text x="194" y="167" text-anchor="middle" font-family="monospace" font-size="11" fill="#0a0e14" font-weight="700">890</text>
+<text x="292" y="167" text-anchor="middle" font-family="monospace" font-size="11" fill="#0a0e14" font-weight="700">2,670</text>
+<text x="512" y="167" text-anchor="middle" font-family="monospace" font-size="11" fill="#0a0e14" font-weight="700">5,340</text>
+
+<!-SEONDHA 7,100 Ha: High 2,130(117.2) Mod 2,840(156.2) No 2,130(117.2)->
+<text x="158" y="250" text-anchor="end" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Seondha</text>
+<text x="158" y="267" text-anchor="end" font-family="monospace" font-size="10" fill="#8b95a5">7,100 Ha</text>
+<rect x="170" y="234" width="117.2" height="30" rx="2" fill="#ef4444" fill-opacity="0.78"/>
+<rect x="287.2" y="234" width="156.2" height="30" rx="2" fill="#ff8c42" fill-opacity="0.68"/>
+<rect x="443.4" y="234" width="117.2" height="30" rx="2" fill="#4ade80" fill-opacity="0.5"/>
+<text x="228" y="253" text-anchor="middle" font-family="monospace" font-size="11" fill="#0a0e14" font-weight="700">2,130</text>
+<text x="365" y="253" text-anchor="middle" font-family="monospace" font-size="11" fill="#0a0e14" font-weight="700">2,840</text>
+<text x="502" y="253" text-anchor="middle" font-family="monospace" font-size="11" fill="#0a0e14" font-weight="700">2,130</text>
+
+<!-INDERGARH 5,800 Ha: High 464(25.5) Mod 1,392(76.6) No 3,944(216.9)->
+<text x="158" y="336" text-anchor="end" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Indergarh</text>
+<text x="158" y="353" text-anchor="end" font-family="monospace" font-size="10" fill="#8b95a5">5,800 Ha</text>
+<rect x="170" y="320" width="25.5" height="30" rx="2" fill="#ef4444" fill-opacity="0.78"/>
+<rect x="195.5" y="320" width="76.6" height="30" rx="2" fill="#ff8c42" fill-opacity="0.68"/>
+<rect x="272.1" y="320" width="216.9" height="30" rx="2" fill="#4ade80" fill-opacity="0.5"/>
+<text x="183" y="339" text-anchor="middle" font-family="monospace" font-size="10" fill="#fff" font-weight="700">464</text>
+<text x="234" y="339" text-anchor="middle" font-family="monospace" font-size="11" fill="#0a0e14" font-weight="700">1,392</text>
+<text x="380" y="339" text-anchor="middle" font-family="monospace" font-size="11" fill="#0a0e14" font-weight="700">3,944</text>
+
+<!-Legend->
+<g transform="translate(540,372)" font-family="monospace" font-size="12">
+ <rect x="0" y="-11" width="15" height="12" rx="2" fill="#ef4444" fill-opacity="0.78"/>
+ <text x="23" y="-1" fill="#aab4c2">High</text>
+ <rect x="95" y="-11" width="15" height="12" rx="2" fill="#ff8c42" fill-opacity="0.68"/>
+ <text x="118" y="-1" fill="#aab4c2">Moderate</text>
+ <rect x="225" y="-11" width="15" height="12" rx="2" fill="#4ade80" fill-opacity="0.5"/>
+ <text x="248" y="-1" fill="#aab4c2">No stress</text>
+</g>
+</svg>
+<div class="figure-caption">All four taluks shown on a single shared area axis bar length is proportional to total monitored acreage per taluk. Seondha has the highest high-stress proportion at 30% of its area. Bhander&apos;s primary threat is localised blast pressure in 2,567 Ha manageable with targeted fungicide if acted on within the window. District totals: 33,000 Ha monitored, 5,164 Ha (15.7%) high stress, 10,822 Ha (32.8%) moderate. Indergarh shows the lowest high-stress area but the most severe per-hectare water stress across every biophysical parameter.</div>
+</div>
+
+
+<h2><span class="section-num">08 / PRESCRIPTION</span>From Intelligence to Action</h2>
+
+<p>A stress score that does not produce an action is just a number. The final output of the intelligence model is a prioritised management advisory taluk by taluk, stress type by stress type, ranked by urgency and projected yield impact, and compliant with export-market MRL requirements for basmati. In a fully realized SSE-integrated deployment, the prescription engine also surfaces analogous historical interventions from the NEXUS record: "the last time Bhander showed this blast signature at this humidity level, fungicide applied within 72 hours limited damage to 4% of the affected area."</p>
+
+<div class="figure">
+<div class="figure-label">FIGURE 14</div>
+<div class="figure-title">Prioritised management advisory Datia District, 01-10 October 2025</div>
+<svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+<!-Columns: TALUK x=36 | STRESS x=190 | PRESCRIPTION x=380 | WINDOW x=700 | URGENCY x=820->
+<!-Header->
+<rect x="20" y="14" width="960" height="38" rx="4" fill="#11161e"/>
+<text x="36" y="38" font-family="monospace" font-size="13" fill="#00d4ff" letter-spacing="1">TALUK</text>
+<text x="190" y="38" font-family="monospace" font-size="13" fill="#00d4ff" letter-spacing="1">STRESS</text>
+<text x="380" y="38" font-family="monospace" font-size="13" fill="#00d4ff" letter-spacing="1">PRESCRIPTION</text>
+<text x="700" y="38" font-family="monospace" font-size="13" fill="#00d4ff" letter-spacing="1">WINDOW</text>
+<text x="820" y="38" font-family="monospace" font-size="13" fill="#00d4ff" letter-spacing="1">URGENCY</text>
+
+<!-Row 1: Bhander Blast->
+<rect x="20" y="56" width="960" height="66" rx="3" fill="#151b25" stroke="#262f3d"/>
+<rect x="20" y="56" width="5" height="66" rx="2" fill="#ef4444"/>
+<text x="36" y="84" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Bhander</text>
+<text x="36" y="105" font-family="monospace" font-size="12" fill="#97a1b0">2,567 Ha &#183; 14%</text>
+<text x="190" y="84" font-family="sans-serif" font-size="14" fill="#ef4444">Blast disease</text>
+<text x="190" y="105" font-family="monospace" font-size="12" fill="#97a1b0">HIGH &#183; spectral</text>
+<text x="380" y="84" font-family="sans-serif" font-size="14" fill="#e6edf3">Tricyclazole 75WP @ 0.6 g/L</text>
+<text x="380" y="105" font-family="monospace" font-size="12" fill="#97a1b0">Repeat after 7 days if RH &gt;75%</text>
+<text x="700" y="84" font-family="sans-serif" font-size="14" fill="#e6edf3">01-03 Oct</text>
+<text x="700" y="105" font-family="monospace" font-size="12" fill="#97a1b0">3-day window</text>
+<rect x="820" y="70" width="92" height="32" rx="4" fill="rgba(239,68,68,0.18)" stroke="#ef4444" stroke-opacity="0.85" stroke-width="1.5"/>
+<text x="866" y="91" text-anchor="middle" font-family="monospace" font-size="12" fill="#ef4444" font-weight="600">URGENT</text>
+
+<!-Row 2: Bhander N->
+<rect x="20" y="128" width="960" height="66" rx="3" fill="#11161e" stroke="#262f3d"/>
+<rect x="20" y="128" width="5" height="66" rx="2" fill="#fbbf24"/>
+<text x="36" y="156" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Bhander</text>
+<text x="36" y="177" font-family="monospace" font-size="12" fill="#97a1b0">Moderate</text>
+<text x="190" y="156" font-family="sans-serif" font-size="14" fill="#fbbf24">N deficiency</text>
+<text x="190" y="177" font-family="monospace" font-size="12" fill="#97a1b0">CCC declining</text>
+<text x="380" y="156" font-family="sans-serif" font-size="14" fill="#e6edf3">Urea top-dress 20 kg/ha</text>
+<text x="380" y="177" font-family="monospace" font-size="12" fill="#97a1b0">Apply before canopy closes</text>
+<text x="700" y="156" font-family="sans-serif" font-size="14" fill="#e6edf3">03-07 Oct</text>
+<rect x="804" y="142" width="128" height="32" rx="4" fill="rgba(251,191,36,0.14)" stroke="#fbbf24" stroke-opacity="0.75" stroke-width="1.5"/>
+<text x="868" y="163" text-anchor="middle" font-family="monospace" font-size="10" fill="#fbbf24" font-weight="600">WITHIN 5 DAYS</text>
+
+<!-Row 3: Datia N->
+<rect x="20" y="200" width="960" height="66" rx="3" fill="#151b25" stroke="#262f3d"/>
+<rect x="20" y="200" width="5" height="66" rx="2" fill="#ef4444"/>
+<text x="36" y="228" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Datia</text>
+<text x="36" y="249" font-family="monospace" font-size="12" fill="#97a1b0">CCC &lt;131 &#181;g/cm&#178;</text>
+<text x="190" y="228" font-family="sans-serif" font-size="14" fill="#ef4444">N deficiency</text>
+<text x="190" y="249" font-family="monospace" font-size="12" fill="#97a1b0">HIGH confirmed</text>
+<text x="380" y="228" font-family="sans-serif" font-size="14" fill="#e6edf3">Urea 20 kg/ha or foliar 2%</text>
+<text x="380" y="249" font-family="monospace" font-size="12" fill="#97a1b0">CCC retrieval confirms deficiency</text>
+<text x="700" y="228" font-family="sans-serif" font-size="14" fill="#e6edf3">01-05 Oct</text>
+<rect x="820" y="214" width="92" height="32" rx="4" fill="rgba(239,68,68,0.18)" stroke="#ef4444" stroke-opacity="0.85" stroke-width="1.5"/>
+<text x="866" y="235" text-anchor="middle" font-family="monospace" font-size="12" fill="#ef4444" font-weight="600">URGENT</text>
+
+<!-Row 4: Seondha water->
+<rect x="20" y="272" width="960" height="66" rx="3" fill="#11161e" stroke="#262f3d"/>
+<rect x="20" y="272" width="5" height="66" rx="2" fill="#ef4444"/>
+<text x="36" y="300" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Seondha</text>
+<text x="36" y="321" font-family="monospace" font-size="12" fill="#97a1b0">CWSI 0.52</text>
+<text x="190" y="300" font-family="sans-serif" font-size="14" fill="#ff8c42">Water stress</text>
+<text x="190" y="321" font-family="monospace" font-size="12" fill="#97a1b0">Grain fill at risk</text>
+<text x="380" y="300" font-family="sans-serif" font-size="14" fill="#e6edf3">Supplemental irrigation 40 mm</text>
+<text x="380" y="321" font-family="monospace" font-size="12" fill="#97a1b0">ETa/ET&#8320; 0.71 deficit confirmed</text>
+<text x="700" y="300" font-family="sans-serif" font-size="14" fill="#e6edf3">01-05 Oct</text>
+<rect x="804" y="286" width="148" height="32" rx="4" fill="rgba(239,68,68,0.14)" stroke="#ef4444" stroke-opacity="0.75" stroke-width="1.5"/>
+<text x="878" y="307" text-anchor="middle" font-family="monospace" font-size="11" fill="#ef4444" font-weight="600">WITHIN 48 HRS</text>
+
+<!-Row 5: Seondha BLB->
+<rect x="20" y="344" width="960" height="66" rx="3" fill="#151b25" stroke="#262f3d"/>
+<rect x="20" y="344" width="5" height="66" rx="2" fill="#fbbf24"/>
+<text x="36" y="372" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Seondha</text>
+<text x="36" y="393" font-family="monospace" font-size="12" fill="#97a1b0">1,534 Ha conf.</text>
+<text x="190" y="372" font-family="sans-serif" font-size="14" fill="#fbbf24">Leaf Blight</text>
+<text x="190" y="393" font-family="monospace" font-size="12" fill="#97a1b0">SWIR + ground</text>
+<text x="380" y="372" font-family="sans-serif" font-size="14" fill="#e6edf3">Copper oxychloride 50WP @ 3 g/L</text>
+<text x="380" y="393" font-family="monospace" font-size="12" fill="#97a1b0">MRL-safe for export markets</text>
+<text x="700" y="372" font-family="sans-serif" font-size="14" fill="#e6edf3">04-08 Oct</text>
+<rect x="804" y="358" width="128" height="32" rx="4" fill="rgba(251,191,36,0.14)" stroke="#fbbf24" stroke-opacity="0.75" stroke-width="1.5"/>
+<text x="868" y="379" text-anchor="middle" font-family="monospace" font-size="10" fill="#fbbf24" font-weight="600">WITHIN 5 DAYS</text>
+
+<!-Row 6: Indergarh water->
+<rect x="20" y="416" width="960" height="66" rx="3" fill="#11161e" stroke="#262f3d"/>
+<rect x="20" y="416" width="5" height="66" rx="2" fill="#ef4444"/>
+<text x="36" y="444" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Indergarh</text>
+<text x="36" y="465" font-family="monospace" font-size="12" fill="#97a1b0">CWSI 0.61 crit.</text>
+<text x="190" y="444" font-family="sans-serif" font-size="14" fill="#ef4444">Water stress</text>
+<text x="190" y="465" font-family="monospace" font-size="12" fill="#97a1b0">Top priority taluk</text>
+<text x="380" y="444" font-family="sans-serif" font-size="14" fill="#e6edf3">Irrigation 50 mm + drain fields</text>
+<text x="380" y="465" font-family="monospace" font-size="12" fill="#97a1b0">All parameters below threshold</text>
+<text x="700" y="444" font-family="sans-serif" font-size="14" fill="#e6edf3">01-03 Oct</text>
+<rect x="820" y="430" width="92" height="32" rx="4" fill="rgba(239,68,68,0.18)" stroke="#ef4444" stroke-opacity="0.85" stroke-width="1.5"/>
+<text x="866" y="451" text-anchor="middle" font-family="monospace" font-size="12" fill="#ef4444" font-weight="600">URGENT</text>
+
+<!-Row 7: Indergarh lodging->
+<rect x="20" y="488" width="960" height="66" rx="3" fill="#151b25" stroke="#262f3d"/>
+<rect x="20" y="488" width="5" height="66" rx="2" fill="#ef4444"/>
+<text x="36" y="516" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Indergarh</text>
+<text x="36" y="537" font-family="monospace" font-size="12" fill="#97a1b0">730 Ha &#183; SAR</text>
+<text x="190" y="516" font-family="sans-serif" font-size="14" fill="#ef4444">Lodging risk</text>
+<text x="190" y="537" font-family="monospace" font-size="12" fill="#97a1b0">VH/VV anomaly</text>
+<text x="380" y="516" font-family="sans-serif" font-size="14" fill="#e6edf3">Drain stagnant water immediately</text>
+<text x="380" y="537" font-family="monospace" font-size="12" fill="#97a1b0">SAR-only invisible to optical</text>
+<text x="700" y="516" font-family="sans-serif" font-size="14" fill="#e6edf3">01-03 Oct</text>
+<rect x="804" y="502" width="148" height="32" rx="4" fill="rgba(239,68,68,0.14)" stroke="#ef4444" stroke-opacity="0.75" stroke-width="1.5"/>
+<text x="878" y="523" text-anchor="middle" font-family="monospace" font-size="11" fill="#ef4444" font-weight="600">WITHIN 48 HRS</text>
+</svg>
+<div class="figure-caption">Every prescription traces back to a specific spectral, SAR, or climate signal. The lodging detection in Indergarh is particularly notable detectable only via SAR VH/VV polarisation anomaly, completely invisible to any optical sensor. An optical-only system would have missed it entirely. All prescriptions comply with ICAR Basmati guidelines and MRL-safe protocols for export markets.</div>
+</div>
+
+
+<h2><span class="section-num">09 / YIELD &amp; PROCUREMENT</span>From Stress Map to Sourcing Plan</h2>
+
+<p>The same biophysical retrieval that drives the stress diagnosis also drives a forward yield estimate. AGB, LAI, and light-use-efficiency trajectories projected through the remaining grain-fill window translate directly into expected output per hectare and per taluk. For a procurement buyer, this converts a stress map into a sourcing plan: where the volume is, when it will be ready to harvest, and how much confidence to attach to each estimate.</p>
+
+<p>Estimated regional basmati output for Kharif 2025 is <strong>1,28,157 MT at a district average of 3.88 t/ha</strong>. Indergarh records the highest per-hectare yield at 4.14 t/ha despite carrying the most severe water stress, while Bhander, the largest single-taluk pool at 42,560 MT, sits at 3.80 t/ha consistent with its mixed black-cotton-to-loamy soils. Seondha trails the region at 3.71 t/ha.</p>
+
+<div class="figure">
+<div class="figure-label">FIGURE 15</div>
+<div class="figure-title">Yield prediction - estimated basmati output by taluk</div>
+<svg viewBox="0 0 880 420" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="yBh" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00d4ff" stop-opacity="0.95"/><stop offset="100%" stop-color="#00d4ff" stop-opacity="0.4"/></linearGradient>
+  <linearGradient id="yDa" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4ade80" stop-opacity="0.95"/><stop offset="100%" stop-color="#4ade80" stop-opacity="0.4"/></linearGradient>
+  <linearGradient id="ySe" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fbbf24" stop-opacity="0.95"/><stop offset="100%" stop-color="#fbbf24" stop-opacity="0.4"/></linearGradient>
+  <linearGradient id="yIn" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a78bfa" stop-opacity="0.95"/><stop offset="100%" stop-color="#a78bfa" stop-opacity="0.4"/></linearGradient>
+</defs>
+
+<!-- Axes -->
+<line x1="90" y1="60" x2="90" y2="360" stroke="#3a4452" stroke-width="1.5"/>
+<line x1="90" y1="360" x2="820" y2="360" stroke="#3a4452" stroke-width="1.5"/>
+<text x="34" y="210" text-anchor="middle" font-family="monospace" font-size="12" fill="#aab4c2" letter-spacing="1" transform="rotate(-90,34,210)">YIELD (t/ha)</text>
+
+<!-- Y ticks + gridlines -->
+<g font-family="monospace" font-size="10" fill="#8b95a5">
+  <line x1="90" y1="360" x2="820" y2="360" stroke="#1f2937"/><text x="80" y="364" text-anchor="end">0</text>
+  <line x1="90" y1="293" x2="820" y2="293" stroke="#1f2937"/><text x="80" y="297" text-anchor="end">1</text>
+  <line x1="90" y1="227" x2="820" y2="227" stroke="#1f2937"/><text x="80" y="231" text-anchor="end">2</text>
+  <line x1="90" y1="160" x2="820" y2="160" stroke="#1f2937"/><text x="80" y="164" text-anchor="end">3</text>
+  <line x1="90" y1="93" x2="820" y2="93" stroke="#1f2937"/><text x="80" y="97" text-anchor="end">4</text>
+</g>
+
+<!-- Regional average line 3.88 -->
+<line x1="90" y1="101" x2="820" y2="101" stroke="#c9a84c" stroke-width="1.3" stroke-dasharray="5,3"/>
+<text x="816" y="96" text-anchor="end" font-family="monospace" font-size="11" fill="#c9a84c">Region avg 3.88 t/ha</text>
+
+<!-- Columns -->
+<rect x="132" y="107" width="96" height="253" rx="3" fill="url(#yBh)"/>
+<text x="180" y="99" text-anchor="middle" font-family="monospace" font-size="15" font-weight="700" fill="#e6edf3">3.80</text>
+<text x="180" y="382" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Bhander</text>
+<text x="180" y="398" text-anchor="middle" font-family="monospace" font-size="11" fill="#8b95a5">42,560 MT &#183; 11,200 Ha</text>
+
+<rect x="312" y="96" width="96" height="264" rx="3" fill="url(#yDa)"/>
+<text x="360" y="88" text-anchor="middle" font-family="monospace" font-size="15" font-weight="700" fill="#e6edf3">3.96</text>
+<text x="360" y="382" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Datia</text>
+<text x="360" y="398" text-anchor="middle" font-family="monospace" font-size="11" fill="#8b95a5">35,244 MT &#183; 8,900 Ha</text>
+
+<rect x="492" y="113" width="96" height="247" rx="3" fill="url(#ySe)"/>
+<text x="540" y="105" text-anchor="middle" font-family="monospace" font-size="15" font-weight="700" fill="#e6edf3">3.71</text>
+<text x="540" y="382" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Seondha</text>
+<text x="540" y="398" text-anchor="middle" font-family="monospace" font-size="11" fill="#8b95a5">26,341 MT &#183; 7,100 Ha</text>
+
+<rect x="672" y="84" width="96" height="276" rx="3" fill="url(#yIn)"/>
+<text x="720" y="76" text-anchor="middle" font-family="monospace" font-size="15" font-weight="700" fill="#e6edf3">4.14</text>
+<text x="720" y="382" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Indergarh</text>
+<text x="720" y="398" text-anchor="middle" font-family="monospace" font-size="11" fill="#8b95a5">24,012 MT &#183; 5,800 Ha</text>
+
+<!-- Total summary -->
+<rect x="120" y="16" width="300" height="48" rx="4" fill="#151b25" stroke="#c9a84c" stroke-width="1.2"/>
+<text x="134" y="34" font-family="monospace" font-size="11" fill="#c9a84c" letter-spacing="1">REGIONAL TOTAL</text>
+<text x="134" y="52" font-family="monospace" font-size="14" fill="#e6edf3" font-weight="700">1,28,157 MT &#183; 3.88 t/ha</text>
+</svg>
+<div class="figure-caption">Total estimated basmati yield for the Bhander region in Kharif 2025 is 1,28,157 MT at a district average of 3.88 t/ha. Indergarh is the only taluk crossing the 4 t/ha threshold (4.14 t/ha); Datia follows at 3.96 t/ha. Seondha records the lowest yield at 3.71 t/ha approximately 4.4% below the regional average. Bhander&apos;s 42,560 MT remains the largest single-taluk procurement pool despite a mid-range 3.80 t/ha yield.</div>
+</div>
+
+<p>Yield volume alone does not determine sourcing order. Harvest readiness, intervention urgency, and model confidence combine into a procurement priority that sequences buyer action across the cycle from Indergarh&apos;s de-risked early window to Seondha&apos;s deferred late-October pool.</p>
+
+<div class="figure">
+<div class="figure-label">FIGURE 16</div>
+<div class="figure-title">Procurement priority and harvest readiness by taluk</div>
+<svg viewBox="0 0 1000 384" xmlns="http://www.w3.org/2000/svg">
+<!-- Header -->
+<rect x="20" y="14" width="960" height="38" rx="4" fill="#11161e"/>
+<text x="36" y="38" font-family="monospace" font-size="13" fill="#00d4ff" letter-spacing="1">TALUK</text>
+<text x="170" y="38" font-family="monospace" font-size="13" fill="#00d4ff" letter-spacing="1">PRIORITY</text>
+<text x="330" y="38" font-family="monospace" font-size="13" fill="#00d4ff" letter-spacing="1">HARVEST WINDOW</text>
+<text x="640" y="38" font-family="monospace" font-size="13" fill="#00d4ff" letter-spacing="1">HARVEST READINESS</text>
+<text x="900" y="38" font-family="monospace" font-size="13" fill="#00d4ff" letter-spacing="1">CONF</text>
+
+<!-- Date axis ticks for harvest window -->
+<g font-family="monospace" font-size="9" fill="#5a6470">
+  <line x1="330" y1="58" x2="610" y2="58" stroke="#1f2937"/>
+  <text x="330" y="52" text-anchor="middle">01</text>
+  <text x="386" y="52" text-anchor="middle">06</text>
+  <text x="442" y="52" text-anchor="middle">11</text>
+  <text x="498" y="52" text-anchor="middle">16</text>
+  <text x="554" y="52" text-anchor="middle">21</text>
+  <text x="610" y="52" text-anchor="middle">26 Oct</text>
+</g>
+
+<!-- Row 1: Indergarh HIGH -->
+<rect x="20" y="66" width="960" height="64" rx="3" fill="#151b25" stroke="#262f3d"/>
+<rect x="20" y="66" width="5" height="64" rx="2" fill="#ef4444"/>
+<text x="36" y="94" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Indergarh</text>
+<text x="36" y="113" font-family="monospace" font-size="11" fill="#97a1b0">5,800 Ha</text>
+<rect x="160" y="82" width="92" height="30" rx="4" fill="rgba(239,68,68,0.18)" stroke="#ef4444" stroke-opacity="0.85" stroke-width="1.5"/>
+<text x="206" y="102" text-anchor="middle" font-family="monospace" font-size="12" fill="#ef4444" font-weight="600">HIGH</text>
+<rect x="378" y="91" width="90" height="14" rx="3" fill="#a78bfa" fill-opacity="0.85"/>
+<text x="423" y="123" text-anchor="middle" font-family="monospace" font-size="10" fill="#8b95a5">08-16 Oct</text>
+<rect x="640" y="90" width="122" height="16" rx="2" fill="#4ade80" fill-opacity="0.85"/>
+<rect x="762" y="90" width="58" height="16" rx="2" fill="#c9a84c" fill-opacity="0.6"/>
+<rect x="820" y="90" width="20" height="16" rx="2" fill="#3a4452"/>
+<text x="640" y="124" font-family="monospace" font-size="10" fill="#8b95a5">61% &#8804;10d &#183; 29% &#183; 10%</text>
+<text x="922" y="100" text-anchor="middle" font-family="monospace" font-size="13" fill="#4ade80" font-weight="700">93%</text>
+
+<!-- Row 2: Datia MEDIUM-HIGH -->
+<rect x="20" y="138" width="960" height="64" rx="3" fill="#11161e" stroke="#262f3d"/>
+<rect x="20" y="138" width="5" height="64" rx="2" fill="#ff8c42"/>
+<text x="36" y="166" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Datia</text>
+<text x="36" y="185" font-family="monospace" font-size="11" fill="#97a1b0">8,900 Ha</text>
+<rect x="160" y="154" width="128" height="30" rx="4" fill="rgba(255,140,66,0.16)" stroke="#ff8c42" stroke-opacity="0.85" stroke-width="1.5"/>
+<text x="224" y="174" text-anchor="middle" font-family="monospace" font-size="11" fill="#ff8c42" font-weight="600">MEDIUM-HIGH</text>
+<rect x="401" y="163" width="90" height="14" rx="3" fill="#4ade80" fill-opacity="0.85"/>
+<text x="446" y="195" text-anchor="middle" font-family="monospace" font-size="10" fill="#8b95a5">10-18 Oct</text>
+<rect x="640" y="162" width="108" height="16" rx="2" fill="#4ade80" fill-opacity="0.85"/>
+<rect x="748" y="162" width="64" height="16" rx="2" fill="#c9a84c" fill-opacity="0.6"/>
+<rect x="812" y="162" width="28" height="16" rx="2" fill="#3a4452"/>
+<text x="640" y="196" font-family="monospace" font-size="10" fill="#8b95a5">54% &#8804;10d &#183; 32% &#183; 14%</text>
+<text x="922" y="172" text-anchor="middle" font-family="monospace" font-size="13" fill="#4ade80" font-weight="700">91%</text>
+
+<!-- Row 3: Bhander MEDIUM -->
+<rect x="20" y="210" width="960" height="64" rx="3" fill="#151b25" stroke="#262f3d"/>
+<rect x="20" y="210" width="5" height="64" rx="2" fill="#fbbf24"/>
+<text x="36" y="238" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Bhander</text>
+<text x="36" y="257" font-family="monospace" font-size="11" fill="#97a1b0">11,200 Ha</text>
+<rect x="160" y="226" width="92" height="30" rx="4" fill="rgba(251,191,36,0.14)" stroke="#fbbf24" stroke-opacity="0.8" stroke-width="1.5"/>
+<text x="206" y="246" text-anchor="middle" font-family="monospace" font-size="12" fill="#fbbf24" font-weight="600">MEDIUM</text>
+<rect x="423" y="235" width="90" height="14" rx="3" fill="#00d4ff" fill-opacity="0.85"/>
+<text x="468" y="267" text-anchor="middle" font-family="monospace" font-size="10" fill="#8b95a5">12-20 Oct</text>
+<rect x="640" y="234" width="96" height="16" rx="2" fill="#4ade80" fill-opacity="0.85"/>
+<rect x="736" y="234" width="74" height="16" rx="2" fill="#c9a84c" fill-opacity="0.6"/>
+<rect x="810" y="234" width="30" height="16" rx="2" fill="#3a4452"/>
+<text x="640" y="268" font-family="monospace" font-size="10" fill="#8b95a5">48% &#8804;10d &#183; 37% &#183; 15%</text>
+<text x="922" y="244" text-anchor="middle" font-family="monospace" font-size="13" fill="#fbbf24" font-weight="700">88%</text>
+
+<!-- Row 4: Seondha LOW-MEDIUM -->
+<rect x="20" y="282" width="960" height="64" rx="3" fill="#11161e" stroke="#262f3d"/>
+<rect x="20" y="282" width="5" height="64" rx="2" fill="#8b95a5"/>
+<text x="36" y="310" font-family="sans-serif" font-size="14" font-weight="600" fill="#e6edf3">Seondha</text>
+<text x="36" y="329" font-family="monospace" font-size="11" fill="#97a1b0">7,100 Ha</text>
+<rect x="160" y="298" width="128" height="30" rx="4" fill="rgba(139,149,165,0.16)" stroke="#8b95a5" stroke-opacity="0.8" stroke-width="1.5"/>
+<text x="224" y="318" text-anchor="middle" font-family="monospace" font-size="11" fill="#aab4c2" font-weight="600">LOW-MEDIUM</text>
+<rect x="498" y="307" width="112" height="14" rx="3" fill="#fbbf24" fill-opacity="0.85"/>
+<text x="554" y="339" text-anchor="middle" font-family="monospace" font-size="10" fill="#8b95a5">16-26 Oct</text>
+<rect x="640" y="306" width="76" height="16" rx="2" fill="#4ade80" fill-opacity="0.85"/>
+<rect x="716" y="306" width="84" height="16" rx="2" fill="#c9a84c" fill-opacity="0.6"/>
+<rect x="800" y="306" width="40" height="16" rx="2" fill="#3a4452"/>
+<text x="640" y="340" font-family="monospace" font-size="10" fill="#8b95a5">38% &#8804;10d &#183; 42% &#183; 20%</text>
+<text x="922" y="316" text-anchor="middle" font-family="monospace" font-size="13" fill="#aab4c2" font-weight="700">84%</text>
+
+<!-- Readiness legend -->
+<g transform="translate(640, 372)" font-family="monospace" font-size="11">
+  <rect x="0" y="-10" width="14" height="11" rx="1.5" fill="#4ade80" fill-opacity="0.85"/>
+  <text x="20" y="0" fill="#8b95a5">&#8804;10 days</text>
+  <rect x="120" y="-10" width="14" height="11" rx="1.5" fill="#c9a84c" fill-opacity="0.6"/>
+  <text x="140" y="0" fill="#8b95a5">10-20 days</text>
+  <rect x="250" y="-10" width="14" height="11" rx="1.5" fill="#3a4452"/>
+  <text x="270" y="0" fill="#8b95a5">&gt;20 days</text>
+</g>
+</svg>
+<div class="figure-caption">Indergarh is designated HIGH priority for immediate procurement: 61% harvest readiness within 10 days, the highest yield in the region (4.14 t/ha), and 93% model confidence the most de-risked opportunity this cycle. Datia (MEDIUM-HIGH) is the second-largest near-term pool at 35,244 MT. Bhander carries the largest absolute volume (42,560 MT) but is rated MEDIUM on slower harvest progression (48% in 10 days). Seondha is rated LOW-MEDIUM and deferred to the 16-26 Oct window, with only 38% maturing in the next 10 days.</div>
+</div>
+
+
+<h2><span class="section-num">10 / WHAT THIS ENABLES</span>The Commercial Intelligence Layer</h2>
+
+<p>The Datia District case illustrates four distinct commercial applications of the same underlying intelligence each serving a different buyer, all derived from a single physical observation of the same 69,200 hectares of monitored farmland (33,000 of them basmati).</p>
+
+<div class="outcome-grid">
+ <div class="outcome-card">
+ <div class="outcome-label">COOPERATIVE ADVISORY</div>
+ <h4>Taluk-level prescription delivery</h4>
+ <p>A rice cooperative serving Datia District receives a ten-day advisory covering all four taluks, ranked by urgency, with ICAR-compliant prescriptions that field officers can act on immediately. No agronomist site visit required for stress screening only for application confirmation.</p>
+ </div>
+ <div class="outcome-card">
+ <div class="outcome-label">GOVERNMENT MONITORING</div>
+ <h4>District crop health intelligence</h4>
+ <p>A state agriculture department receives quantified acreage by stress class 5,164 Ha high, 10,822 Ha moderate enabling targeted subsidy deployment, input supply logistics, and yield forecast revision ahead of harvest procurement season.</p>
+ </div>
+ <div class="outcome-card">
+ <div class="outcome-label">CROP INSURANCE</div>
+ <h4>Defensible loss quantification</h4>
+ <p>A crop insurer receives a spatially explicit stress record tied to specific growth stage events blast outbreak, irrigation deficit, lodging incident with biophysical evidence tracing yield impact to its physical cause. Claims are adjudicated with data, not site visits alone.</p>
+ </div>
+ <div class="outcome-card">
+ <div class="outcome-label">EXPORT QUALITY</div>
+ <h4>Aroma quality risk flagging</h4>
+ <p>A basmati exporter receives advance notice of elevated quality degradation risk in Seondha and Indergarh nitrogen depletion and water stress during grain filling directly affect aromatic compound development. Procurement decisions can be adjusted before harvest.</p>
+ </div>
+</div>
+
+<h2><span class="section-num">11 / WHERE WE ARE</span>What&apos;s Available and What&apos;s Coming</h2>
+
+<p>The intelligence report illustrated in this case study represents the target output of the Pixxel analytics stack. It is built from real scientific methods and real production capabilities and it is honest about which parts are operational today, which are in active development, and when the full integrated system is expected to be available.</p>
+
+<h3>Available today operational and pilot</h3>
+<p>Firefly is operational and producing hyperspectral data. ISOFIT atmospheric correction is running in production. PROSAIL inversion retrieving LAI, CCC, CWC, LCC, fAPAR, AGB, and LUE is validated and deployed. Spectral indices including NDRE, MCARI, CWSI, and SIF are operational. SAR anomaly detection is available where Sentinel-1 data is integrated. Individual stress layers water stress, nitrogen status, blast risk screening, BLB detection exist as separate production outputs. Pilot engagements in rice, wheat, and other kharif crops can be scoped now, delivering the individual analytical layers described in this case study as analyst-produced GeoTIFF outputs and structured reports.</p>
+
+<h3>Being built now</h3>
+<p>The NEXUS cube architecture that unifies these individual layers into a single coherent per-AOI intelligence object. The MicroClim climate forcing integration that conditions every biological interpretation against the actual weather the crop experienced. The Semantic Search Engine that makes the district&apos;s full observational history queryable enabling the &ldquo;show me every field that looked like this before a blast outbreak&rdquo; class of question that no pre-specified alert rule can answer. The solution packages that structure these capabilities into commercially defined, repeatable precision agriculture products.</p>
+
+<h3>Expected early 2027</h3>
+<p>The fully integrated intelligence stack described in this paper NEXUS cube accumulation, SSE-powered semantic search across seasons of field-level data, MicroClim-conditioned biophysical baselines, multimodal attribution, and automated prescription generation delivered as a unified platform with API access, operator dashboards, and continuous monitoring subscriptions for enterprise customers. Early customers onboarding in 2025 and 2026 are part of this build. Their fields populate the first generation of hyper-local intelligence models. Their agronomists validate the prescriptions. Their yield outcomes calibrate the attribution layer season by season. The platform that exists in early 2027 will be meaningfully smarter for every season of field-level data it has accumulated before then.</p>
+
+<div class="footer-note">
+ PIXXEL ANALYTICS &middot; INTERNAL WHITE PAPER &middot; WORKING DRAFT &middot; BASMATI RICE CASE STUDY &middot; NOT FOR DISTRIBUTION
+</div>
+
+</div>
+</body>
+</html>

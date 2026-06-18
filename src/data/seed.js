@@ -786,7 +786,7 @@ export const objections = [
   {
     q: 'How is this different from other geospatial platforms?',
     a:
-      'Other platforms sell pixels, regional-scale analytics, or learned embeddings without physical interpretability. NEXUS is hyper-local (the baseline is your field, not a regional model), physically grounded (PROSAIL traits, HydroLight inversion), and queryable through a semantic foundation. The output is decision-ready evidence, not an opaque score from a black-box classifier.',
+      'Other platforms sell pixels, regional-scale analytics, or learned embeddings without physical interpretability. NEXUS is hyper-local (the baseline is your field, not a regional model), physically grounded (PROSAIL traits, HydroLight inversion), and queryable through semantic search over your AOI history. The output is decision-ready evidence, not an opaque score from a black-box classifier.',
   },
   {
     q: 'Do you need farm management or ground truth data?',
@@ -811,7 +811,7 @@ export const home = {
     {
       title: 'Geospatial AI',
       body:
-        'NEXUS engines, semantic foundation, intelligence cube, and the data pipeline that turns raw acquisitions into queryable evidence.',
+        'NEXUS field intelligence (cube + semantic query), MicroClim integration, and the pipeline that turns acquisitions into queryable evidence.',
     },
     {
       title: 'Applied Science',
@@ -837,28 +837,23 @@ export const home = {
     },
     {
       id: 'nexus',
-      title: 'NEXUS',
-      body: 'Platform vision, engines, architecture graphic, and roadmap that everything else hangs from.',
+      title: 'NEXUS - NORTH STAR',
+      body: 'White paper: unified field intelligence (cube + semantic query), ontology, build status, and roadmap.',
     },
     {
       id: 'sse',
-      title: 'Semantic Search Engine',
-      body: 'Scaffold: positioning and technical depth for SSE and archive retrieval (edit over time).',
+      title: 'LENS · Semantic search',
+      body: 'Semantic retrieval over the customer archive, GeoFM embeddings, and the V1–V4 engineering roadmap.',
     },
     {
       id: 'microclim',
-      title: 'MicroClim',
-      body: 'Scaffold: downscaled weather products and how they corroborate satellite layers (edit over time).',
+      title: 'MICROCLIM-WEATHER',
+      body: 'Downscaled weather products and how they corroborate satellite layers.',
     },
     {
-      id: 'claims',
-      title: 'What We Can Claim',
-      body: 'The honest line between what we can deliver today and what is coming by end of 2026.',
-    },
-    {
-      id: 'messaging',
-      title: 'Messaging & Objections',
-      body: 'Language guide, differentiators, and answers to the questions you are going to get asked.',
+      id: 'agriculture',
+      title: 'TRACE · Agriculture',
+      body: 'Crop trait retrieval, phenology, PROSAIL biophysical variables, and monitoring subscription.',
     },
     {
       id: 'commercial-requests',
@@ -871,8 +866,62 @@ export const home = {
 };
 
 export const nexus = {
+  whitePaper: {
+    eyebrow: 'Overview · NEXUS white paper',
+    title: 'Field-level intelligence that compounds.',
+    subtitle:
+      'NEXUS is Pixxel\'s field-level intelligence system: a persistent intelligence cube for every monitored place, plus semantic query over that history. One product, not a database of scenes and a separate search engine.',
+    sseLinkLabel: 'Semantic query capabilities and version roadmap',
+  },
+  unified: {
+    title: 'What NEXUS is',
+    intro:
+      'NEXUS is a field intelligence system with two interdependent parts: an intelligence cube that accumulates a persistent, physically-grounded time series for every monitored place, and a semantic query layer that makes that history searchable in ways no pre-specified alert rule can replicate. The cube is the memory; the query layer is the intelligence that makes the memory actionable.',
+    components: [
+      {
+        title: 'Intelligence cube',
+        body:
+          'At customer onboarding, the full MSI archive for each AOI is ingested and PROSAIL inversion (vegetation), HydroLight inversion (water), SAR structural context, and MicroClim forcing are applied across the entire time series. The cube a customer receives on day one reflects over 13 years of that location\'s biophysical history. Every subsequent acquisition deepens a record that already knows the field.',
+      },
+      {
+        title: 'Semantic query layer',
+        body:
+          'DINOv3 embeddings operate over physically retrieved biophysical state vectors, not raw pixels. Similar states sit close in embedding space. The pattern-matching happens in a physically grounded domain: trajectory queries, historical analogues, and anomaly retrieval all index over PROSAIL and HydroLight outputs, not spectral appearance alone.',
+      },
+    ],
+    inseparable:
+      'The cube without query is a database you can only interrogate with fixed rules. The query layer without cube history has nothing meaningful to search. One system.',
+    onboardingCallout:
+      'NEXUS does not have a cold-start problem. At onboarding, PROSAIL inversion, SAR fusion, and MicroClim forcing are applied retroactively across the full MSI archive — typically 13+ years of that AOI\'s biophysical history. Day one delivers baseline intelligence and anomaly detection grounded in a place\'s own record. HSI tasking begins precision-upgrading a cube that already knows the location.',
+  },
+  ontology: {
+    title: 'Objects, not pixels',
+    intro:
+      'Most Earth observation systems treat the planet as a grid of pixels that change value over time. Each satellite pass produces a new map, analysts compare maps, and change is inferred after the fact. That approach has no memory, no field identity, and no sense of what a specific place is supposed to look like.',
+    principle:
+      'NEXUS operates on an ontological principle: the world is a collection of persistent, meaningful objects (a rice paddy in Madhya Pradesh, a forest stand in the Congo Basin, a reservoir in California). Each has an identity, a history, and a trajectory. An intelligence system\'s job is not to produce maps but to know those objects deeply enough to detect anomalies, attribute causes, and surface patterns no one thought to look for when the data was collected.',
+    technical:
+      'Technically: every monitored location has a persistent identity, every observation attaches to that identity, and every derived insight (a stress score, an attribution, a prescription) is grounded in the full history of that specific location rather than a generic model applied from above.',
+    plainLanguage:
+      'That is what ontology means here: structured identity and meaning, not just data with timestamps.',
+    contrast: {
+      pixelLabel: 'Pixel-grid view',
+      objectLabel: 'Object (ontology) view',
+      pixel: [
+        'A fresh map every satellite pass',
+        'Change inferred by differencing two scenes',
+        'No durable identity for a given field',
+        'Regional model applied from above',
+      ],
+      object: [
+        'One persistent record per field, stand, or AOI',
+        'Anomalies read against that place\'s own history',
+        'Stable identity every observation attaches to',
+        'Insight grounded in the location\'s full trajectory',
+      ],
+    },
+  },
   problem: {
-    eyebrow: '01 · The Problem',
     title: 'Geospatial intelligence is broken at the field scale.',
     intro:
       'Every customer engagement repeats the same work, ships regional models against local realities, and hands over outputs that buyers cannot defend. That is the gap NEXUS exists to close.',
@@ -881,53 +930,157 @@ export const nexus = {
       { title: 'Regional Not Local', body: 'Regional models are applied to single fields and farms, smoothing over the variation customers actually care about.' },
       { title: 'Black Box Outputs', body: 'Classifier outputs without physical interpretability are unusable for insurance adjudication, registries, or audits.' },
       { title: 'Bespoke Pipelines', body: 'Each engagement spins up a new pipeline instead of stacking on a shared evidence layer.' },
-      { title: 'Indices Not Physics', body: 'NDVI and friends summarize symptoms; PROSAIL traits express causes.' },
+      { title: 'Indices Not Physics', body: 'NDVI and friends summarize symptoms; PROSAIL and HydroLight retrievals express physiochemical state from radiative transfer.' },
       { title: 'Scale Without Precision', body: 'Global coverage at low specificity wins demos but loses procurement.' },
     ],
     callout:
-      'NEXUS replaces this with a hyper-local, physically grounded, semantically queryable intelligence cube — built once, deepened with every acquisition.',
+      'NEXUS replaces this with hyper-local, physically grounded field intelligence you can query. Built once per AOI, deepened with every acquisition.',
   },
-  platform: {
-    eyebrow: '02 · The Platform',
-    title: 'NEXUS is not a pipeline. It is a queryable intelligence cube.',
+  capabilities: {
+    title: 'What NEXUS does',
+    intro:
+      'Capabilities, not separate product names. The same system delivers identity, accumulation, interpretation, and evidence.',
     pillars: [
-      { num: '01', title: 'Hyper-Local', body: 'The baseline is your field, not a regional model.' },
-      { num: '02', title: 'Physically Constrained', body: 'PROSAIL, HydroLight, and SAR physics — every output is a scientific statement.' },
-      { num: '03', title: 'Semantically Queryable', body: 'Ask the cube questions; do not chase pixels.' },
-      { num: '04', title: 'Decision-Ready Evidence', body: 'Onset dates, uncertainty bounds, sensor tiers, audit trails.' },
-      { num: '05', title: 'Compounds Over Time', body: 'Every new acquisition adds to the same field-specific archive.' },
+      { num: '01', title: 'Persistent identity', body: 'Every monitored location has a stable object record, not a one-off scene stack.' },
+      { num: '02', title: 'Historical accumulation', body: 'Multimodal time series deepens with every clear acquisition and every engine run.' },
+      { num: '03', title: 'Semantic querying', body: 'Similarity, trajectory, analogue, and anomaly-style questions over biophysical state, not pixel thresholds alone.' },
+      { num: '04', title: 'Climate-conditioned interpretation', body: 'MicroClim forcing fused into the cube so biological signals read as signals, not isolated index moves.' },
+      { num: '05', title: 'Decision-ready evidence', body: 'Onset windows, uncertainty, sensor tier, and audit-friendly lineage on outputs.' },
+    ],
+    queryContrast: {
+      old: [
+        { title: 'Pixel queries', quote: 'Show me pixels where NDVI dropped by more than 0.2.' },
+        { title: 'Change detection', quote: 'Detect change between two scenes.' },
+        { title: 'Surface classification', quote: 'Classify this surface into a label.' },
+      ],
+      nexus: [
+        {
+          title: 'State similarity',
+          quote:
+            'Show me every location in this district following the same trajectory as the worst-performing fields from last season.',
+        },
+        {
+          title: 'Trajectory matching',
+          quote:
+            'Find areas within this project following the same trajectory as this known degradation event.',
+        },
+        {
+          title: 'Spectral analogue',
+          quote: 'Find locations in this AOI with a state similar to this reference sample.',
+        },
+      ],
+    },
+    queryFootnote:
+      'Semantic query is scoped to the customer\'s monitored AOI only. It is not planetary open-world search. Detail by version: see the semantic query roadmap page.',
+  },
+  physicsIntro:
+    'The intelligence cube is built on radiative transfer physics, not pattern matching on spectral indices alone. Vegetation uses PROSAIL canopy inversion; waterbodies use HydroLight aquatic optical modeling (operationalized via a validated deep-learning emulator for computational tractability at scale); geology uses spectral unmixing where applicable. Every retrieval traces back to a physical model with known assumptions and documented uncertainty.',
+  physicsVsDinov3:
+    'NEXUS uses DINOv3 embeddings in its semantic query layer — a learned model. This does not contradict the physics-first positioning. The embeddings operate over PROSAIL and HydroLight retrieved state vectors, not raw pixel reflectance. The deep-learning emulator for HydroLight is a computational accelerant for physics-grade retrieval, not a replacement for it. Pattern matching happens in a physically grounded space: two states are semantically similar because their biophysical retrievals are similar, not because their spectral appearances happen to cluster.',
+  physicsAudit:
+    'Every number traces back to a physical model (PROSAIL, HydroLight, or domain-appropriate inversion) with known assumptions and documented uncertainty. That is the difference between a product that survives expert scrutiny and one that does not.',
+  inputs: {
+    title: 'What feeds the cube',
+    items: [
+      'Hyperspectral optical: Firefly VNIR (470–900 nm); Honeybee VNIR-SWIR (470–2500 nm, 2027+)',
+      'MSI: Sentinel-2, Landsat, PlanetScope (13+ year archive per AOI — PROSAIL inversion applied retroactively at onboarding)',
+      'SAR: Sentinel-1 VH/VV for structure, moisture, lodging context (fused across full archive at onboarding)',
+      'Climate: MicroClim forcing (GDD, precipitation deficit, VPD, ETa/ET0 — applied across full time series at onboarding)',
+      'Ancillary: field boundary, topography, soil type, prior land use where available',
+    ],
+    onboardingNote:
+      'At onboarding, the full archive is processed end-to-end: atmospheric correction, PROSAIL / HydroLight inversion, SAR fusion, and MicroClim contextualization are applied across every available scene. The resulting cube reflects the complete observational and biophysical history of each AOI before the first customer acquisition is scheduled.',
+  },
+  stack: [
+    {
+      name: 'Firefly / Honeybee',
+      role: 'Sensor layer',
+      accent: 'var(--cyan)',
+      body:
+        'Physics-grade hyperspectral acquisition, radiometrically calibrated. Firefly (VNIR) operational today; Honeybee (VNIR-SWIR) 2027+.',
+    },
+    {
+      name: 'NEXUS intelligence cube',
+      role: 'Memory + analytics',
+      accent: 'var(--green)',
+      body:
+        'Multimodal time series per monitored AOI: Data Engine ingestion, PROSAIL and HydroLight retrievals, Context and analytic engines, MicroClim forcing, and semantic query in one persistent object.',
+    },
+    {
+      name: 'NEXUS semantic query',
+      role: 'Query layer (part of NEXUS)',
+      accent: 'var(--purple)',
+      body:
+        'DINOv3 embeddings fine-tuned over biophysical state vectors, not raw pixels. Similarity, trajectory matching, anomaly surfacing, and historical analogue retrieval — all scoped to the customer AOI.',
+    },
+    {
+      name: 'MicroClim',
+      role: 'Climate forcing (named integration)',
+      accent: '#4FC3F7',
+      body:
+        'Field-level climate variables downscaled and fused into the cube. Conditions every biological interpretation across verticals.',
+    },
+    {
+      name: 'Aurora / Project Zenith',
+      role: 'Delivery platform',
+      accent: 'var(--amber)',
+      body:
+        'Customer-facing platform and operator dashboard. Packages NEXUS outputs into vertical products and workflows; not a second intelligence white paper.',
+    },
+  ],
+  architecture: {
+    title: 'Inside the NEXUS engines',
+    engines: [
+      { name: 'Data Engine', eyebrow: 'Initial', accent: 'var(--cyan)', body: 'Initial ingestion and preparation: acquisitions harmonized, ISOFIT atmospheric correction applied, retrievals and forcing layers attached to the persistent object record, and cube state kept current for downstream engines.' },
+      { name: 'Trait & Structure', body: 'PROSAIL traits and canopy structure for vegetation; HydroLight IOPs and water-quality retrievals for aquatic AOIs; MSI and HSI across domains.' },
+      { name: 'Context Engine', body: 'Field-specific expected-state baselines built from the archive.' },
+      { name: 'Semantic query (within NEXUS)', body: 'DINOv3 embeddings and retrieval over biophysical states in the customer AOI.' },
+      { name: 'Aurora delivery', body: 'API, Zenith, and vertical packages that expose NEXUS outputs to customers.' },
     ],
   },
-  architecture: {
-    eyebrow: '03 · Architecture',
-    title: 'Six engines. One intelligence stack.',
-    engines: [
-      { name: 'Trait & Structure', body: 'PROSAIL traits, canopy structure, and biophysical retrievals across MSI and HSI.' },
-      { name: 'Context Engine', body: 'Field-specific expected-state baselines built from the 13+ year archive.' },
-      { name: 'Event Engine', body: 'Anomaly detection, event classification, onset dating, and severity scoring.' },
-      { name: 'Attribution Engine', body: 'Causal hypothesis ranking with spectral evidence and MicroClim corroboration.' },
-      { name: 'Semantic Foundation', body: 'SSE, DINOv3, SAM3, and the semantic web that makes the cube queryable.' },
-      { name: 'Aurora Platform', body: 'The delivery layer — packaging engines into vertical products and customer workflows.' },
+  threeComponents: [
+    { name: 'NEXUS', body: 'Field intelligence object and semantic query layer.' },
+    { name: 'MicroClim', body: 'Climate forcing context layer integrated into the cube.' },
+    { name: 'Aurora', body: 'Delivery platform (imagery ordering, models, exports, Zenith).' },
+  ],
+  techSpecs: {
+    title: 'Technical specifications (summary)',
+    retrievalHeaders: ['Domain', 'Outputs'],
+    retrievals: [
+      ['Vegetation (PROSAIL)', 'LAI, cab, Car, Cw, Cm, fAPAR, AGB proxies, red-edge nitrogen proxies'],
+      ['Aquatic (HydroLight)', 'Chl-a, phycocyanin, CDOM, TSM, IOPs, Rrs'],
+      ['Geology (SAM + MTNF)', 'Mineral abundance, alteration, spectral similarity to reference'],
+    ],
+    semanticHeaders: ['Topic', 'Detail'],
+    semantic: [
+      ['Foundation model', 'DINOv3 fine-tuned on Pixxel MSI/HSI'],
+      ['Embedding input', 'Biophysical state vectors (not raw pixels only)'],
+      ['Query types', 'Similarity, trajectory matching, anomaly surfacing, historical analogue retrieval'],
+      ['Scope', 'Per-customer AOI; not global archive search'],
+      [
+        'Temporal encoding',
+        'Open engineering decision (per-acquisition + attention vs spatiotemporal GEOFM vs change-state embeddings). Do not commit in customer-facing language.',
+      ],
     ],
   },
   differentiation: {
-    eyebrow: '04 · Differentiation',
     title: 'Them vs us.',
     rows: [
       { them: 'Regional models smoothed across fields', us: 'Field-specific baselines derived from the field itself' },
       { them: 'Indices and classifier outputs', us: 'PROSAIL and HydroLight retrievals with calibrated uncertainty' },
-      { them: 'Bespoke pipelines per engagement', us: 'Shared engines that compound over time' },
+      { them: 'Database of scenes to download', us: 'Field intelligence you can query and compound over time' },
+      { them: 'Bespoke pipelines per engagement', us: 'Shared engines that deepen the same AOI object' },
       { them: 'Pixels delivered, decisions outsourced', us: 'Decision-ready evidence with onset dates and audit trails' },
-      { them: 'MSI alone', us: 'MSI baseline plus HSI precision upgrade where physics demands it' },
+      { them: '13-year MSI archive applied through regional models', us: '13-year MSI archive inverted field-by-field through PROSAIL and HydroLight — a location-specific biophysical history, not a regional average applied to it' },
     ],
   },
   sensors: {
-    eyebrow: '05 · Sensor Architecture',
+    eyebrow: '06 · Inputs & sensors',
     title: 'MSI baseline, HSI precision upgrade.',
     msi: {
       title: 'MSI · Baseline',
       body:
-        'Sentinel-2 plus Landsat plus PlanetScope, indexed back 13+ years. Provides the dense temporal record needed for the Context Engine and the structural backbone for change detection. Limit: cannot disambiguate spectrally similar stressors.',
+        'Sentinel-2 plus Landsat plus PlanetScope, indexed back 13+ years. Dense temporal record for context baselines and structural change. Limit: cannot disambiguate spectrally similar stressors.',
       example: [
         'Field 47 · MSI tier',
         'LAI and FVC depressed vs field-specific expected state',
@@ -939,7 +1092,7 @@ export const nexus = {
     hsi: {
       title: 'HSI · Precision Upgrade',
       body:
-        'Pixxel hyperspectral with 150+ bands resolves the biochemistry MSI cannot — Cw, Cm, Car, REIP shifts, and N/P/K signatures. Tasked over customer AOIs as the precision-grade upgrade.',
+        'Pixxel hyperspectral with 150+ bands resolves biochemistry MSI cannot. Tasked over customer AOIs as the precision-grade upgrade.',
       example: [
         'Field 47 · HSI tier',
         'Cw depressed vs canopy structure — water stress signal',
@@ -949,15 +1102,115 @@ export const nexus = {
       ],
     },
   },
+  vignettes: [
+    {
+      vertical: 'Forestry · Carbon',
+      color: '#5BE584',
+      persona: 'Congo Basin carbon project developer',
+      body:
+        'A living NEXUS model of every forest stand in the project area: full observational history, degradation flags, biomass with uncertainty bounds suitable for screening (not credit issuance without Honeybee validation), and area-specific questions without a new bespoke analysis run each time.',
+    },
+    {
+      vertical: 'Geology · Exploration',
+      color: '#F5A623',
+      persona: 'Atacama exploration geologist',
+      body:
+        'A mineral intelligence model of the target: embeddings from Firefly acquisitions, queryable for locations that match a reference signature, updated as new tasks arrive, with prospectivity tied to surface mineral physics.',
+    },
+    {
+      vertical: 'Water · Public health',
+      color: '#4FC3F7',
+      persona: 'Southeast Asia water utility manager',
+      body:
+        'A HAB intelligence model of the reservoir: pigment retrievals from optical physics, anomalies against that water body\'s baseline, risk context from catchment climate history, and alerts before intake compromise.',
+    },
+    {
+      vertical: 'Defense · Intelligence',
+      color: '#EF5350',
+      persona: 'Site-monitoring defense analyst',
+      body:
+        'A physics-grounded site intelligence model: PROSAIL and spectral inversion applied to every facility acquisition, structural change tracked in SAR, and anomaly detection against that specific site\'s own baseline. Semantic query surfaces archive moments where surface state or material signature diverged from the established object record. Analyst in the loop; dissemination constraints apply.',
+    },
+  ],
+  honestScience: {
+    title: 'Defensible evidence, not optimistic dashboards.',
+    paragraphs: [
+      'Pixxel operates in markets where outputs have consequences: carbon screening, insurance, drilling, regulatory water response.',
+      'Overconfident outputs are commercially dangerous. Every output carries confidence; every claim is scoped to what the physics supports.',
+    ],
+    advantage:
+      'Conservative, auditable positioning is the durable commercial advantage with expert buyers.',
+  },
+  whatIsLiveNow:
+    'Today: Firefly hyperspectral acquisition, ISOFIT atmospheric correction, PROSAIL and HydroLight biophysical retrieval, and individual vertical layers (stress, water quality, mineral) are operational. Pilot deliveries are analyst-produced at present. The integrated NEXUS platform — persistent field identity, semantic query at scale, and MicroClim-conditioned baselines — is in active build and expected mid 2027.',
+  buildStatus: {
+    title: 'Build status',
+    intro:
+      'Many production layers ship today across verticals. They are powerful individually and not yet fully unified into the integrated NEXUS platform described here.',
+    columns: [
+      {
+        accent: 'var(--green)',
+        label: 'Operational today',
+        items: [
+          'Firefly acquisitions, ISOFIT atmospheric correction, PROSAIL and HydroLight biophysical retrieval',
+          'Individual stress, water quality, and mineral layers per vertical',
+          'Bespoke pilot delivery as analyst-produced outputs',
+          'AOI-scoped DINOv3 change and anomaly models on selected engagements',
+        ],
+      },
+      {
+        accent: 'var(--cyan)',
+        label: 'In active build',
+        items: [
+          'NEXUS cube data architecture and ingestion pipeline',
+          'MicroClim climate forcing integration',
+          'NEXUS semantic query embedding architecture',
+          'Solution package productization',
+          'Project Zenith operator dashboard (Professional tier and above)',
+        ],
+      },
+      {
+        accent: 'var(--amber)',
+        label: 'Expected mid 2027',
+        items: [
+          'Fully integrated NEXUS platform: persistent field identity, seasonal accumulation, MicroClim-conditioned baselines, semantic query at scale, multimodal attribution',
+          'Honeybee VNIR-SWIR and expanded SWIR-dependent products',
+          'Aurora delivery with operator dashboard as default path for monitoring tiers',
+        ],
+      },
+    ],
+  },
+  doNotClaim: [
+    'Full NEXUS platform operational end-to-end today',
+    'Semantic query layer in production (in design and early build)',
+    'MRV-grade carbon suitable for credit issuance (Honeybee + validation, 2027+)',
+    'SWIR-dependent mineral or carbon products before Honeybee',
+    'Global semantic search (scoped to customer AOI only)',
+    'Committed temporal-encoding architecture for embeddings (engineering open)',
+  ],
   roadmap: {
-    eyebrow: '06 · Roadmap',
     title: 'Where we are headed.',
     phases: [
-      { when: 'H1 2026', title: 'Foundation', body: 'MSI baseline operational; HSI tasking workflow; Context Engine v1; first vertical bespoke deliveries at scale.' },
-      { when: 'Q3 2026', title: 'Intelligence', body: 'Context + Event + Attribution engines productized; Field Stress Monitor and Precision Intervention Advisor live.' },
-      { when: 'Q4 2026', title: 'Products', body: 'Productized vertical packages across Agriculture, Forestry, Water; portfolio risk and cause-of-loss evidence GA.' },
-      { when: '2027+', title: 'Scale', body: 'SWIR (Honeybee) closes MRV-grade carbon and SWIR mineral mapping; Aurora platform expands to full self-serve.' },
+      { when: 'H1 2026', title: 'Foundation', body: 'MSI baseline operational; HSI tasking; cube ingestion v1; bespoke deliveries at scale.' },
+      { when: 'Q3–Q4 2026', title: 'Intelligence products', body: 'Context, Event, Attribution engines and vertical packages (Ag, Forestry, Water).' },
+      { when: 'Mid 2027', title: 'Integrated NEXUS', body: 'Persistent identity, semantic query at scale, MicroClim-conditioned baselines, Aurora/Zenith monitoring path.' },
+      { when: '2027+', title: 'SWIR scale', body: 'Honeybee closes SWIR mineral and tighter carbon workflows; platform hardening.' },
     ],
+  },
+  closing: {
+    label: 'The architecture compounds by design',
+    paragraphs: [
+      'Every new acquisition deepens object records. Every model improvement propagates across monitored AOIs. Every vertical adds a domain of intelligence. Value increases the longer a location has been monitored.',
+      'This is not a dashboard or a mapping tool. It is field-level intelligence that knows specific places with increasing depth and delivers knowledge people can act on.',
+    ],
+  },
+  claimContrast: {
+    title: 'Two very different products.',
+    intro:
+      'Planetary coverage at low resolution is a different product from knowing a specific place with depth that survives expert review. Pixxel builds the second.',
+    planetary: 'Knows everything about everywhere at low resolution. Coverage without depth is surveillance, not intelligence.',
+    hyperlocal:
+      'Knows a specific field, stand, waterbody, or site with depth defensible in court, registry, drilling, or briefing.',
   },
 };
 
@@ -965,7 +1218,7 @@ export const messaging = {
   framing: {
     label: 'Where we are right now — say this honestly',
     body:
-      'Pixxel Analytics is in active transition from R&D and bespoke delivery to a productized platform. Deployed today: PROSAIL trait retrievals, HydroLight water quality, SSE object recognition, and AOI-scoped DINOv3 change and anomaly models — not yet full-archive operational monitoring. The full NEXUS engine stack ships through 2026. We need early-adopter pilots to validate regional accuracy, refine attribution models, and build the evidence base for inventory-grade claims. Customers who engage now get closer collaboration and first-mover advantage in exchange for accepting that some outputs are still exploration grade.',
+      'Pixxel Analytics is in active transition from R&D and bespoke delivery to a productized platform. Deployed today: PROSAIL trait retrievals, HydroLight water quality, and individual vertical layers on bespoke AOIs. NEXUS semantic query and full cube integration are in active build, not production yet. AOI-scoped change and anomaly models exist on selected engagements but are not full-archive operational monitoring. Productized vertical packages target mid 2027. Early-adopter pilots help validate regional accuracy and build the evidence base for inventory-grade claims.',
   },
   differentiators: [
     {

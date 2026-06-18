@@ -73,21 +73,21 @@ const VERTICAL_FRAMING = {
   Agriculture: {
     problem:
       'visibility into crop physiology, health, and stress drivers that broadband multispectral indices alone cannot resolve',
-    why: "Pixxel's Firefly satellites produce 400-band VNIR hyperspectral imagery at 5 m spatial resolution, enabling direct retrieval of biophysical variables (leaf area, canopy chlorophyll, canopy water) rather than broadband index proxies. Every pilot delivers HSI-derived analytics and MSI outputs together for direct comparison.",
+    why: "Pixxel's Firefly satellites produce 400-band VNIR hyperspectral imagery at 5 m spatial resolution, enabling direct retrieval of biophysical variables (leaf area, canopy chlorophyll, canopy water) rather than broadband index proxies. Customers choose either an MSI Analytics pilot or a Hyperspectral pilot as separate products.",
     method:
       'PROSAIL canopy radiative-transfer inversion and spectral health indices benchmarked against the multispectral historical baseline',
   },
   Forestry: {
     problem:
       'reliable, repeatable measurement of forest cover, biomass, and degradation across landscapes that field inventories cannot cost-effectively cover',
-    why: "Pixxel's Firefly hyperspectral imagery extends standard MSI cover and change products with canopy biophysical retrievals (LAI, chlorophyll, canopy water) and biomass proxies. MSI and HSI outputs are delivered together for direct comparison.",
+    why: "Pixxel's Firefly hyperspectral imagery delivers canopy biophysical retrievals (LAI, chlorophyll, canopy water) and biomass proxies; MSI Analytics pilots cover archive-based cover and change without Firefly tasking. These are separate pilot products.",
     method:
       'PROSAIL canopy inversion, SAR cloud-gap fill where available, and change detection across the available archive',
   },
   Water: {
     problem:
       'water-body classification and quantitative water-quality monitoring with the specificity needed to distinguish bloom types, constituent drivers, and dynamics not visible to broadband sensors',
-    why: "Firefly hyperspectral imagery enables phycocyanin (cyanobacteria-specific) retrieval, full inherent optical property retrieval, and absorption parameters that extend an MSI monitoring baseline. HSI and MSI outputs are delivered together.",
+    why: "Firefly hyperspectral imagery enables phycocyanin (cyanobacteria-specific) retrieval, full inherent optical property retrieval, and absorption parameters. MSI Analytics pilots deliver archive-based water-quality monitoring without Firefly tasking. These are separate pilot products.",
     method:
       'Full IOP retrieval, HSI-derived water-quality variables, and MSI time-series benchmarking',
   },
@@ -332,9 +332,9 @@ function buildExecutiveSummary(form) {
   if (isMonitoring) {
     para2 =
       `Pixxel will apply ${framing.method} across the AOI. ` +
-      `The proposal defines two pilot offerings: Hyperspectral + MSI (default) and MSI-only. Each offering is available at three engagement levels (Basic, Standard, and Enterprise) that differ in AOI scale and Firefly acquisition count. ` +
-      `MSI outputs are included in every pilot; HSI biophysical retrievals and the MSI/HSI comparison apply only to Hyperspectral + MSI engagements. ` +
-      `Deliverables include GeoTIFF rasters, written reporting matched to the offering selected, and a joint interpretation review with ${c}.`;
+      `The proposal defines two separate pilot products: MSI Analytics and Hyperspectral. Each product is available at three engagement levels (Basic, Standard, and Enterprise) that differ in AOI scale; Hyperspectral engagements also differ in Firefly acquisition count. ` +
+      `The customer selects one product for this engagement unless both are contracted as distinct pilots. ` +
+      `Deliverables include GeoTIFF rasters, written reporting matched to the product selected, and a joint interpretation review with ${c}.`;
   } else if (vertical === 'Geology') {
     para2 =
       `Pixxel will apply ${framing.method} across the exploration target AOI via Firefly VNIR hyperspectral acquisition. ` +
@@ -688,7 +688,7 @@ function tierComparisonTable(tierRows, multiplier, isGeo = false) {
       alt: false,
     },
     {
-      label: isGeo ? 'Price (USD)' : 'HSI+MSI price',
+      label: isGeo ? 'Price (USD)' : 'Hyperspectral pilot',
       vals: tierRows.map((t) => fmtUsd(t.hsiMsi, t.prefix)),
       alt: true,
       bold: true,
@@ -696,7 +696,7 @@ function tierComparisonTable(tierRows, multiplier, isGeo = false) {
     ...(!isGeo
       ? [
           {
-            label: 'MSI-only (0.60×)',
+            label: 'MSI Analytics pilot',
             vals: tierRows.map((t) => fmtUsd(t.msiOnly, t.prefix)),
             alt: false,
             italics: true,
@@ -817,14 +817,14 @@ function buildMonitoringTechnical(form, tierRows) {
     h2('4.2 Area of Interest'),
     para(
       aoiDesc
-        ? `AOI: ${aoiDesc}. Exact AOI boundaries are confirmed with the customer at contract signing. Firefly hyperspectral acquisitions are scheduled subject to operational feasibility within the pilot window; if an acquisition is not feasible, the HSI task cost is credited toward the subscription onboarding fee and MSI-equivalent outputs are delivered.`
-        : `The AOI is confirmed with the customer at contract signing. Firefly hyperspectral acquisitions are scheduled subject to operational feasibility within the pilot window; if an acquisition is not feasible, the HSI task cost is credited toward the subscription onboarding fee and MSI-equivalent outputs are delivered.`,
+        ? `AOI: ${aoiDesc}. Exact AOI boundaries are confirmed with the customer at contract signing. For Hyperspectral pilots, Firefly acquisitions are scheduled subject to operational feasibility within the pilot window; if an acquisition is not feasible, the HSI task cost is credited toward the subscription onboarding fee and scope may convert to MSI Analytics product layers or rescheduling by agreement.`
+        : `The AOI is confirmed with the customer at contract signing. For Hyperspectral pilots, Firefly acquisitions are scheduled subject to operational feasibility within the pilot window; if an acquisition is not feasible, the HSI task cost is credited toward the subscription onboarding fee and scope may convert to MSI Analytics product layers or rescheduling by agreement.`,
       { after: 160 }
     ),
 
     h2('4.3 Pilot Scope'),
     para(
-      `Three engagement levels (Basic, Standard, Enterprise) are offered for each pilot type in the pricing table. Scope is defined in two layers: MSI outputs (included in every pilot) and HSI outputs (Hyperspectral + MSI pilots only). Within a chosen offering, tiers differ by AOI size and Firefly task count, not by which MSI or HSI product lines are delivered. Scope is locked at contract signing against currently available pipeline layers. Capabilities not yet operational are not in scope.`,
+      `Three engagement levels (Basic, Standard, Enterprise) are offered for each pilot product in the pricing table. MSI Analytics and Hyperspectral are separate products: each engagement delivers one product's scope unless both are contracted as distinct pilots. Within a chosen product, tiers differ by AOI size; Hyperspectral tiers also differ by Firefly task count. Scope is locked at contract signing against currently available pipeline layers. Capabilities not yet operational are not in scope.`,
       { italics: true, after: 160 }
     ),
 
@@ -837,13 +837,13 @@ function buildMonitoringTechnical(form, tierRows) {
         ]
       : []),
 
-    h3('MSI outputs (every pilot tier)'),
+    h3('MSI Analytics pilot — product scope'),
     ...vScope.msi.map((item) => bullet(item)),
 
-    h3('HSI outputs (Hyperspectral + MSI pilots)'),
+    h3('Hyperspectral pilot — product scope'),
     ...vScope.hsi.map((item) => bullet(item)),
     para(
-      'All HSI outputs are delivered with MSI equivalents for comparison. This comparison is a core deliverable of every Hyperspectral + MSI pilot.',
+      'MSI Analytics and Hyperspectral are separate pilot products. This engagement delivers the scope for the product selected in section 4.7 unless both products are contracted as distinct pilots.',
       { italics: true, after: 120, before: 80 }
     ),
     ...(vScope.hsiNote
@@ -861,10 +861,6 @@ function buildMonitoringTechnical(form, tierRows) {
           ...modelling.indices.map((item) => bullet(item)),
           h3(modelling.prosailLabel),
           ...modelling.prosail.map((item) => bullet(item)),
-          para(
-            'HSI retrievals are delivered alongside MSI-based index outputs so the performance difference is directly visible in the pilot data.',
-            { italics: true, after: 120, before: 80 }
-          ),
         ]
       : []),
 
@@ -873,7 +869,7 @@ function buildMonitoringTechnical(form, tierRows) {
     bullet('Validation report (PDF) and interpretation deck (PDF / slides)'),
     bullet('Joint interpretation review session with the Pixxel analytics team'),
     para(
-      'MSI-only pilots deliver a summary report (~5 pages) in place of the full validation report and interpretation deck.',
+      'MSI Analytics pilots deliver a summary report (~5 pages) in place of the full validation report and interpretation deck used for Hyperspectral pilots.',
       { italics: true, after: 120 }
     ),
 
@@ -891,7 +887,7 @@ function buildMonitoringTechnical(form, tierRows) {
     h2('4.7 Pricing'),
     tierComparisonTable(tierRows, 1, false),
     para(
-      'Prices shown with regional pricing adjustment applied. MSI-only option is a 0.60× downgrade from the default Hyperspectral + MSI offering; it does not include the HSI vs. MSI comparison deliverable.',
+      'Prices shown with regional pricing adjustment applied. MSI Analytics and Hyperspectral are separate products with separate price lists; the customer selects one product per engagement unless both are contracted distinctly.',
       { italics: true, before: 160, after: 120 }
     ),
     para(
@@ -1281,7 +1277,7 @@ function PricingPreview({ vertical, multiplier }) {
         <tbody>
           {!isGeo && (
             <tr>
-              <td style={tdLabel}>HSI+MSI</td>
+              <td style={tdLabel}>Hyperspectral</td>
               {rows.map((r) => (
                 <td key={r.tier} style={{ ...tdStyle, fontWeight: 600, color: 'var(--cyan)' }}>
                   {fmtUsd(r.hsiMsi, r.prefix)}
@@ -1301,7 +1297,7 @@ function PricingPreview({ vertical, multiplier }) {
           )}
           {!isGeo && (
             <tr>
-              <td style={{ ...tdLabel, background: 'var(--bg2)' }}>MSI-only</td>
+              <td style={{ ...tdLabel, background: 'var(--bg2)' }}>MSI Analytics</td>
               {rows.map((r) => (
                 <td key={r.tier} style={{ ...tdStyle, background: 'var(--bg2)', color: 'var(--gray)' }}>
                   {fmtUsd(r.msiOnly, r.prefix)}
@@ -1410,9 +1406,10 @@ export default function PilotProposalGenerator() {
       <h1 className="section-title">Pilot proposal generator.</h1>
       <p className="section-sub">
         Fill in deal context, vertical, and regional pricing band. The tool builds a deterministic
-        executive summary and packages a Pixxel-branded <code>.docx</code> proposal with MSI and
-        HSI scope, engagement tiers (Basic, Standard, Enterprise), and the pricing table for the
-        selected vertical. Customer name is substituted throughout, including Exhibit A.
+        executive summary and packages a Pixxel-branded <code>.docx</code> proposal with MSI Analytics
+        and Hyperspectral product scope (separate pilot products), engagement tiers (Basic, Standard,
+        Enterprise), and the pricing table for the selected vertical. Customer name is substituted
+        throughout, including Exhibit A.
       </p>
 
       <Callout type="warn" label="Internal · indicative">

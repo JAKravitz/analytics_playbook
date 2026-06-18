@@ -3,24 +3,17 @@ import ConfBanner from './components/ConfBanner.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import Home from './sections/Home.jsx';
 import NexusWhitePaper from './sections/NexusWhitePaper.jsx';
-import Agriculture from './sections/Agriculture.jsx';
-import Forestry from './sections/Forestry.jsx';
-import Water from './sections/Water.jsx';
-import Geology from './sections/Geology.jsx';
-import Mining from './sections/Mining.jsx';
-import Defense from './sections/Defense.jsx';
-import Claims from './sections/Claims.jsx';
-import Messaging from './sections/Messaging.jsx';
-import Resources from './sections/Resources.jsx';
+import AgricultureProduct from './sections/products/AgricultureProduct.jsx';
+import GeologyProduct from './sections/products/GeologyProduct.jsx';
+import WaterProduct from './sections/products/WaterProduct.jsx';
 import LayerCatalog from './sections/LayerCatalog.jsx';
 import LayerSpecPage from './sections/LayerSpecPage.jsx';
-import SemanticSearchEngine from './sections/SemanticSearchEngine.jsx';
+import SSEProduct from './sections/products/SSEProduct.jsx';
 import MicroClim from './sections/MicroClim.jsx';
 import PilotProposalGenerator from './sections/PilotProposalGenerator.jsx';
 import CommercialRequests from './sections/CommercialRequests.jsx';
-import RevenueModels from './sections/RevenueModels.jsx';
-import PilotRevenueModel from './sections/PilotRevenueModel.jsx';
 import GroundResearch from './sections/GroundResearch.jsx';
+import Resources from './sections/Resources.jsx';
 import { seed, CLAIMS_VERSION } from './data/seed.js';
 import {
   seedLayers,
@@ -29,39 +22,50 @@ import {
 } from './data/layersCatalog.js';
 import { storage } from './data/storage.js';
 
+const SIDEBAR_COLLAPSED_KEY = 'playbook-sidebar-collapsed';
+
+function readSidebarCollapsed() {
+  if (typeof window === 'undefined') return false;
+  try {
+    return window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
 const sectionMap = {
   home: Home,
   layers: LayerCatalog,
   'layer-spec': LayerSpecPage,
-  sse: SemanticSearchEngine,
+  sse: SSEProduct,
   microclim: MicroClim,
   nexus: NexusWhitePaper,
-  agriculture: Agriculture,
-  forestry: Forestry,
-  water: Water,
-  geology: Geology,
-  mining: Mining,
-  defense: Defense,
-  claims: Claims,
-  messaging: Messaging,
-  'revenue-models': RevenueModels,
-  'pilot-revenue-model': PilotRevenueModel,
+  agriculture: AgricultureProduct,
+  geology: GeologyProduct,
+  water: WaterProduct,
   'ground-research': GroundResearch,
   'commercial-requests': CommercialRequests,
   resources: Resources,
   quoting: PilotProposalGenerator,
 };
 
+/** Product sections that support #<slug>/<subView> routing. */
+const PRODUCT_SECTIONS = new Set(['agriculture', 'geology', 'water', 'sse']);
+
 function parseRouteFromHash() {
-  if (typeof window === 'undefined') return { section: 'home', layerSpecId: null };
+  if (typeof window === 'undefined') return { section: 'home', layerSpecId: null, subView: null };
   const raw = (window.location.hash.replace(/^#/, '') || 'home').trim();
   if (raw.startsWith('layer-spec/')) {
     const layerSpecId = raw.slice('layer-spec/'.length).trim() || null;
-    return { section: 'layer-spec', layerSpecId };
+    return { section: 'layer-spec', layerSpecId, subView: null };
   }
-  if (raw === 'aquatic') return { section: 'water', layerSpecId: null };
-  if (sectionMap[raw]) return { section: raw, layerSpecId: null };
-  return { section: 'home', layerSpecId: null };
+  const [head, sub] = raw.split('/');
+  if (PRODUCT_SECTIONS.has(head)) {
+    return { section: head, layerSpecId: null, subView: sub || null };
+  }
+  if (raw === 'aquatic') return { section: 'water', layerSpecId: null, subView: null };
+  if (sectionMap[raw]) return { section: raw, layerSpecId: null, subView: null };
+  return { section: 'home', layerSpecId: null, subView: null };
 }
 
 function buildInitialState() {
@@ -114,8 +118,9 @@ function mergeWithSeed(stored) {
 }
 
 export default function App() {
-  const [{ section, layerSpecId }, setRoute] = useState(parseRouteFromHash);
+  const [{ section, layerSpecId, subView }, setRoute] = useState(parseRouteFromHash);
   const [theme, setTheme] = useState('dark');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(readSidebarCollapsed);
   const [state, setState] = useState(() => buildInitialState());
   const [hydrated, setHydrated] = useState(false);
   const saveTimer = useRef(null);
@@ -147,13 +152,21 @@ export default function App() {
   }, [theme]);
 
   useEffect(() => {
+    try {
+      window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, sidebarCollapsed ? '1' : '0');
+    } catch {
+      /* ignore quota / private mode */
+    }
+  }, [sidebarCollapsed]);
+
+  useEffect(() => {
     const onHash = () => setRoute(parseRouteFromHash());
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
   const handleSelect = (id) => {
-    setRoute({ section: id, layerSpecId: null });
+    setRoute({ section: id, layerSpecId: null, subView: null });
     if (typeof window !== 'undefined') {
       window.history.replaceState(null, '', `#${id}`);
       window.scrollTo({ top: 0, behavior: 'instant' });
@@ -168,25 +181,34 @@ export default function App() {
       setState,
       navigate: handleSelect,
       layerSpecId,
+      subView,
     }),
-    [state, layerSpecId]
+    [state, layerSpecId, subView]
   );
 
   return (
     <>
       <ConfBanner />
-      <div className="app-shell">
+      <div className={`app-shell${sidebarCollapsed ? ' sidebar-collapsed' : ''}`}>
         <Sidebar
           section={section === 'layer-spec' ? 'layers' : section}
           onSelect={handleSelect}
           theme={theme}
           onToggleTheme={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed((c) => !c)}
         />
         <main className="main-area">
           <div className="main-scroll">
             <div
               className="section"
-              key={section === 'layer-spec' ? `layer-spec-${layerSpecId || 'none'}` : section}
+              key={
+                section === 'layer-spec'
+                  ? `layer-spec-${layerSpecId || 'none'}`
+                  : PRODUCT_SECTIONS.has(section)
+                    ? `${section}-${subView || 'landing'}`
+                    : section
+              }
             >
               <Section {...sectionProps} />
             </div>

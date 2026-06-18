@@ -1,4 +1,5 @@
 import Callout from '../components/Callout.jsx';
+import { regionalPricingTiers } from '../data/regionalPricingTiers.js';
 import { TYPE, mono } from '../styles/typography.js';
 
 const VERTICAL_COLORS = {
@@ -150,7 +151,7 @@ function AppliesTo({ children }) {
   );
 }
 
-/** Two-column block: MSI outputs (all tiers) + HSI outputs (HSI+MSI default). */
+/** Two-column block: MSI Analytics product scope | Hyperspectral product scope. */
 function VerticalScopeBlock({ vertical, color, msiItems, hsiItems, inDevelopment }) {
   return (
     <div
@@ -245,7 +246,7 @@ function VerticalScopeBlock({ vertical, color, msiItems, hsiItems, inDevelopment
               marginBottom: 6,
             }}
           >
-            MSI outputs — every pilot
+            MSI Analytics pilot
           </div>
           <NoteList items={msiItems} fontSize={TYPE.muted} />
         </div>
@@ -261,22 +262,25 @@ function VerticalScopeBlock({ vertical, color, msiItems, hsiItems, inDevelopment
               marginBottom: 6,
             }}
           >
-            HSI outputs — Hyperspectral + MSI pilots
+            Hyperspectral pilot
           </div>
           <NoteList items={hsiItems} fontSize={TYPE.muted} color="var(--text)" />
-          <p
-            style={{
-              ...mono,
-              fontSize: 11,
-              color: 'var(--gray)',
-              margin: '10px 0 0',
-              lineHeight: 1.5,
-            }}
-          >
-            All HSI outputs delivered alongside MSI equivalents for direct comparison.
-          </p>
         </div>
       </div>
+      <p
+        style={{
+          ...mono,
+          fontSize: 11,
+          color: 'var(--gray)',
+          margin: 0,
+          padding: '10px 16px 14px',
+          borderTop: '1px solid var(--gray2)',
+          lineHeight: 1.55,
+        }}
+      >
+        MSI Analytics and Hyperspectral are separate pilot products. Each engagement delivers one
+        product&apos;s scope unless the customer contracts both as distinct pilots.
+      </p>
     </div>
   );
 }
@@ -401,73 +405,23 @@ export default function PilotRevenueModel() {
       <SectionDivider label="What a pilot is (and isn't)" />
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: 12,
+          background: 'var(--bg2)',
+          border: '1px solid var(--gray2)',
+          borderLeft: `2px solid ${PILOT_ACCENT}`,
+          padding: '16px 18px',
           marginBottom: 8,
         }}
       >
-        <div
-          style={{
-            background: 'var(--bg2)',
-            border: '1px solid var(--gray2)',
-            borderLeft: `2px solid ${PILOT_ACCENT}`,
-            padding: '16px 18px',
-          }}
-        >
-          <div
-            style={{
-              ...mono,
-              fontSize: TYPE.label,
-              letterSpacing: 1.5,
-              textTransform: 'uppercase',
-              color: PILOT_ACCENT,
-              marginBottom: 10,
-              fontWeight: 700,
-            }}
-          >
-            Current operational reality
-          </div>
-          <NoteList
-            items={[
-              'Solution packages and APIs are in development — not yet available for customer access',
-              'Delivery is analyst-produced: GeoTIFFs, PDF reports, visualizations',
-              'Pilot scope strictly constrained to operationally available layers — no bespoke pipeline development for pilots',
-              'If a capability is on the roadmap but not yet operational, it is not in scope for any pilot tier',
-              'Aurora / Zephyr / SSE not included in pilots at this stage',
-            ]}
-          />
-        </div>
-        <div
-          style={{
-            background: 'var(--bg2)',
-            border: '1px solid var(--gray2)',
-            borderLeft: '2px solid var(--amber)',
-            padding: '16px 18px',
-          }}
-        >
-          <div
-            style={{
-              ...mono,
-              fontSize: TYPE.label,
-              letterSpacing: 1.5,
-              textTransform: 'uppercase',
-              color: 'var(--amber)',
-              marginBottom: 10,
-              fontWeight: 700,
-            }}
-          >
-            Pilot scope guardrails
-          </div>
-          <NoteList
-            items={[
-              'Pilot scope strictly constrained to operationally available layers — no bespoke pipeline development',
-              'If a capability is on the roadmap but not yet operational, it is not in scope for any pilot tier',
-              'Customers requesting roadmap capabilities are directed to the subscription — those ship when operational',
-              'Standard answer for out-of-scope requests: "on roadmap, available through subscription when operational"',
-            ]}
-          />
-        </div>
+        <NoteList
+          items={[
+            'Solution packages and APIs are in development — not yet available for customer access',
+            'Delivery is analyst-produced: GeoTIFFs, PDF reports, visualizations',
+            'Pilot scope is fixed at contract signing to operationally available pipeline layers only — no bespoke pipeline development for pilots',
+            'Roadmap capabilities that are not yet operational are out of scope for every pilot tier; direct those requests to subscription when they ship',
+            'Standard answer for out-of-scope asks: "on roadmap, available through subscription when operational"',
+            'Aurora / Zenith / SSE not included in pilots at this stage',
+          ]}
+        />
       </div>
 
       {/* ── Guiding principles ──────────────────────────────────────────── */}
@@ -478,17 +432,10 @@ export default function PilotRevenueModel() {
         the subscription roadmap.
       </PrinciplePill>
       <PrinciplePill accent="var(--cyan)">
-        <strong>HSI and MSI side-by-side.</strong> All monitoring pilots include both Firefly HSI and
-        MSI outputs delivered side-by-side, allowing customers to directly compare
-        hyperspectral-derived analytics against multispectral baselines. This comparison is a core
-        deliverable of every monitoring pilot.
-      </PrinciplePill>
-      <PrinciplePill accent="var(--gray)">
-        <strong>MSI-only option.</strong> Customers who explicitly want MSI-only analytics — due to
-        budget, cloud cover constraints, or preference — can opt for the MSI Analytics Pilot at a{' '}
-        <strong>0.60× multiplier</strong> on standard pricing. This is a downgrade from the default
-        HSI-included offering, not the baseline. MSI-only pilots do not include the HSI vs. MSI
-        comparison deliverable.
+        <strong>Two pilot products.</strong> Monitoring pilots are sold as separate products:{' '}
+        <strong>MSI Analytics</strong> (archive MSI layers, no Firefly tasking) and{' '}
+        <strong>Hyperspectral</strong> (Firefly VNIR acquisition and HSI biophysical retrievals).
+        The customer selects one product per engagement unless both are contracted as distinct pilots.
       </PrinciplePill>
       <PrinciplePill accent={PILOT_ACCENT}>
         <strong>Conversion incentive.</strong> Pilot fee credited toward onboarding fee on
@@ -496,23 +443,23 @@ export default function PilotRevenueModel() {
         verticals.
       </PrinciplePill>
       <PrinciplePill accent={PILOT_ACCENT}>
-        <strong>Regional pricing.</strong> All list prices at Tier 1 (1.0×) standard rate. Apply
-        regional multiplier based on customer HQ country World Bank income classification — see{' '}
-        <a href="#revenue-models" style={{ color: 'var(--cyan)' }}>
-          product revenue model
-        </a>
-        .
+        <strong>Regional pricing.</strong> All list prices at Tier 1 (1.0×) standard rate. Apply the
+        World Bank income-tier multiplier for the customer&apos;s HQ jurisdiction — see{' '}
+        <a href="#pilot-regional-multipliers" style={{ color: 'var(--cyan)' }}>
+          regional pricing multipliers
+        </a>{' '}
+        below the pilot pricing tables.
       </PrinciplePill>
 
       {/* ── Monitoring Services Pilots ─────────────────────────────────── */}
       <SectionDivider label="Monitoring services pilots" />
       <AppliesTo>Agriculture, Forestry, Water</AppliesTo>
       <p style={{ fontSize: TYPE.body, color: 'var(--text)', margin: '0 0 12px', maxWidth: 820, lineHeight: 1.55 }}>
-        Shared tier structure across monitoring verticals.{' '}
-        <strong>Tiers differ only in AOI size and number of HSI tasks</strong> — scope is consistent
-        across Basic, Standard, and Enterprise. MSI outputs are included in every pilot. HSI outputs
-        are additionally included in the default Hyperspectral + MSI pilot. Enterprise tier is priced
-        from <strong>$20,000</strong> on a project basis.
+        Two separate products share the same Basic / Standard / Enterprise tier structure.{' '}
+        <strong>Tiers differ by AOI size</strong>; Hyperspectral pilots also differ by Firefly task
+        count. Scope is fixed per product at contract signing. Hyperspectral Enterprise is priced from{' '}
+        <strong>$20,000</strong> on a project basis; MSI Analytics Enterprise from{' '}
+        <strong>$12,000</strong>.
       </p>
 
       <div
@@ -526,10 +473,11 @@ export default function PilotRevenueModel() {
           margin: '16px 0 6px',
         }}
       >
-        Hyperspectral + MSI pilot (default)
+        Hyperspectral pilot (HSI product)
       </div>
       <p style={{ fontSize: TYPE.muted, color: 'var(--gray)', margin: '0 0 8px', lineHeight: 1.5 }}>
-        Firefly VNIR HSI acquisition included. MSI and HSI outputs delivered side-by-side.
+        Firefly VNIR acquisition included. Delivers the Hyperspectral product scope only (see vertical
+        scope below).
       </p>
       <DataTable
         headers={['', 'Basic', 'Standard', 'Enterprise']}
@@ -564,11 +512,11 @@ export default function PilotRevenueModel() {
           margin: '20px 0 6px',
         }}
       >
-        MSI Analytics Pilot (MSI-only, 0.60×)
+        MSI Analytics pilot (MSI product)
       </div>
       <p style={{ fontSize: TYPE.muted, color: 'var(--gray)', margin: '0 0 8px', lineHeight: 1.5 }}>
-        No Firefly acquisition. MSI outputs only. Available where HSI acquisition is not feasible or
-        at customer preference. Does not include the HSI vs. MSI comparison deliverable.
+        No Firefly acquisition. Delivers the MSI Analytics product scope only. Typical where archive MSI
+        is sufficient, cloud limits HSI tasking, or budget targets the lower product tier.
       </p>
       <DataTable
         headers={['', 'Basic', 'Standard', 'Enterprise']}
@@ -599,6 +547,38 @@ export default function PilotRevenueModel() {
         MSI-only requirement.
       </p>
 
+      <div id="pilot-regional-multipliers">
+      <SectionDivider label="Regional pricing multipliers" />
+      <p style={{ fontSize: TYPE.muted, color: 'var(--text)', margin: '0 0 8px', maxWidth: 820, lineHeight: 1.55 }}>
+        {regionalPricingTiers.blurb}{' '}
+        <a
+          href={regionalPricingTiers.worldBankUrl}
+          target="_blank"
+          rel="noreferrer noopener"
+          style={{ color: 'var(--cyan)' }}
+        >
+          World Bank country income classifications
+        </a>
+        .
+      </p>
+      <DataTable
+        headers={regionalPricingTiers.headers}
+        rows={regionalPricingTiers.rows}
+        firstColAccent="var(--cyan)"
+      />
+      <p
+        style={{
+          ...mono,
+          fontSize: TYPE.small,
+          color: 'var(--gray)',
+          lineHeight: 1.55,
+          margin: '6px 0 16px',
+        }}
+      >
+        {regionalPricingTiers.footnote}
+      </p>
+      </div>
+
       {/* ── What is included — per vertical ─────────────────────────────── */}
       <div
         style={{
@@ -614,14 +594,16 @@ export default function PilotRevenueModel() {
         What is included — by vertical
       </div>
       <p style={{ fontSize: TYPE.body, color: 'var(--text)', margin: '0 0 14px', maxWidth: 820, lineHeight: 1.55 }}>
-        Scope is consistent across Basic, Standard, and Enterprise tiers. MSI outputs are included in
-        every pilot. HSI outputs are additionally included in Hyperspectral + MSI pilots.
+        Columns below describe each product&apos;s scope. A single engagement delivers one product unless
+        both are contracted as separate pilots. Tier depth (Basic / Standard / Enterprise) is consistent
+        within each product.
       </p>
 
       <VerticalScopeBlock
         vertical="Agriculture"
         color={VERTICAL_COLORS.agriculture}
         inDevelopment={[
+          'Causal attribution (ranked stress drivers)',
           'Soil NPK / SOC estimation',
           'Irrigation optimization',
           'Yield / biomass / production forecasting',
@@ -630,13 +612,14 @@ export default function PilotRevenueModel() {
           'Crop type classification',
           'Phenology stage and growth trajectory summary',
           'Spectral health indices: NDRE, NDVI narrowband, PRI, CIgreen, PSRI',
+          'PROSAIL inversion (MSI-tier): LAI, fAPAR, canopy chlorophyll (cab), canopy water (Cw)',
           'Anomaly detection against MSI seasonal baseline',
           'Summary report and GeoTIFF map outputs',
         ]}
         hsiItems={[
-          'PROSAIL inversion: LAI, canopy chlorophyll (cab), canopy water content (cw), carotenoids (Car)',
+          'PROSAIL inversion: LAI, fAPAR, canopy chlorophyll (cab), canopy water (Cw), carotenoids (Car), dry matter (Cm), anthocyanins (Anth) where signal supports',
           'Physiology and health score from HSI biophysical retrievals',
-          'Stress attribution hypotheses where attribution pipeline is available',
+          'Generalized stress and severity classification from HSI retrievals (not ranked cause attribution)',
           'Validation report and interpretation deck',
         ]}
       />
@@ -644,19 +627,28 @@ export default function PilotRevenueModel() {
       <VerticalScopeBlock
         vertical="Forestry"
         color={VERTICAL_COLORS.forestry}
-        inDevelopment={[]}
+        inDevelopment={[
+          'Causal attribution (disturbance drivers: mechanical vs biological)',
+          'MRV-grade carbon stock suitable for credit issuance',
+          'Operational degradation trend alerting (BFAST-style, FIRMS corroboration)',
+          'ARR counterfactual baselines at inventory grade',
+        ]}
         msiItems={[
           'Forest cover and type classification',
           'LULC mapping',
           'Deforestation and degradation detection',
-          'AI change detection over available archive',
+          'Change detection over available archive',
+          'PROSAIL inversion (MSI-tier): LAI, fAPAR, canopy chlorophyll (cab), canopy water (Cw)',
+          'Anomaly detection against MSI seasonal forest baseline',
           'Summary report and GeoTIFF map outputs',
         ]}
         hsiItems={[
-          'PROSAIL inversion: LAI, cab, cw, forest physiology and health score',
+          'PROSAIL inversion: LAI, fAPAR, canopy chlorophyll (cab), canopy water (Cw), carotenoids (Car), dry matter (Cm)',
+          'Canopy physiology and health score from HSI biophysical retrievals',
+          'Generalized stress and degradation severity from HSI retrievals (not ranked cause attribution)',
           'Above-ground biomass (AGB) proxy estimation',
-          'Carbon stock proxy estimation',
-          'SAR cloud gap fill where available',
+          'Carbon stock proxy estimation (exploration grade)',
+          'SAR cloud gap fill where Sentinel-1 is available over the AOI',
           'Validation report and interpretation deck',
         ]}
       />
@@ -860,15 +852,15 @@ export default function PilotRevenueModel() {
           ],
           [
             'HSI feasibility (monitoring services)',
-            'If Firefly acquisition fails within the pilot window, HSI task cost is credited toward conversion onboarding fee and MSI-equivalent outputs are delivered.',
+            'If Firefly acquisition fails within the pilot window, HSI task cost is credited toward conversion onboarding fee; scope may convert to MSI Analytics product layers or rescheduling by agreement.',
           ],
           [
             'HSI feasibility (geology)',
             'If Firefly acquisition fails within the pilot window, customer\u2019s choice of full refund or rescheduling.',
           ],
           [
-            'MSI-only pilots',
-            '0.60\u00d7 multiplier applied to standard pricing. No HSI vs. MSI comparison deliverable included. Available where HSI acquisition is not feasible or at customer preference.',
+            'MSI Analytics vs Hyperspectral',
+            'Separate pilot products with separate price lists (see monitoring tables above). Customer selects one product per engagement unless both are contracted distinctly.',
           ],
           [
             'Ground truth',

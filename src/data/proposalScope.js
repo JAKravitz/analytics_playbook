@@ -2,10 +2,10 @@
  * Pilot proposal scope content; V2 pricing model.
  *
  * V2 model:
- *   Two pilot offerings: Hyperspectral + MSI (default) and MSI-only (0.60×).
- *   Tiers (Basic / Standard / Enterprise) differ by AOI size and Firefly task
- *   count within each offering. Scope is split by sensor tier: MSI outputs on
- *   every pilot; HSI outputs on Hyperspectral + MSI pilots only. Enterprise
+ *   Two separate monitoring pilot products: MSI Analytics and Hyperspectral.
+ *   Tiers (Basic / Standard / Enterprise) differ by AOI size; Hyperspectral
+ *   tiers also differ by Firefly task count. Each engagement delivers one
+ *   product's scope unless both are contracted as distinct pilots. Enterprise
  *   adds multi-date analysis and ground truth on monitoring pilots.
  *
  * Exports:
@@ -79,6 +79,7 @@ export const ENTERPRISE_EXTRAS = [
 export const MONITORING_SCOPE = {
   Agriculture: {
     inDevelopment: [
+      'Causal attribution (ranked stress drivers)',
       'Soil NPK / SOC estimation',
       'Irrigation optimization',
       'Yield / biomass / production forecasting',
@@ -87,33 +88,45 @@ export const MONITORING_SCOPE = {
       'Crop type classification across the AOI',
       'Phenology stage and growth trajectory summary',
       'Spectral health indices: NDRE, NDVI narrowband, PRI (photosynthetic efficiency), CIgreen, PSRI (senescence marker)',
+      'PROSAIL canopy inversion (MSI-tier): Leaf Area Index (LAI), fAPAR, canopy chlorophyll (cab), canopy water (Cw)',
       'Anomaly detection against MSI seasonal baseline; flagged management units for review',
       'Summary report and GeoTIFF map outputs',
     ],
     hsi: [
-      'PROSAIL canopy radiative-transfer inversion: Leaf Area Index (LAI), canopy chlorophyll (cab), canopy water content (cw), carotenoids (Car)',
+      'PROSAIL canopy radiative-transfer inversion: LAI, fAPAR, canopy chlorophyll (cab), canopy water (Cw), carotenoids (Car), dry matter (Cm), anthocyanins (Anth) where signal supports',
       'Physiology and health score per management unit derived from HSI biophysical retrievals',
-      'Stress attribution hypotheses where the attribution pipeline is available; flags credible cause hypotheses (water deficit, chlorophyll loss, senescence) without replacing field diagnosis',
+      'Generalized stress and severity classification from HSI retrievals (not ranked cause attribution)',
       'Validation report (~15 pages) and interpretation deck',
     ],
-    hsiNote: 'Disease attribution and yield forecasting are not within pilot scope; see "in development" above.',
+    hsiNote: 'Ranked cause attribution, disease-specific diagnosis, and yield forecasting are not within pilot scope; see "in development" above.',
   },
   Forestry: {
-    inDevelopment: [],
+    inDevelopment: [
+      'Causal attribution (disturbance drivers: mechanical vs biological)',
+      'MRV-grade carbon stock suitable for credit issuance',
+      'Operational degradation trend alerting (BFAST-style, FIRMS corroboration)',
+      'ARR counterfactual baselines at inventory grade',
+    ],
     msi: [
       'Forest cover and type classification',
       'Land Use / Land Cover (LULC) mapping',
       'Deforestation and degradation detection',
       'Change detection over available archive',
+      'PROSAIL canopy inversion (MSI-tier): LAI, fAPAR, canopy chlorophyll (cab), canopy water (Cw)',
+      'Anomaly detection against MSI seasonal forest baseline; flagged stands or polygons for review',
       'Summary report and GeoTIFF map outputs',
     ],
     hsi: [
-      'PROSAIL inversion: LAI, canopy chlorophyll (cab), canopy water content (cw), forest physiology and health score',
+      'PROSAIL canopy radiative-transfer inversion: LAI, fAPAR, canopy chlorophyll (cab), canopy water (Cw), carotenoids (Car), dry matter (Cm)',
+      'Canopy physiology and health score per stand or management unit from HSI biophysical retrievals',
+      'Generalized stress and degradation severity from HSI retrievals (not ranked cause attribution)',
       'Above-ground biomass (AGB) proxy estimation',
-      'Carbon stock proxy estimation',
+      'Carbon stock proxy estimation (exploration grade — not credit issuance)',
       'SAR cloud gap fill where Sentinel-1 data is available over the AOI',
       'Validation report (~15 pages) and interpretation deck',
     ],
+    hsiNote:
+      'Ranked disturbance-driver attribution and registry-grade carbon are not within pilot scope; see "in development" above.',
   },
   Water: {
     inDevelopment: [
@@ -191,7 +204,7 @@ export const DEFENSE_SCOPE = {
 
 /* ─── Helpers ─────────────────────────────────────────────────────────────── */
 
-/** Compute HSI+MSI and MSI-only prices with regional multiplier. */
+/** Compute Hyperspectral and MSI Analytics product prices with regional multiplier. */
 export function calcTierPrices(vertical, multiplier = 1.0) {
   const isGeo = vertical === 'Geology';
   const tiers = isGeo

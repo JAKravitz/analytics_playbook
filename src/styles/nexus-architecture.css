@@ -1,0 +1,502 @@
+/* Project NEXUS architecture slide — ported from project_nexus_slide_2.html */
+
+/* Scroll container — used when the graphic needs horizontal scroll */
+.nexus-arch-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 28px 0 32px;
+  border: 1px solid var(--gray2);
+  border-radius: 10px;
+  background: #05070d;
+}
+
+/* Scale-to-fit container — shrinks the 1600×900 slide to fill available width */
+.nexus-arch-fit {
+  --na-scale: 0.57;
+  width: 100%;
+  /* reserve exactly the scaled height so layout doesn't collapse */
+  height: calc(900px * var(--na-scale));
+  overflow: hidden;
+  position: relative;
+  margin: 28px 0 8px;
+  border: 1px solid var(--gray2);
+  border-radius: 10px;
+  background: #05070d;
+}
+
+.nexus-arch-fit .nexus-arch-slide {
+  transform: scale(var(--na-scale));
+  transform-origin: top left;
+  /* At scale 0.57 the 1600px slide fills ≈ 912px — matches most content columns */
+  width: 1600px;
+  height: 900px;
+  min-height: unset;
+  border-radius: 0;
+}
+
+.nexus-arch-slide {
+  width: 1600px;
+  height: 900px;
+  min-height: 900px;
+  background: #0a0e1a;
+  padding: 32px 48px 28px;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  color: #e6edf7;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+
+.nexus-arch-slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.nexus-arch-content {
+  position: relative;
+  z-index: 1;
+}
+
+.nexus-arch-title-row {
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.nexus-arch-eyebrow {
+  font-size: 13px;
+  letter-spacing: 5px;
+  color: #7a8499;
+  font-weight: 500;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.nexus-arch-title-main {
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  margin: 0;
+  font-family: 'Barlow Condensed', Impact, 'Arial Black', sans-serif;
+}
+
+.nexus-arch-title-main .accent {
+  color: #3fc1ff;
+}
+
+.nexus-arch-pill-row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 22px 0 28px;
+}
+
+.nexus-arch-pill {
+  padding: 8px 18px;
+  border: 1.5px solid;
+  border-radius: 24px;
+  font-size: 12px;
+  letter-spacing: 2.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.nexus-arch-pill.multimodal { color: #3fc1ff; border-color: #3fc1ff; }
+.nexus-arch-pill.hsi-pill {
+  color: #c792ea;
+  border-color: #c792ea;
+  background: rgba(199, 146, 234, 0.18);
+  box-shadow: 0 0 16px rgba(199, 146, 234, 0.35);
+  transform: scale(1.05);
+}
+.nexus-arch-pill.bio { color: #3fc1ff; border-color: #3fc1ff; }
+.nexus-arch-pill.semantic { color: #1ad1b5; border-color: #1ad1b5; }
+.nexus-arch-pill.intel { color: #5be584; border-color: #5be584; }
+
+.nexus-arch-stage-grid {
+  display: grid;
+  grid-template-columns: 220px 40px 260px 40px 340px 40px 260px 40px 280px;
+  align-items: start;
+  gap: 0;
+}
+
+.nexus-arch-stage-label {
+  font-size: 16px;
+  letter-spacing: 4px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 22px;
+  text-transform: uppercase;
+}
+
+.nexus-arch-stage-title {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 18px;
+  letter-spacing: 0.5px;
+}
+
+.nexus-arch-stage-title.color-blue { color: #3fc1ff; }
+.nexus-arch-stage-title.color-teal { color: #1ad1b5; }
+.nexus-arch-stage-title.color-purple { color: #c792ea; }
+.nexus-arch-stage-title.color-green { color: #5be584; }
+
+.nexus-arch-stage-sub {
+  font-size: 12px;
+  color: #7a8499;
+  text-align: center;
+  margin-top: 6px;
+  letter-spacing: 0.5px;
+}
+
+.nexus-arch-arrow-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 180px;
+}
+
+.nexus-arch-arrow {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 12px 0 12px 18px;
+  border-color: transparent transparent transparent #3fc1ff;
+  opacity: 0.75;
+}
+
+.nexus-arch-constellation {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  padding-top: 10px;
+}
+
+.nexus-arch-sat-row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+}
+
+.nexus-arch-sat {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.nexus-arch-sat-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-top: 3px;
+}
+
+.nexus-arch-sat.msi { border-color: #3fc1ff; color: #3fc1ff; }
+.nexus-arch-sat.hsi {
+  border-color: #c792ea;
+  color: #c792ea;
+  box-shadow: 0 0 0 3px rgba(199, 146, 234, 0.25), 0 0 20px rgba(199, 146, 234, 0.3);
+  transform: scale(1.08);
+}
+.nexus-arch-sat.sar { border-color: #f2a623; color: #f2a623; }
+.nexus-arch-sat.vhr { border-color: #1ad1b5; color: #1ad1b5; }
+.nexus-arch-sat.clim { border-color: #e24b4a; color: #e24b4a; }
+
+.nexus-arch-sat-icon {
+  width: 24px;
+  height: 18px;
+}
+
+.nexus-arch-hsi-banner {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border: 2px solid #5be584;
+  background: rgba(91, 229, 132, 0.15);
+  color: #5be584;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: 6px;
+  text-align: center;
+  box-shadow: 0 0 16px rgba(91, 229, 132, 0.3);
+}
+
+.nexus-arch-cubes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 18px;
+  padding-top: 10px;
+}
+
+.nexus-arch-cube-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.nexus-arch-cube-svg {
+  width: 110px;
+  height: 80px;
+}
+
+.nexus-arch-cube-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #9aa4b8;
+  text-align: center;
+}
+
+.nexus-arch-cube-label.purple { color: #c792ea; }
+.nexus-arch-cube-label.blue { color: #3fc1ff; }
+.nexus-arch-cube-label.amber { color: #f2a623; }
+.nexus-arch-cube-label.cyan { color: #1ad1b5; }
+
+.nexus-arch-cube-label.cyan .upgrade-tag {
+  display: inline-block;
+  margin-left: 5px;
+  font-size: 9px;
+  color: #0a0e1a;
+  background: #1ad1b5;
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.8px;
+  vertical-align: middle;
+}
+
+.nexus-arch-core-card {
+  border: 1.5px solid rgba(199, 146, 234, 0.45);
+  border-radius: 10px;
+  padding: 16px 14px 14px;
+  background: rgba(199, 146, 234, 0.05);
+}
+
+.nexus-arch-core-header {
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  color: #c792ea;
+  text-align: center;
+  margin-bottom: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.nexus-arch-engine {
+  padding: 11px 14px;
+  border-left: 3px solid;
+  margin-bottom: 9px;
+  border-radius: 0 4px 4px 0;
+}
+
+.nexus-arch-engine:last-child {
+  margin-bottom: 0;
+}
+
+.nexus-arch-engine-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.nexus-arch-engine-sub {
+  font-size: 11px;
+  color: #9aa4b8;
+  margin-top: 2px;
+  letter-spacing: 0.3px;
+}
+
+.nexus-arch-engine.trait { border-color: #c792ea; background: rgba(199, 146, 234, 0.07); }
+.nexus-arch-engine.trait .nexus-arch-engine-title { color: #c792ea; }
+.nexus-arch-engine.context { border-color: #3fc1ff; background: rgba(63, 193, 255, 0.07); }
+.nexus-arch-engine.context .nexus-arch-engine-title { color: #3fc1ff; }
+.nexus-arch-engine.event { border-color: #f2a623; background: rgba(242, 166, 35, 0.07); }
+.nexus-arch-engine.event .nexus-arch-engine-title { color: #f2a623; }
+.nexus-arch-engine.attribution { border-color: #1ad1b5; background: rgba(26, 209, 181, 0.07); }
+.nexus-arch-engine.attribution .nexus-arch-engine-title { color: #1ad1b5; }
+
+.nexus-arch-semantic-card {
+  border: 1.5px solid rgba(26, 209, 181, 0.4);
+  border-radius: 10px;
+  padding: 14px 12px;
+  background: rgba(26, 209, 181, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.nexus-arch-semantic-header {
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  color: #1ad1b5;
+  text-align: center;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.nexus-arch-semantic-tag {
+  padding: 8px 12px;
+  border: 1px solid rgba(26, 209, 181, 0.35);
+  border-radius: 5px;
+  background: rgba(26, 209, 181, 0.08);
+}
+
+.nexus-arch-semantic-tag-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1ad1b5;
+  letter-spacing: 0.6px;
+}
+
+.nexus-arch-semantic-tag-desc {
+  font-size: 11px;
+  color: #9aa4b8;
+  margin-top: 2px;
+  letter-spacing: 0.2px;
+}
+
+.nexus-arch-verticals-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.nexus-arch-vertical-tile {
+  aspect-ratio: 1.15;
+  border: 1.5px solid;
+  border-radius: 8px;
+  padding: 10px 12px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.nexus-arch-vert-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  align-self: flex-start;
+  padding: 3px 7px;
+  border-radius: 3px;
+  position: relative;
+  z-index: 1;
+}
+
+.nexus-arch-vert-name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+}
+
+.nexus-arch-vertical-tile.agri {
+  border-color: rgba(91, 229, 132, 0.55);
+  background: linear-gradient(135deg, rgba(91, 229, 132, 0.22), rgba(91, 229, 132, 0.05));
+  color: #5be584;
+}
+.nexus-arch-vertical-tile.agri .nexus-arch-vert-tag { background: rgba(242, 166, 35, 0.3); color: #f2a623; }
+
+.nexus-arch-vertical-tile.forestry {
+  border-color: rgba(91, 229, 132, 0.55);
+  background: linear-gradient(135deg, rgba(91, 229, 132, 0.28), rgba(91, 229, 132, 0.06));
+  color: #5be584;
+}
+.nexus-arch-vertical-tile.forestry .nexus-arch-vert-tag { background: rgba(91, 229, 132, 0.3); color: #5be584; }
+
+.nexus-arch-vertical-tile.water {
+  border-color: rgba(63, 193, 255, 0.55);
+  background: linear-gradient(135deg, rgba(226, 75, 74, 0.22), rgba(63, 193, 255, 0.22));
+  color: #3fc1ff;
+}
+.nexus-arch-vertical-tile.water .nexus-arch-vert-tag { background: rgba(226, 75, 74, 0.3); color: #e24b4a; }
+
+.nexus-arch-vertical-tile.geology {
+  border-color: rgba(242, 166, 35, 0.55);
+  background: linear-gradient(135deg, rgba(242, 166, 35, 0.22), rgba(199, 146, 234, 0.15));
+  color: #f2a623;
+}
+.nexus-arch-vertical-tile.geology .nexus-arch-vert-tag { background: rgba(242, 166, 35, 0.3); color: #f2a623; }
+
+.nexus-arch-stripe-bg {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0,
+    transparent 8px,
+    rgba(255, 255, 255, 0.06) 8px,
+    rgba(255, 255, 255, 0.06) 9px
+  );
+  pointer-events: none;
+}
+
+.nexus-arch-bracket-row {
+  display: grid;
+  grid-template-columns: 220px 40px 260px 40px 340px 40px 260px 40px 280px;
+  margin-top: 28px;
+}
+
+.nexus-arch-bracket {
+  position: relative;
+  height: 50px;
+}
+
+.nexus-arch-bracket-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 16px;
+  border: 2px solid;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+}
+
+.nexus-arch-bracket-label {
+  position: absolute;
+  top: 22px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 6px;
+  font-weight: 700;
+  font-family: 'Barlow Condensed', Impact, 'Arial Black', sans-serif;
+}
+
+.nexus-arch-bracket.nexus .nexus-arch-bracket-line { border-color: #c792ea; }
+.nexus-arch-bracket.nexus .nexus-arch-bracket-label { color: #c792ea; }
+.nexus-arch-bracket.aurora .nexus-arch-bracket-line { border-color: #5be584; }
+.nexus-arch-bracket.aurora .nexus-arch-bracket-label { color: #5be584; }
+
+.nexus-arch-caption {
+  margin-top: 14px;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--gray);
+  max-width: 900px;
+}

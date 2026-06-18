@@ -79,7 +79,7 @@ const INTEGRATIONS = [
   {
     title: 'NEXUS Cube',
     accent: 'var(--green)',
-    body: 'MicroClim layers are fused into the hyper-local multimodal cube as environmental context — the record that explains whether spectral stress is weather-driven or something else.',
+    body: 'MicroClim layers are fused into the hyper-local multimodal cube alongside PROSAIL- and HydroLight-derived optical layers — environmental context that explains whether spectral stress is weather-driven or something else.',
   },
   {
     title: 'Attribution Engine',

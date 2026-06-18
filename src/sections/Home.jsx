@@ -3,8 +3,17 @@ import Callout from '../components/Callout.jsx';
 import Card from '../components/Card.jsx';
 import { seed } from '../data/seed.js';
 
+const PRODUCTS = [
+  { id: 'nexus', name: 'NEXUS', sub: 'North star · Intelligence cube', color: 'var(--green)' },
+  { id: 'agriculture', name: 'TRACE', sub: 'Agriculture · Crop traits', color: '#4ADE80' },
+  { id: 'geology', name: 'SCOPE', sub: 'Geology · Mineral prospecting', color: '#F5A623' },
+  { id: 'water', name: 'SWIPE', sub: 'Water · Quality & HAB', color: '#4FC3F7' },
+  { id: 'sse', name: 'LENS', sub: 'Semantic search · GeoFM', color: '#A78BFA' },
+  { id: 'microclim', name: 'MICROCLIM', sub: 'Weather · Downscaled climate', color: 'var(--cyan)' },
+];
+
 export default function Home({ navigate }) {
-  const { home, verticals } = seed;
+  const { home } = seed;
 
   return (
     <>
@@ -29,17 +38,17 @@ export default function Home({ navigate }) {
         ))}
       </div>
 
-      <div className="eyebrow">The five verticals</div>
+      <div className="eyebrow">Products</div>
       <div className="card-grid grid-3" style={{ marginBottom: 36 }}>
-        {Object.entries(verticals).map(([id, v]) => (
+        {PRODUCTS.map((p) => (
           <button
-            key={id}
-            onClick={() => navigate(id)}
+            key={p.id}
+            onClick={() => navigate(p.id)}
             className="card"
             style={{
               textAlign: 'left',
               cursor: 'pointer',
-              borderTop: `2px solid ${v.color}`,
+              borderTop: `2px solid ${p.color}`,
               background: 'var(--bg2)',
               color: 'inherit',
               borderRight: '1px solid var(--gray2)',
@@ -48,13 +57,13 @@ export default function Home({ navigate }) {
               padding: 24,
             }}
           >
-            <div className="eyebrow" style={{ color: v.color, marginBottom: 8 }}>
-              Vertical
+            <div className="eyebrow" style={{ color: p.color, marginBottom: 8 }}>
+              Product
             </div>
-            <h3 style={{ margin: '0 0 6px', color: 'var(--white)' }}>{v.name}</h3>
-            <p className="muted" style={{ fontSize: 12, margin: '0 0 12px' }}>{v.sub}</p>
-            <span className="row" style={{ color: v.color, fontSize: 12 }}>
-              Open vertical <ArrowRight size={12} />
+            <h3 style={{ margin: '0 0 6px', color: 'var(--white)' }}>{p.name}</h3>
+            <p className="muted" style={{ fontSize: 12, margin: '0 0 12px' }}>{p.sub}</p>
+            <span className="row" style={{ color: p.color, fontSize: 12 }}>
+              Open product <ArrowRight size={12} />
             </span>
           </button>
         ))}

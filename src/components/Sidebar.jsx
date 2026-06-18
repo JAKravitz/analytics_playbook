@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, PanelLeftClose, PanelLeft } from 'lucide-react';
 
 const groups = [
   {
@@ -7,29 +7,22 @@ const groups = [
     items: [
       { id: 'home', label: 'Home' },
       { id: 'layers', label: 'API Catalog' },
-      { id: 'nexus', label: 'NEXUS' },
-      { id: 'sse', label: 'Semantic Search Engine' },
-      { id: 'microclim', label: 'MicroClim' },
     ],
   },
   {
-    label: 'Verticals',
+    label: 'Products',
     items: [
-      { id: 'agriculture', label: 'Agriculture' },
-      { id: 'forestry', label: 'Forestry' },
-      { id: 'water', label: 'Water' },
-      { id: 'geology', label: 'Geology' },
-      { id: 'mining', label: 'Mining Lifecycle' },
-      { id: 'defense', label: 'Defense & Intelligence' },
+      { id: 'agriculture', label: 'TRACE · Agriculture' },
+      { id: 'geology', label: 'SCOPE · Geology' },
+      { id: 'water', label: 'SWIPE · Water' },
+      { id: 'sse', label: 'LENS · Semantic search' },
+      { id: 'microclim', label: 'MICROCLIM-WEATHER' },
+      { id: 'nexus', label: 'NEXUS - NORTH STAR' },
     ],
   },
   {
     label: 'Commercial',
     items: [
-      { id: 'claims', label: 'What We Can Claim' },
-      { id: 'messaging', label: 'Messaging & Objections' },
-      { id: 'revenue-models', label: 'Product revenue model' },
-      { id: 'pilot-revenue-model', label: 'Pilot revenue model' },
       { id: 'ground-research', label: 'Ground research & validation' },
       { id: 'commercial-requests', label: 'Analytics ticket request' },
       { id: 'quoting', label: 'Pilot Proposal Generator' },
@@ -38,7 +31,14 @@ const groups = [
   },
 ];
 
-export default function Sidebar({ section, onSelect, theme, onToggleTheme }) {
+export default function Sidebar({
+  section,
+  onSelect,
+  theme,
+  onToggleTheme,
+  collapsed,
+  onToggleCollapse,
+}) {
   const [query, setQuery] = useState('');
 
   const filtered = useMemo(() => {
@@ -55,40 +55,60 @@ export default function Sidebar({ section, onSelect, theme, onToggleTheme }) {
   }, [query]);
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-logo">
-        <div className="brand">Pixxel</div>
-        <div className="sub">Analytics Playbook · v2</div>
+    <aside className={`sidebar${collapsed ? ' is-collapsed' : ''}`}>
+      <div className="sidebar-header">
+        <div className="sidebar-logo">
+          <div className="brand">{collapsed ? 'P' : 'Pixxel'}</div>
+          {!collapsed && <div className="sub">Analytics Playbook · v3</div>}
+        </div>
+        <button
+          type="button"
+          className="sidebar-collapse-toggle"
+          onClick={onToggleCollapse}
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          {collapsed ? <PanelLeft size={16} /> : <PanelLeftClose size={16} />}
+        </button>
       </div>
-      <div className="sidebar-search">
-        <input
-          type="text"
-          placeholder="Search sections…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-      </div>
-      <nav className="sidebar-nav">
-        {filtered.map((g) => (
-          <div key={g.label}>
-            <div className="nav-group-label">{g.label}</div>
-            {g.items.map((it) => (
-              <button
-                key={it.id}
-                className={`nav-item${section === it.id ? ' active' : ''}`}
-                onClick={() => onSelect(it.id)}
-              >
-                {it.label}
-              </button>
-            ))}
+      {!collapsed && (
+        <>
+          <div className="sidebar-search">
+            <input
+              type="text"
+              placeholder="Search sections…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
           </div>
-        ))}
-      </nav>
+          <nav className="sidebar-nav">
+            {filtered.map((g) => (
+              <div key={g.label}>
+                <div className="nav-group-label">{g.label}</div>
+                {g.items.map((it) => (
+                  <button
+                    key={it.id}
+                    className={`nav-item${section === it.id ? ' active' : ''}`}
+                    onClick={() => onSelect(it.id)}
+                  >
+                    {it.label}
+                  </button>
+                ))}
+              </div>
+            ))}
+          </nav>
+        </>
+      )}
       <div className="sidebar-footer">
-        <span className="meta">Internal · v0.1</span>
-        <button className="theme-toggle" onClick={onToggleTheme}>
+        {!collapsed && <span className="meta">Internal · v0.1</span>}
+        <button
+          className="theme-toggle"
+          onClick={onToggleTheme}
+          aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+          title={theme === 'light' ? 'Dark mode' : 'Light mode'}
+        >
           {theme === 'light' ? <Moon size={11} /> : <Sun size={11} />}
-          {theme === 'light' ? 'Dark' : 'Light'}
+          {!collapsed && (theme === 'light' ? 'Dark' : 'Light')}
         </button>
       </div>
     </aside>

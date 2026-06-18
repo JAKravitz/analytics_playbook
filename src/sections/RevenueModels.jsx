@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import Callout from '../components/Callout.jsx';
+import { regionalPricingTiers } from '../data/regionalPricingTiers.js';
 import { bodyText, mutedText, TYPE } from '../styles/typography.js';
 
 // ─── Shared atoms ─────────────────────────────────────────────────────────────
@@ -524,8 +525,8 @@ export default function RevenueModels() {
       </PrinciplePill>
       <PrinciplePill>
         <strong>Subscription governs refresh cadence and platform access.</strong> All tiers receive
-        embedding refresh and Core API delivery. Starter is API-only (no Zephyr, no SSE); Professional
-        and above add Project Zephyr and semantic search.
+        embedding refresh and Core API delivery. Starter is API-only (no Zenith, no SSE); Professional
+        and above add Project Zenith and semantic search.
       </PrinciplePill>
       <PrinciplePill>
         <strong>Starter = integrate into your stack.</strong> Monitoring API outputs, webhooks, and
@@ -545,7 +546,7 @@ export default function RevenueModels() {
       <SectionBlurb>
         Covers: full historical MSI archive retrieval, multimodal data cube construction, trait and
         structure baseline derivation, climate variable downscaling, DINOv3 embedding space
-        initialization, and API credentials plus delivery endpoints. Project Zephyr provisioning is
+        initialization, and API credentials plus delivery endpoints. Project Zenith provisioning is
         included from Professional tier upward (optional paid add-on for Starter by exception).
       </SectionBlurb>
       <DataTable
@@ -563,7 +564,7 @@ export default function RevenueModels() {
         'Pilot fee credited toward onboarding fee on conversion within 60 days',
         'AOI expansions post-onboarding trigger pro-rata onboarding fee for incremental area',
         'HSI cube initialization included in onboarding fee if HSI tier selected at onboarding',
-        'Starter onboarding provisions API access only — Zephyr not included unless upgraded at signup',
+        'Starter onboarding provisions API access only — Zenith not included unless upgraded at signup',
       ]} />
 
       <SectionDivider label="Subscription tiers" />
@@ -577,7 +578,7 @@ export default function RevenueModels() {
           ['Monitored AOIs / boundaries', '50', '500', 'Unlimited', 'Unlimited'],
           ['API integrations', '1', '3', '10', 'Unlimited'],
           ['Dashboard seats', '0 (API only)', '5', '20', 'Custom'],
-          ['Platform access', 'API only — Core APIs, delivery, webhooks; no Zephyr, no SSE', 'Zephyr + SSE semantic query', 'Zephyr + SSE + priority processing', 'Zephyr + SSE + dedicated instance + custom fine-tuning'],
+          ['Platform access', 'API only — Core APIs, delivery, webhooks; no Zenith, no SSE', 'Zenith + SSE semantic query', 'Zenith + SSE + priority processing', 'Zenith + SSE + dedicated instance + custom fine-tuning'],
           ['Support', 'Standard SLA', 'Priority SLA', 'Dedicated SLA', 'Named account manager'],
           ['Contract', 'Annual', 'Annual', 'Annual', 'Multi-year'],
           ['Billing', 'Annual / Quarterly (+10%)', 'Annual / Quarterly (+10%)', 'Annual / Quarterly (+10%)', 'Negotiated'],
@@ -665,7 +666,7 @@ export default function RevenueModels() {
         compact
       />
       <TableFootnote style={{ margin: '6px 0 0' }}>
-        Starter is API-only: no Project Zephyr and no SSE. Threshold + webhook alerting (+10% add-on) is
+        Starter is API-only: no Project Zenith and no SSE. Threshold + webhook alerting (+10% add-on) is
         the primary notification path at Starter. Upgrade to Professional for dashboard and semantic query.
       </TableFootnote>
 
@@ -747,7 +748,7 @@ export default function RevenueModels() {
         the contract specifies otherwise. Tier is determined by the{' '}
         <strong>purchaser&apos;s headquarters jurisdiction</strong> using the{' '}
         <a
-          href="https://datatopics.worldbank.org/world-development-indicators/the-world-by-income-and-region.html"
+          href={regionalPricingTiers.worldBankUrl}
           target="_blank"
           rel="noreferrer noopener"
           style={{ color: 'var(--cyan)' }}
@@ -756,20 +757,8 @@ export default function RevenueModels() {
         </a>{' '}
         (current fiscal year mapping). Multiply the applicable list fee by the multiplier below.
       </SectionBlurb>
-      <DataTable
-        headers={['Region tier', 'Classification (HQ jurisdiction)', 'Multiplier']}
-        rows={[
-          ['Tier 1', 'High-income economy', '1.0×'],
-          ['Tier 2', 'Upper-middle-income economy', '0.75×'],
-          ['Tier 3', 'Lower-middle-income & low-income economies', '0.50×'],
-          ['Institutional', 'International NGOs · UN agencies · multilateral development banks (MDBs)', '0.60×'],
-        ]}
-        compact
-      />
-      <TableFootnote>
-        NGO / Multilateral eligibility requires documented status; stacking with bundling discounts and
-        early-partner rebates is subject to commercial review.
-      </TableFootnote>
+      <DataTable headers={regionalPricingTiers.headers} rows={regionalPricingTiers.rows} compact />
+      <TableFootnote>{regionalPricingTiers.footnote}</TableFootnote>
 
       <SectionDivider label="Illustrative deal examples" />
       <DealExample
@@ -802,7 +791,7 @@ export default function RevenueModels() {
         accent="#4FC3F7"
         lines={[
           { label: 'Onboarding', value: '$500 (300 km² reservoir network)' },
-          { label: 'Tier', value: 'Professional (Zephyr + SSE — not Starter API-only)' },
+          { label: 'Tier', value: 'Professional (Zenith + SSE — not Starter API-only)' },
           { label: 'Add-ons', value: 'HAB Monitor (+25%), Alerting (+10%)' },
           { label: 'Monthly', value: '$4,500 × 1.35 = $6,075' },
           { label: 'Year 1', value: '$72,900 + $500 onboarding = $73,400' },
@@ -814,7 +803,7 @@ export default function RevenueModels() {
         accent="var(--cyan)"
         lines={[
           { label: 'Onboarding', value: '$500 (200 km² study AOI)' },
-          { label: 'Tier', value: 'Starter (API only — no Zephyr)' },
+          { label: 'Tier', value: 'Starter (API only — no Zenith)' },
           { label: 'Add-ons', value: 'Alerting (+10%)' },
           { label: 'Monthly', value: '$1,500 × 1.10 = $1,650' },
           { label: 'Year 1', value: '$19,800 + $500 onboarding = $20,300' },
@@ -875,7 +864,7 @@ export default function RevenueModels() {
           ['HSI tasks', 'Defined number of Firefly acquisitions included in campaign fee'],
           ['Deliverables', 'Mineral classification map, alteration halo map, REE proxy layer, prospectivity score, confidence layer, evidence package per HSI task'],
           ['SSE access', 'Semantic / spectral similarity search over campaign AOI archive for campaign duration'],
-          ['Aurora / Zephyr', 'Project Zephyr dashboard access for campaign duration'],
+          ['Aurora / Zenith', 'Project Zenith dashboard access for campaign duration'],
           ['Renewal', 'Renewable at end of period — same AOI or new target'],
         ]}
         compact
@@ -956,7 +945,7 @@ export default function RevenueModels() {
       <DataTable
         headers={['Component', 'Description']}
         rows={[
-          ['Site onboarding', 'Full historical archive cube build, embedding space initialization, Aurora / Zephyr provisioning'],
+          ['Site onboarding', 'Full historical archive cube build, embedding space initialization, Aurora / Zenith provisioning'],
           ['Monitoring subscription', 'Embedding refresh cadence (continuous or weekly), Core API outputs, SSE access'],
           ['HSI task allocation', 'Defined Firefly tasking cadence per contract period'],
           ['Add-on modules', 'Mobility & Terrain add-on priced per contract'],
@@ -993,8 +982,8 @@ export default function RevenueModels() {
             {[
               'Onboarding fee calibration — fees are indicative. Validate against actual compute cost of full-archive cube build per km² before finalizing.',
               'Geology campaign fee calibration — validate against typical junior miner vs. major exploration budget benchmarks.',
-              'Starter API-only exceptions — define policy for paid Zephyr viewer add-on vs. required upgrade to Professional.',
-              'Quarterly / Annual refresh as downgrade — formalize whether self-serve downgrade in Aurora or a contract variation (Professional+ only for Zephyr self-serve).',
+              'Starter API-only exceptions — define policy for paid Zenith viewer add-on vs. required upgrade to Professional.',
+              'Quarterly / Annual refresh as downgrade — formalize whether self-serve downgrade in Aurora or a contract variation (Professional+ only for Zenith self-serve).',
               'Geology renewal discount — 15% renewal assumes same AOI. Define policy for partial AOI renewal.',
               'Defense pricing framework — develop in coordination with defense sales team. Requires ITAR compliance review before publishing or sharing.',
               'DaaS pricing — raw and processed NEXUS cube as a separate revenue stream. Not in this model; needs its own commercial track.',
