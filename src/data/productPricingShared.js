@@ -28,6 +28,9 @@ export const AURORA_CADENCES = ['Quarterly refresh', 'Monthly refresh', 'Weekly 
 export const AURORA_LEDE =
   'Self-service in Aurora with the complete product capability set on every plan. Choose refresh cadence (quarterly, monthly, or weekly) and AOI band; all tiers include the same layers, dashboards, copilot, workflows, and supplementary dataset slots.';
 
+export const AURORA_SUBSCRIPTION_PRICING_TBD =
+  'TBD — based on Aurora subscription and token pricing.';
+
 /** Default IaaS volume bands (flat tier is configured separately per product). */
 export const IAAS_VOLUME_BANDS = [
   '400–1,200 km²',

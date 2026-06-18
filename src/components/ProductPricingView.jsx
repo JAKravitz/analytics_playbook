@@ -1,5 +1,5 @@
 import Callout from './Callout.jsx';
-import { PRICING_DISCLAIMER } from '../data/productPricingShared.js';
+import { AURORA_SUBSCRIPTION_PRICING_TBD, PRICING_DISCLAIMER } from '../data/productPricingShared.js';
 
 function DataTable({ headers, rows }) {
   return (
@@ -257,17 +257,11 @@ function AuroraSection({ aurora, accent }) {
       </div>
 
       <div className="eyebrow" style={{ marginTop: 24, marginBottom: 8 }}>
-        Subscription pricing
+        Subscription &amp; token pricing
       </div>
-      {aurora.cadenceNote && (
-        <p style={{ fontSize: 13, color: 'var(--gray)', margin: '0 0 10px', lineHeight: 1.55, maxWidth: 820 }}>
-          {aurora.cadenceNote}
-        </p>
-      )}
-      <DataTable
-        headers={aurora.subscriptionPricing.headers}
-        rows={aurora.subscriptionPricing.rows}
-      />
+      <p style={{ fontSize: 14, color: 'var(--gray)', margin: 0, lineHeight: 1.6, maxWidth: 820 }}>
+        {AURORA_SUBSCRIPTION_PRICING_TBD}
+      </p>
     </section>
   );
 }

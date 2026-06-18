@@ -1,91 +1,34 @@
 /**
- * Pilot proposal scope content; V2 pricing model.
+ * Pilot proposal scope content; V3 product alignment.
  *
- * V2 model:
- *   Two separate monitoring pilot products: MSI Analytics and Hyperspectral.
- *   Tiers (Basic / Standard / Enterprise) differ by AOI size; Hyperspectral
- *   tiers also differ by Firefly task count. Each engagement delivers one
- *   product's scope unless both are contracted as distinct pilots. Enterprise
- *   adds multi-date analysis and ground truth on monitoring pilots.
+ * V3 model:
+ *   Product pilots: TRACE (agriculture), SWIPE (water), SCOPE (geology).
+ *   Monitoring pilots (TRACE, SWIPE): separate MSI Analytics and Hyperspectral products.
+ *   Tiers (Basic / Standard / Enterprise) differ by AOI size; Hyperspectral tiers also differ
+ *   by Firefly task count. SCOPE geology pilots are HSI-only (Standard / Enterprise).
+ *
+ * Contract-based defense, mining, forestry, and multi-vertical programs are out of scope here —
+ * see Bespoke projects & pipeline in the playbook.
  *
  * Exports:
- *   MONITORING_SCOPE  ; Agriculture, Forestry, Water
- *   GEOLOGY_SCOPE     ; Standard + Enterprise (HSI-only)
- *   MINING_SCOPE      ; indicative scope, project-based
- *   DEFENSE_SCOPE     ; indicative scope, project-based
- *   ENTERPRISE_EXTRAS ; additions applied to all monitoring Enterprise tiers
- *   TIER_PARAMS       ; pricing, AOI bands, HSI tasks, duration per tier
+ *   MONITORING_SCOPE  — TRACE · Agriculture, SWIPE · Water
+ *   GEOLOGY_SCOPE     — SCOPE · Geology
  */
 
-/* ─── Tier parameters ─────────────────────────────────────────────────────── */
-
-/**
- * TIER_PARAMS['monitoring'][tier] drives the pricing table and scope header.
- * Prices at Tier 1 (1.0×); multiply by regional factor at render time.
- */
-export const TIER_PARAMS = {
-  monitoring: {
-    Basic: {
-      price: 2000,
-      msiFactor: 0.6,
-      aoi: 'Up to 200 km²',
-      hsiTasks: '1 Firefly acquisition',
-      duration: '4-6 weeks',
-    },
-    Standard: {
-      price: 8000,
-      msiFactor: 0.6,
-      aoi: '200-1,000 km²',
-      hsiTasks: '2 Firefly acquisitions',
-      duration: '6-10 weeks',
-    },
-    Enterprise: {
-      price: 20000,
-      msiFactor: 0.6,
-      aoi: '1,000+ km²; scope by discussion',
-      hsiTasks: '3+ Firefly acquisitions; by discussion',
-      duration: '10-16 weeks; by discussion',
-      pricePrefix: 'From ',
-      projectBased: true,
-    },
-  },
-  geology: {
-    Standard: {
-      price: 8000,
-      aoi: 'Up to 1,000 km²',
-      hsiTasks: '1 Firefly acquisition',
-      duration: '6-10 weeks',
-    },
-    Enterprise: {
-      price: 20000,
-      aoi: '1,000+ km²; scope by discussion',
-      hsiTasks: '2+ Firefly acquisitions; by discussion',
-      duration: '10-16 weeks; by discussion',
-      pricePrefix: 'From ',
-      projectBased: true,
-    },
-  },
-};
-
-/* ─── Enterprise extras (applied to all monitoring verticals at Enterprise) ── */
-
-export const ENTERPRISE_EXTRAS = [
-  'Multi-date analysis across the available archive; trend and seasonality characterisation across the AOI',
-  'Ground truth comparison where customer-provided reference data is available (field LAI, canopy chlorophyll, cover, dry-matter measurements); retrieval accuracy report per matched variable',
-];
-
-/* ─── Monitoring scope — per vertical ────────────────────────────────────── */
+/* ─── Monitoring scope — TRACE & SWIPE ───────────────────────────────────── */
 
 export const MONITORING_SCOPE = {
   Agriculture: {
+    product: 'TRACE',
     inDevelopment: [
       'Causal attribution (ranked stress drivers)',
       'Soil NPK / SOC estimation',
       'Irrigation optimization',
       'Yield / biomass / production forecasting',
+      'NEXUS cube persistence and LENS semantic search',
     ],
     msi: [
-      'Crop type classification across the AOI',
+      'Farm boundary delineation and crop type classification',
       'Phenology stage and growth trajectory summary',
       'Spectral health indices: NDRE, NDVI narrowband, PRI (photosynthetic efficiency), CIgreen, PSRI (senescence marker)',
       'PROSAIL canopy inversion (MSI-tier): Leaf Area Index (LAI), fAPAR, canopy chlorophyll (cab), canopy water (Cw)',
@@ -98,40 +41,15 @@ export const MONITORING_SCOPE = {
       'Generalized stress and severity classification from HSI retrievals (not ranked cause attribution)',
       'Validation report (~15 pages) and interpretation deck',
     ],
-    hsiNote: 'Ranked cause attribution, disease-specific diagnosis, and yield forecasting are not within pilot scope; see "in development" above.',
-  },
-  Forestry: {
-    inDevelopment: [
-      'Causal attribution (disturbance drivers: mechanical vs biological)',
-      'MRV-grade carbon stock suitable for credit issuance',
-      'Operational degradation trend alerting (BFAST-style, FIRMS corroboration)',
-      'ARR counterfactual baselines at inventory grade',
-    ],
-    msi: [
-      'Forest cover and type classification',
-      'Land Use / Land Cover (LULC) mapping',
-      'Deforestation and degradation detection',
-      'Change detection over available archive',
-      'PROSAIL canopy inversion (MSI-tier): LAI, fAPAR, canopy chlorophyll (cab), canopy water (Cw)',
-      'Anomaly detection against MSI seasonal forest baseline; flagged stands or polygons for review',
-      'Summary report and GeoTIFF map outputs',
-    ],
-    hsi: [
-      'PROSAIL canopy radiative-transfer inversion: LAI, fAPAR, canopy chlorophyll (cab), canopy water (Cw), carotenoids (Car), dry matter (Cm)',
-      'Canopy physiology and health score per stand or management unit from HSI biophysical retrievals',
-      'Generalized stress and degradation severity from HSI retrievals (not ranked cause attribution)',
-      'Above-ground biomass (AGB) proxy estimation',
-      'Carbon stock proxy estimation (exploration grade — not credit issuance)',
-      'SAR cloud gap fill where Sentinel-1 data is available over the AOI',
-      'Validation report (~15 pages) and interpretation deck',
-    ],
     hsiNote:
-      'Ranked disturbance-driver attribution and registry-grade carbon are not within pilot scope; see "in development" above.',
+      'Ranked cause attribution, disease-specific diagnosis, and yield forecasting are not within pilot scope; see "in development" above.',
   },
   Water: {
+    product: 'SWIPE',
     inDevelopment: [
       'Benthic habitat mapping (coral, algae, sand, depth)',
       'HAB forecasting',
+      'Full NEXUS waterbody cube and semantic query',
     ],
     msi: [
       'Water body classification and surface mask',
@@ -142,21 +60,23 @@ export const MONITORING_SCOPE = {
     ],
     hsi: [
       'Phycocyanin retrieval; cyanobacteria-specific, 620 nm absorption feature',
-      'Full Inherent Optical Property (IOP) retrieval and absorption parameter decomposition',
-      'Non-optical proxy estimates: dissolved oxygen (DO), pH, ammonia',
+      'Full Inherent Optical Property (IOP) retrieval and absorption parameter decomposition (HydroLight emulator)',
+      'Non-optical proxy estimates: dissolved oxygen (DO), pH, ammonia where validated',
       'HAB classification and bloom extent where signal supports it',
       'Validation report (~15 pages) and interpretation deck',
     ],
   },
 };
 
-/* ─── Geology scope ─────────────────────────────────────────────────────── */
+/* ─── Geology scope — SCOPE ─────────────────────────────────────────────── */
 
 export const GEOLOGY_SCOPE = {
+  product: 'SCOPE',
   inDevelopment: [
     'Full REE spectral library expansion',
     'Lithium / pegmatite detection',
     'SWIR mineral suite (requires Honeybee; not yet operational)',
+    'NEXUS belt-scale cube persistence and semantic search',
   ],
   standard: [
     '1 Firefly VNIR acquisition over exploration target AOI',
@@ -174,56 +94,3 @@ export const GEOLOGY_SCOPE = {
     'Drill target summary and full exploration interpretation report',
   ],
 };
-
-/* ─── Project-based scope ─────────────────────────────────────────────────── */
-
-export const MINING_SCOPE = {
-  items: [
-    'Site boundary definition and change detection over available MSI archive',
-    'Tailings storage facility extent, condition, and surface change mapping',
-    'Evaporation pond area and condition monitoring',
-    'Waste dump characterization and surface change assessment',
-    'HSI-derived surface mineralogy and oxidation front detection (subject to Firefly acquisition feasibility)',
-    'AMD proxy indicators from HSI where available',
-    'Site condition report and ESG-relevant summary',
-  ],
-  pricing: 'By discussion. Minimum engagement ~$8,000 aligned to Standard monitoring tier; final fee determined by AOI, scope, and HSI task requirements.',
-};
-
-export const DEFENSE_SCOPE = {
-  items: [
-    'Site boundary definition and AI change detection over available archive',
-    'Facility footprint mapping and object detection',
-    'Site anomaly assessment against established baseline',
-    'Terrain characterization for mobility assessment where applicable',
-    'Material characterization from HSI where available and permitted',
-    'Site intelligence report',
-  ],
-  pricing: 'By discussion. Minimum engagement $5,000 reflecting security review overhead. Final fee determined by AOI, classification requirements, HSI task requirements, and deliverable scope.',
-};
-
-/* ─── Helpers ─────────────────────────────────────────────────────────────── */
-
-/** Compute Hyperspectral and MSI Analytics product prices with regional multiplier. */
-export function calcTierPrices(vertical, multiplier = 1.0) {
-  const isGeo = vertical === 'Geology';
-  const tiers = isGeo
-    ? TIER_PARAMS.geology
-    : TIER_PARAMS.monitoring;
-
-  return Object.entries(tiers).map(([tier, p]) => {
-    const base = p.price;
-    const hsiMsi = Math.round(base * multiplier);
-    const msiOnly = isGeo ? null : Math.round(base * p.msiFactor * multiplier);
-    return {
-      tier,
-      hsiMsi,
-      msiOnly,
-      prefix: p.pricePrefix || '',
-      aoi: p.aoi,
-      hsiTasks: p.hsiTasks,
-      duration: p.duration,
-      projectBased: !!p.projectBased,
-    };
-  });
-}

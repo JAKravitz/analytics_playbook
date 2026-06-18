@@ -40,25 +40,38 @@ import {
 import {
   MONITORING_SCOPE,
   GEOLOGY_SCOPE,
-  MINING_SCOPE,
-  DEFENSE_SCOPE,
-  ENTERPRISE_EXTRAS,
-  TIER_PARAMS,
-  calcTierPrices,
 } from '../data/proposalScope.js';
+import {
+  getScaledIaasPricing,
+  getScaledAuroraPricing,
+  getAoiBandOptions,
+  pricingMultipliers,
+  sensorMultiplier,
+  SENSOR_TIER_OPTIONS,
+  EARLY_ADOPTER_OPTIONS,
+  computeProposalFeeMultiplier,
+  quoteSelectedAoiBand,
+  formatProposalUsd,
+  scaleFeeString,
+} from '../data/pilotProposalPricing.js';
 
-/* ─── Verticals & regional pricing ────────────────────────────────────────── */
+/* ─── Product pilots (v3) ─────────────────────────────────────────────────── */
 
-const VERTICALS = [
-  'Agriculture',
-  'Forestry',
-  'Water',
-  'Geology',
-  'Mining Lifecycle',
-  'Defense & Intelligence',
+const PILOT_PRODUCTS = [
+  { key: 'Agriculture', label: 'TRACE · Agriculture', short: 'TRACE' },
+  { key: 'Water', label: 'SWIPE · Water', short: 'SWIPE' },
+  { key: 'Geology', label: 'SCOPE · Geology', short: 'SCOPE' },
 ];
 
-const MONITORING_VERTICALS = new Set(['Agriculture', 'Forestry', 'Water']);
+function pilotProductLabel(key) {
+  return PILOT_PRODUCTS.find((p) => p.key === key)?.label ?? key;
+}
+
+function pilotProductShort(key) {
+  return PILOT_PRODUCTS.find((p) => p.key === key)?.short ?? key;
+}
+
+const MONITORING_VERTICALS = new Set(['Agriculture', 'Water']);
 
 const REGIONAL_MULTIPLIERS = [
   { id: 't1', label: 'Tier 1, High Income (1.0×)', value: 1.0 },
@@ -71,53 +84,38 @@ const REGIONAL_MULTIPLIERS = [
 
 const VERTICAL_FRAMING = {
   Agriculture: {
+    product: 'TRACE',
     problem:
       'visibility into crop physiology, health, and stress drivers that broadband multispectral indices alone cannot resolve',
-    why: "Pixxel's Firefly satellites produce 400-band VNIR hyperspectral imagery at 5 m spatial resolution, enabling direct retrieval of biophysical variables (leaf area, canopy chlorophyll, canopy water) rather than broadband index proxies. Customers choose either an MSI Analytics pilot or a Hyperspectral pilot as separate products.",
+    why:
+      "TRACE is Pixxel's agriculture API-layer product: Firefly delivers 400-band VNIR hyperspectral imagery at 5 m resolution for PROSAIL trait retrieval and narrowband indices beyond MSI proxies. Pilots are offered as separate MSI Analytics or Hyperspectral engagements.",
     method:
       'PROSAIL canopy radiative-transfer inversion and spectral health indices benchmarked against the multispectral historical baseline',
   },
-  Forestry: {
-    problem:
-      'reliable, repeatable measurement of forest cover, biomass, and degradation across landscapes that field inventories cannot cost-effectively cover',
-    why: "Pixxel's Firefly hyperspectral imagery delivers canopy biophysical retrievals (LAI, chlorophyll, canopy water) and biomass proxies; MSI Analytics pilots cover archive-based cover and change without Firefly tasking. These are separate pilot products.",
-    method:
-      'PROSAIL canopy inversion, SAR cloud-gap fill where available, and change detection across the available archive',
-  },
   Water: {
+    product: 'SWIPE',
     problem:
       'water-body classification and quantitative water-quality monitoring with the specificity needed to distinguish bloom types, constituent drivers, and dynamics not visible to broadband sensors',
-    why: "Firefly hyperspectral imagery enables phycocyanin (cyanobacteria-specific) retrieval, full inherent optical property retrieval, and absorption parameters. MSI Analytics pilots deliver archive-based water-quality monitoring without Firefly tasking. These are separate pilot products.",
+    why:
+      "SWIPE applies HydroLight inversion physics through a validated emulator: Firefly HSI enables phycocyanin retrieval, full IOP decomposition, and constituent retrievals. MSI Analytics pilots deliver archive-based monitoring without Firefly tasking. These are separate pilot products.",
     method:
-      'Full IOP retrieval, HSI-derived water-quality variables, and MSI time-series benchmarking',
+      'HydroLight IOP retrieval, HSI-derived water-quality variables, and MSI time-series benchmarking',
   },
   Geology: {
+    product: 'SCOPE',
     problem:
       'spatially-resolved mineralogical mapping for exploration targeting and alteration-halo characterisation where field mapping alone is slow and incomplete',
-    why: "Firefly's 400-band VNIR signature unlocks SAM and MTNF mineral classification, iron-oxide and hydrothermal alteration detection, and continuum-removal analysis for REE proxies across the target AOI",
+    why:
+      "SCOPE is Pixxel's geology campaign product: Firefly's 400-band VNIR signature supports SAM and MTNF mineral classification, iron-oxide and hydrothermal alteration detection, and continuum-removal analysis for REE proxies across the target AOI",
     method:
       'NDVI vegetation masking, SAM + MTNF classification, and continuum-removal analysis for alteration mapping',
-  },
-  'Mining Lifecycle': {
-    problem:
-      'consistent, defensible monitoring of operating sites (tailings, ponds, waste dumps) for safety, ESG, and regulatory reporting',
-    why: 'Pixxel pairs MSI archive change detection with Firefly hyperspectral acquisitions over targeted features for surface mineralogy, oxidation-front detection, and AMD proxy indicators',
-    method:
-      'Change detection across the MSI archive, supported where feasible by Firefly hyperspectral acquisitions for surface mineralogy',
-  },
-  'Defense & Intelligence': {
-    problem:
-      'persistent monitoring of sites of interest with change detection, object localization, and material characterisation where permitted',
-    why: 'Firefly hyperspectral imagery extends MSI change detection with material-discriminating spectral signatures, subject to security and export-control review',
-    method:
-      'Change detection across the available archive, supported by HSI-derived material characterisation where permitted',
   },
 };
 
 /* ─── About Pixxel (§2 boilerplate) ──────────────────────────────────────── */
 
 const ABOUT_PIXXEL =
-  "Pixxel Space Technologies is a US and India-based space technology company building a commercial hyperspectral Earth observation constellation. Pixxel's Firefly satellites produce 400-band hyperspectral imagery at 5 m spatial resolution across the VNIR range. The analytics team combines radiative transfer inversion, spectral unmixing, and machine learning to produce geospatial evidence for agriculture, forestry, water, geology, mining, and defense.";
+  "Pixxel Space Technologies is a US and India-based space technology company building a commercial hyperspectral Earth observation constellation. Pixxel's Firefly satellites produce 400-band hyperspectral imagery at 5 m spatial resolution across the VNIR range. The analytics team combines radiative transfer inversion, spectral unmixing, and machine learning to produce geospatial evidence through product lines including TRACE (agriculture), SWIPE (water), SCOPE (geology), and LENS (semantic search), with NEXUS as the north-star intelligence architecture.";
 
 const ABOUT_PIXXEL_SPECS = [
   '5 m spatial resolution on operational Firefly constellation',
@@ -274,9 +272,6 @@ const POC_GOAL_CRITERIA = [
 
 /* ─── Helpers ─────────────────────────────────────────────────────────────── */
 
-const fmtUsd = (n, prefix = '') =>
-  typeof n === 'number' ? `${prefix}$${n.toLocaleString('en-US')}` : 'By discussion';
-
 function todayIsoDate() {
   const d = new Date();
   const y = d.getFullYear();
@@ -310,47 +305,66 @@ function customerSlug(name) {
 
 /* ─── Deterministic executive-summary generator ───────────────────────────── */
 
+function regionalMultiplierForForm(form) {
+  return REGIONAL_MULTIPLIERS.find((m) => m.id === form.regionalTierId)?.value ?? 1.0;
+}
+
+function getFormQuote(form, regionalMultiplier, sensorTierId = form.sensorTierId) {
+  return quoteSelectedAoiBand({
+    vertical: form.vertical,
+    bandIndex: Number(form.aoiBandIndex) || 0,
+    km2: form.aoiKm2,
+    regionalMultiplier,
+    sensorTierId,
+    earlyAdopterId: form.earlyAdopterId,
+  });
+}
+
 function buildExecutiveSummary(form) {
   const { customerName, vertical, aoiDescription } = form;
   const c = customerName?.trim() || '[Customer]';
   const framing = VERTICAL_FRAMING[vertical];
   if (!framing) return '';
 
+  const product = pilotProductShort(vertical);
   const aoiPhrase = aoiDescription?.trim()
     ? aoiDescription.trim()
     : `their ${vertical.toLowerCase()} area of interest`;
 
   const isMonitoring = MONITORING_VERTICALS.has(vertical);
-  const isProjectBased = vertical === 'Mining Lifecycle' || vertical === 'Defense & Intelligence';
+  const quote = getFormQuote(form, regionalMultiplierForForm(form));
 
   const para1 =
     `${c} is evaluating whether satellite hyperspectral analytics can deliver ${framing.problem} across ${aoiPhrase}. ` +
-    `${framing.why}. ` +
-    `This proposal is scoped to test that hypothesis on a representative slice of ${c}'s operations before any commitment to ongoing monitoring.`;
+    `${framing.why} ` +
+    `This ${product} pilot proposal is scoped to test that hypothesis on a representative slice of ${c}'s operations before any commitment to ongoing Aurora monitoring.`;
+
+  const feeClause =
+    quote?.effectiveAmount != null
+      ? ` Selected AOI band (${quote.bandLabel}): indicative IaaS engagement fee ${formatProposalUsd(quote.effectiveAmount)}${
+          quote.km2IsEstimate ? ' (km² midpoint estimate)' : ''
+        }.`
+      : '';
 
   let para2;
   if (isMonitoring) {
     para2 =
       `Pixxel will apply ${framing.method} across the AOI. ` +
-      `The proposal defines two separate pilot products: MSI Analytics and Hyperspectral. Each product is available at three engagement levels (Basic, Standard, and Enterprise) that differ in AOI scale; Hyperspectral engagements also differ in Firefly acquisition count. ` +
-      `The customer selects one product for this engagement unless both are contracted as distinct pilots. ` +
-      `Deliverables include GeoTIFF rasters, written reporting matched to the product selected, and a joint interpretation review with ${c}.`;
-  } else if (vertical === 'Geology') {
-    para2 =
-      `Pixxel will apply ${framing.method} across the exploration target AOI via Firefly VNIR hyperspectral acquisition. ` +
-      `This proposal presents two engagement levels (Standard and Enterprise) covering the full geology analytics stack, differing in AOI scale and acquisition count. ` +
-      `Outputs are delivered as GeoTIFF rasters, an exploration report, and an interpretation deck reviewed jointly with ${c}'s geology team.`;
+      `This proposal is structured as an Insights-as-a-Service (IaaS) engagement — the same pricing framework as the ${product} product page: engagement fee by AOI size band, with sensor-tier multiplier (MSI archive 0.80×, Firefly VNIR 1.0×).` +
+      feeClause +
+      ` Deliverables include GeoTIFF rasters, written reporting, and a joint interpretation review with ${c}.`;
   } else {
     para2 =
-      `Pixxel will scope this engagement following an initial scoping call. ` +
-      `Indicative scope and a minimum fee are outlined in Section 4 of this proposal. ` +
-      `Final pricing, AOI, and deliverable definition are confirmed at contract signing.`;
+      `Pixxel will apply ${framing.method} across the exploration target AOI via Firefly VNIR hyperspectral acquisition. ` +
+      `This SCOPE IaaS engagement uses the campaign pricing framework on the product page — flat fee under the threshold band, then base plus declining $/km² for larger AOIs.` +
+      feeClause +
+      ` Firefly acquisition is required; there is no MSI-only option. Outputs are delivered as GeoTIFF rasters, an exploration report, and an interpretation deck reviewed jointly with ${c}'s geology team.`;
   }
 
   const para3 =
-    `On completion, ${c} will be in a position to assess analytical quality, decision relevance, and operational deployability of Pixxel's analytics ` +
-    `against existing monitoring approaches, and to decide whether to convert into a production subscription engagement. ` +
-    `The pilot fee is creditable in full toward the onboarding fee of a subscription signed within 60 days of pilot completion, providing a low-friction path from validation to ongoing operation.`;
+    `On completion, ${c} will be in a position to assess analytical quality, decision relevance, and operational deployability of Pixxel's ${product} outputs ` +
+    `against existing monitoring approaches, and to decide whether to convert into Aurora subscription or a follow-on Insights-as-a-Service engagement. ` +
+    `The pilot fee credits in full toward Aurora subscription if signed within 60 days of pilot completion, providing a low-friction path from validation to ongoing operation.`;
 
   return [para1, para2, para3].join('\n\n');
 }
@@ -649,91 +663,123 @@ async function buildAgriculturePlatformSection() {
   return blocks;
 }
 
-/* ─── Tier-comparison table (pricing section) ─────────────────────────────── */
+/* ─── IaaS / Aurora pricing tables (DOCX) ───────────────────────────────── */
 
-function tierComparisonTable(tierRows, multiplier, isGeo = false) {
-  // tierRows: array from calcTierPrices
-  const colW = [2400, ...tierRows.map(() => Math.floor(7560 / tierRows.length))];
+function twoColumnPricingTable(headers, rows) {
+  const colW = [3600, 6360];
   const total = colW.reduce((s, w) => s + w, 0);
-
-  const headerRow = new TableRow({
-    tableHeader: true,
-    children: [
-      cell('', { header: true, fill: COLOR_TABLE_HEADER_BG, widthDxa: colW[0] }),
-      ...tierRows.map((t, i) =>
-        cell(t.tier, {
-          header: true,
-          fill: COLOR_TABLE_HEADER_BG,
-          widthDxa: colW[i + 1],
-          alignment: AlignmentType.CENTER,
-        })
-      ),
-    ],
-  });
-
-  const dataRows = [
-    {
-      label: 'AOI',
-      vals: tierRows.map((t) => t.aoi),
-      alt: false,
-    },
-    {
-      label: 'Firefly tasks',
-      vals: tierRows.map((t) => t.hsiTasks),
-      alt: true,
-    },
-    {
-      label: 'Duration',
-      vals: tierRows.map((t) => t.duration),
-      alt: false,
-    },
-    {
-      label: isGeo ? 'Price (USD)' : 'Hyperspectral pilot',
-      vals: tierRows.map((t) => fmtUsd(t.hsiMsi, t.prefix)),
-      alt: true,
-      bold: true,
-    },
-    ...(!isGeo
-      ? [
-          {
-            label: 'MSI Analytics pilot',
-            vals: tierRows.map((t) => fmtUsd(t.msiOnly, t.prefix)),
-            alt: false,
-            italics: true,
-          },
-        ]
-      : []),
-  ];
-
   return new Table({
     columnWidths: colW,
     width: { size: total, type: WidthType.DXA },
     borders: thinBorder(),
     rows: [
-      headerRow,
-      ...dataRows.map(
-        (row) =>
-          new TableRow({
-            children: [
-              cell(row.label, {
-                bold: true,
-                widthDxa: colW[0],
-                fill: row.alt ? COLOR_TABLE_ALT_BG : undefined,
-              }),
-              ...row.vals.map((v, i) =>
-                cell(v, {
-                  widthDxa: colW[i + 1],
-                  fill: row.alt ? COLOR_TABLE_ALT_BG : undefined,
-                  bold: !!row.bold,
-                  italics: !!row.italics,
-                  alignment: AlignmentType.CENTER,
-                })
-              ),
-            ],
+      new TableRow({
+        tableHeader: true,
+        children: headers.map((h, i) =>
+          cell(h, {
+            header: true,
+            fill: COLOR_TABLE_HEADER_BG,
+            widthDxa: colW[i],
+            alignment: i === 0 ? AlignmentType.LEFT : AlignmentType.CENTER,
           })
+        ),
+      }),
+      ...rows.map((row, ri) =>
+        new TableRow({
+          children: row.map((v, i) =>
+            cell(v, {
+              widthDxa: colW[i],
+              fill: ri % 2 === 1 ? COLOR_TABLE_ALT_BG : undefined,
+              bold: i === 1,
+              alignment: i === 0 ? AlignmentType.LEFT : AlignmentType.CENTER,
+            })
+          ),
+        })
       ),
     ],
   });
+}
+
+function buildPricingSection(form, regionalMultiplier, sensorTierId, earlyAdopterId) {
+  const iaas = getScaledIaasPricing(form.vertical, regionalMultiplier);
+  const aurora = getScaledAuroraPricing(form.vertical, regionalMultiplier);
+  const isMonitoring = MONITORING_VERTICALS.has(form.vertical);
+  const feeMult = computeProposalFeeMultiplier({
+    vertical: form.vertical,
+    regionalMultiplier,
+    sensorTierId,
+    earlyAdopterId,
+  });
+  const onTopMult = feeMult.sensor * feeMult.earlyAdopter;
+  const sensorLabel =
+    SENSOR_TIER_OPTIONS.find((o) => o.id === sensorTierId)?.label ??
+    'Hyperspectral · Firefly VNIR (1.0×)';
+  const earlyAdopterLabel =
+    EARLY_ADOPTER_OPTIONS.find((o) => o.id === earlyAdopterId)?.label ?? 'None';
+
+  const scaleRows = (rows) =>
+    onTopMult === 1
+      ? rows
+      : rows.map((row) => [
+          row[0],
+          ...row.slice(1).map((cell) => scaleFeeString(cell, onTopMult)),
+        ]);
+
+  const iaasRows = scaleRows(iaas.rows);
+  const auroraRows = scaleRows(aurora.rows);
+  const quote = getFormQuote(form, regionalMultiplier, sensorTierId);
+
+  const blocks = [
+    h3('Insights as a Service (IaaS)'),
+    para(iaas.lede, { after: 120 }),
+  ];
+
+  if (quote?.effectiveAmount != null) {
+    blocks.push(
+      para(
+        `Indicative IaaS engagement fee for this proposal: ${formatProposalUsd(quote.effectiveAmount)} ` +
+          `(AOI band: ${quote.bandLabel}` +
+          (quote.km2Used != null ? `; ${quote.km2Used.toLocaleString('en-US')} km²` : '') +
+          (quote.km2IsEstimate ? ', midpoint estimate' : '') +
+          `; Tier 1 list ${quote.listFeeText}).`,
+        { after: 120 }
+      )
+    );
+  }
+
+  blocks.push(twoColumnPricingTable(iaas.headers, iaasRows));
+
+  if (iaas.formulaNote) {
+    blocks.push(para(iaas.formulaNote, { italics: true, after: 120, color: COLOR_SLATE }));
+  }
+
+  if (isMonitoring) {
+    blocks.push(
+      para(`Sensor tier for this proposal: ${sensorLabel}.`, { after: 120 }),
+      twoColumnPricingTable(pricingMultipliers.sensor.headers, pricingMultipliers.sensor.rows)
+    );
+  }
+
+  blocks.push(
+    para(`Early adopter program: ${earlyAdopterLabel}.`, { after: 120 }),
+    para(
+      `Multipliers applied to list fees in this proposal: regional ${feeMult.regional.toFixed(2)}×` +
+        (isMonitoring ? ` × sensor ${feeMult.sensor.toFixed(2)}×` : '') +
+        ` × early adopter ${feeMult.earlyAdopter.toFixed(2)}×` +
+        ` = ${feeMult.combined.toFixed(2)}× effective on Tier 1 list.`,
+      { italics: true, after: 160 }
+    ),
+    h3('Aurora subscription (post-pilot path)'),
+    para(aurora.lede, { after: 120 }),
+    twoColumnPricingTable(aurora.headers, auroraRows),
+    para(aurora.cadenceNote, { italics: true, after: 120, color: COLOR_SLATE }),
+    para(
+      'Aurora conversion credit: 100% of the IaaS engagement fee credited toward Aurora subscription if signed within 60 days of IaaS completion.',
+      { italics: true, after: 200 }
+    )
+  );
+
+  return blocks;
 }
 
 /* ─── §4 builders per vertical type ───────────────────────────────────────── */
@@ -760,26 +806,6 @@ const MODELLING_APPROACH = {
       'Carotenoids (Car): photoprotection status and secondary stress indicator',
     ],
   },
-  Forestry: {
-    intro:
-      'Forest monitoring combines PROSAIL canopy inversion with structural analysis and multitemporal change detection. MSI provides broad-area coverage and historical baseline; Firefly HSI resolves biophysical variables that drive carbon stock, degradation, and restoration assessments.',
-    indicesLabel: 'Spectral indices (MSI and HSI)',
-    indices: [
-      'NDVI and red-edge variants: canopy density, cover fraction, and seasonal trajectory',
-      'Normalized Burn Ratio (NBR): burn severity and post-fire canopy status',
-      'Chlorophyll Red-Edge Index: forest vigour and stress onset',
-      'BFAST trend components: gradual degradation and seasonal-decomposition change detection',
-    ],
-    prosailLabel: 'PROSAIL biophysical retrievals (HSI)',
-    prosail: [
-      'Leaf chlorophyll content (Cab): forest vigour and canopy health indicator',
-      'Leaf area index (LAI): canopy density; primary input to fAGB proxy estimation',
-      'Canopy water content (Cw): drought stress and live fuel moisture state',
-      'Dry matter / lignin content (Cm): structural integrity and fuel load indicator',
-      'Forest aboveground biomass proxy (fAGB): derived via LAI-allometric relationships',
-      'Forest cover fraction: canopy closure metric relevant to MRV and restoration reporting',
-    ],
-  },
   Water: {
     intro:
       'Water quality analytics use HydroLight inversion to solve for inherent optical properties (IOPs) from water-leaving reflectance, rather than empirical band-ratio indices alone. The approach transfers across water bodies without site-specific recalibration.',
@@ -801,12 +827,17 @@ const MODELLING_APPROACH = {
   },
 };
 
-function buildMonitoringTechnical(form, tierRows) {
+function buildMonitoringTechnical(form, regionalMultiplier, sensorTierId) {
   const vScope = MONITORING_SCOPE[form.vertical];
-  if (!vScope) return [];
+  const iaas = getScaledIaasPricing(form.vertical, regionalMultiplier);
+  if (!vScope || !iaas) return [];
 
   const aoiDesc = form.aoiDescription?.trim();
+  const quote = getFormQuote(form, regionalMultiplier, sensorTierId);
   const modelling = MODELLING_APPROACH[form.vertical];
+  const sensorMult = sensorMultiplier(sensorTierId);
+  const sensorLabel =
+    SENSOR_TIER_OPTIONS.find((o) => o.id === sensorTierId)?.label ?? 'Firefly VNIR (1.0×)';
 
   return [
     h1('4. Technical and Commercial Proposal'),
@@ -817,14 +848,26 @@ function buildMonitoringTechnical(form, tierRows) {
     h2('4.2 Area of Interest'),
     para(
       aoiDesc
-        ? `AOI: ${aoiDesc}. Exact AOI boundaries are confirmed with the customer at contract signing. For Hyperspectral pilots, Firefly acquisitions are scheduled subject to operational feasibility within the pilot window; if an acquisition is not feasible, the HSI task cost is credited toward the subscription onboarding fee and scope may convert to MSI Analytics product layers or rescheduling by agreement.`
-        : `The AOI is confirmed with the customer at contract signing. For Hyperspectral pilots, Firefly acquisitions are scheduled subject to operational feasibility within the pilot window; if an acquisition is not feasible, the HSI task cost is credited toward the subscription onboarding fee and scope may convert to MSI Analytics product layers or rescheduling by agreement.`,
-      { after: 160 }
+        ? `AOI: ${aoiDesc}. Exact AOI boundaries are confirmed with the customer at contract signing. For Hyperspectral pilots, Firefly acquisitions are scheduled subject to operational feasibility within the pilot window; if an acquisition is not feasible, the HSI task cost is credited toward Aurora conversion and scope may convert to MSI Analytics product layers or rescheduling by agreement.`
+        : `The AOI is confirmed with the customer at contract signing. For Hyperspectral pilots, Firefly acquisitions are scheduled subject to operational feasibility within the pilot window; if an acquisition is not feasible, the HSI task cost is credited toward Aurora conversion and scope may convert to MSI Analytics product layers or rescheduling by agreement.`,
+      { after: quote?.effectiveAmount != null ? 80 : 160 }
     ),
+    ...(quote?.effectiveAmount != null
+      ? [
+          para(
+            `IaaS pricing band: ${quote.bandLabel}` +
+              (quote.km2Used != null
+                ? ` (${quote.km2Used.toLocaleString('en-US')} km²${quote.km2IsEstimate ? ', midpoint estimate' : ''})`
+                : '') +
+              `. Indicative engagement fee: ${formatProposalUsd(quote.effectiveAmount)}.`,
+            { after: 160 }
+          ),
+        ]
+      : []),
 
     h2('4.3 Pilot Scope'),
     para(
-      `Three engagement levels (Basic, Standard, Enterprise) are offered for each pilot product in the pricing table. MSI Analytics and Hyperspectral are separate products: each engagement delivers one product's scope unless both are contracted as distinct pilots. Within a chosen product, tiers differ by AOI size; Hyperspectral tiers also differ by Firefly task count. Scope is locked at contract signing against currently available pipeline layers. Capabilities not yet operational are not in scope.`,
+      `${vScope.product} Insights-as-a-Service engagement. Pricing follows the ${vScope.product} product page: AOI size band sets the list engagement fee; sensor tier (${sensorLabel}) applies a ${sensorMult}× multiplier. Scope is locked at contract signing against operationally available layers only.`,
       { italics: true, after: 160 }
     ),
 
@@ -837,21 +880,24 @@ function buildMonitoringTechnical(form, tierRows) {
         ]
       : []),
 
-    h3('MSI Analytics pilot — product scope'),
+    h3('IaaS deliverables (product page)'),
+    ...iaas.deliverables.map((item) => bullet(item)),
+
+    h3('MSI archive retrieval depth'),
     ...vScope.msi.map((item) => bullet(item)),
 
-    h3('Hyperspectral pilot — product scope'),
+    h3('Firefly VNIR retrieval depth'),
     ...vScope.hsi.map((item) => bullet(item)),
-    para(
-      'MSI Analytics and Hyperspectral are separate pilot products. This engagement delivers the scope for the product selected in section 4.7 unless both products are contracted as distinct pilots.',
-      { italics: true, after: 120, before: 80 }
-    ),
     ...(vScope.hsiNote
       ? [para(vScope.hsiNote, { italics: true, after: 120, color: COLOR_SLATE })]
       : []),
 
-    h3('Enterprise additions'),
-    ...ENTERPRISE_EXTRAS.map((item) => bullet(item)),
+    ...(iaas.notIncluded?.length
+      ? [
+          h3('Not included in IaaS'),
+          ...iaas.notIncluded.map((item) => bullet(item)),
+        ]
+      : []),
 
     ...(modelling
       ? [
@@ -880,30 +926,20 @@ function buildMonitoringTechnical(form, tierRows) {
         : 'Estimated start: to be confirmed at contract signing'
     ),
     para(
-      'Duration per engagement level is shown in the pricing table in section 4.7. Timelines are indicative and subject to Firefly acquisition scheduling and customer data availability.',
+      'Typical engagement window is 4–16 weeks depending on AOI size, Firefly tasking, and customer review cycles. Timelines are indicative and subject to acquisition scheduling.',
       { italics: true, after: 240 }
     ),
 
     h2('4.7 Pricing'),
-    tierComparisonTable(tierRows, 1, false),
-    para(
-      'Prices shown with regional pricing adjustment applied. MSI Analytics and Hyperspectral are separate products with separate price lists; the customer selects one product per engagement unless both are contracted distinctly.',
-      { italics: true, before: 160, after: 120 }
-    ),
-    para(
-      'Conversion credit: Full pilot fee credited toward the onboarding fee on subscription conversion within 60 days of pilot completion.',
-      { italics: true, after: 120 }
-    ),
-    para(
-      'Enterprise price shown is minimum. Final fee, AOI, and acquisition count are confirmed in scoping.',
-      { italics: true, after: 200 }
-    ),
+    ...buildPricingSection(form, regionalMultiplier, sensorTierId, form.earlyAdopterId),
   ];
 }
 
-function buildGeologyTechnical(form, tierRows) {
+function buildGeologyTechnical(form, regionalMultiplier) {
   const geo = GEOLOGY_SCOPE;
+  const iaas = getScaledIaasPricing(form.vertical, regionalMultiplier);
   const aoiDesc = form.aoiDescription?.trim();
+  const quote = getFormQuote(form, regionalMultiplier, 'hsi');
 
   return [
     h1('4. Technical and Commercial Proposal'),
@@ -916,8 +952,20 @@ function buildGeologyTechnical(form, tierRows) {
       aoiDesc
         ? `Target AOI: ${aoiDesc}. Exact boundaries and exploration target coordinates are confirmed at contract signing.`
         : 'Exploration target AOI confirmed at contract signing.',
-      { after: 160 }
+      { after: quote?.effectiveAmount != null ? 80 : 160 }
     ),
+    ...(quote?.effectiveAmount != null
+      ? [
+          para(
+            `IaaS pricing band: ${quote.bandLabel}` +
+              (quote.km2Used != null
+                ? ` (${quote.km2Used.toLocaleString('en-US')} km²${quote.km2IsEstimate ? ', midpoint estimate' : ''})`
+                : '') +
+              `. Indicative campaign fee: ${formatProposalUsd(quote.effectiveAmount)}.`,
+            { after: 160 }
+          ),
+        ]
+      : []),
     para(
         "If Firefly acquisition is not feasible within the pilot window, the customer\u2019s choice of full refund or rescheduling applies.",
       { italics: true, after: 120 }
@@ -925,7 +973,7 @@ function buildGeologyTechnical(form, tierRows) {
 
     h2('4.3 Pilot Scope'),
     para(
-      'Two engagement levels are offered for geology pilots. Firefly VNIR hyperspectral acquisition is required for all geology deliverables; there is no MSI-only option. Tiers differ in AOI scale and acquisition count.',
+      'SCOPE IaaS campaign engagement. Firefly VNIR hyperspectral acquisition is required — MSI-only is not offered. Pricing follows the SCOPE product page (flat fee under threshold, then base + declining $/km²). Larger campaigns may add acquisitions and targets by discussion.',
       { italics: true, after: 160 }
     ),
 
@@ -934,10 +982,10 @@ function buildGeologyTechnical(form, tierRows) {
       { italics: true, after: 120, before: 200, color: COLOR_SLATE }
     ),
 
-    h3('Standard Scope'),
-    ...geo.standard.map((item) => bullet(item)),
+    h3('Campaign deliverables'),
+    ...(iaas?.deliverables ?? geo.standard).map((item) => bullet(item)),
 
-    h3('Enterprise additions (Standard plus)'),
+    h3('Expanded campaigns (by discussion)'),
     ...geo.enterpriseAdditions.map((item) => bullet(item)),
 
     h2('4.4 Deliverables'),
@@ -952,78 +1000,12 @@ function buildGeologyTechnical(form, tierRows) {
         : 'Estimated start: to be confirmed at contract signing'
     ),
     para(
-      'Duration per engagement level is shown in the pricing table in section 4.6. Timelines are indicative and subject to Firefly acquisition scheduling.',
+      'Typical campaign window is 6–12 months; single-acquisition pilots often complete in 6–10 weeks after tasking. Timelines are indicative and subject to Firefly scheduling.',
       { italics: true, after: 240 }
     ),
 
     h2('4.6 Pricing'),
-    tierComparisonTable(tierRows, 1, true),
-    para(
-      'Prices shown with regional pricing adjustment applied. Enterprise price is a minimum; final fee, AOI, and acquisition count are confirmed in scoping.',
-      { italics: true, before: 160, after: 120 }
-    ),
-    para(
-      'Conversion credit: Full pilot fee credited toward onboarding fee on subscription conversion within 60 days of pilot completion.',
-      { italics: true, after: 200 }
-    ),
-  ];
-}
-
-function buildProjectBasedTechnical(form) {
-  const isMining = form.vertical === 'Mining Lifecycle';
-  const scopeData = isMining ? MINING_SCOPE : DEFENSE_SCOPE;
-  const aoiDesc = form.aoiDescription?.trim();
-
-  return [
-    h1('4. Technical and Commercial Proposal'),
-    h2('4.1 Proof of Concept Goals'),
-    para(POC_GOAL_INTRO(form.customerName), { after: 120 }),
-    ...POC_GOAL_CRITERIA.map((c) => bullet(c)),
-
-    h2('4.2 Area of Interest'),
-    para(
-      aoiDesc ? `AOI: ${aoiDesc}. Full scope and AOI are confirmed in an initial scoping call.` : 'AOI and scope confirmed in an initial scoping call.',
-      { after: 160 }
-    ),
-
-    h2('4.3 Pilot Scope'),
-    para(
-      'This engagement is scoped on a project basis following an initial scoping call. The indicative scope below represents typical deliverables. Final scope, AOI, and HSI task requirements are defined at contract signing.',
-      { italics: true, after: 160 }
-    ),
-    ...scopeData.items.map((item) => bullet(item)),
-
-    ...(form.vertical === 'Defense & Intelligence'
-      ? [
-          para(
-            'All Defense & Intelligence engagements are subject to security and export-control compliance review prior to scoping. Do not share scope or pricing details without CCO and legal sign-off.',
-            { italics: true, after: 120, color: COLOR_SLATE }
-          ),
-        ]
-      : []),
-
-    h2('4.4 Deliverables'),
-    bullet('GeoTIFF rasters for all analytical layers produced during the engagement'),
-    bullet(isMining ? 'Site condition report and ESG-relevant summary' : 'Site intelligence report'),
-    bullet('Joint review session with the Pixxel analytics team'),
-
-    h2('4.5 Timeline'),
-    bullet(
-      form.startDate
-        ? `Estimated start: ${formatHumanDate(form.startDate)}`
-        : 'Estimated start: to be confirmed at contract signing'
-    ),
-    para(
-      'Duration determined by AOI, scope, and HSI task requirements, confirmed in scoping.',
-      { italics: true, after: 240 }
-    ),
-
-    h2('4.6 Pricing'),
-    para(scopeData.pricing, { after: 120 }),
-    para(
-      'Conversion credit: Full pilot fee credited toward onboarding fee on subscription conversion within 60 days of pilot completion.',
-      { italics: true, after: 200 }
-    ),
+    ...buildPricingSection(form, regionalMultiplier, 'hsi', form.earlyAdopterId),
   ];
 }
 
@@ -1031,11 +1013,6 @@ function buildProjectBasedTechnical(form) {
 
 async function buildProposalDoc(form, executiveSummary, multiplier) {
   const isMonitoring = MONITORING_VERTICALS.has(form.vertical);
-  const isGeo = form.vertical === 'Geology';
-
-  const tierRows = (isMonitoring || isGeo)
-    ? calcTierPrices(form.vertical, multiplier)
-    : [];
 
   const isAgricultureToc = form.vertical === 'Agriculture';
   const tocLines = [
@@ -1103,11 +1080,9 @@ async function buildProposalDoc(form, executiveSummary, multiplier) {
 
   let technical;
   if (isMonitoring) {
-    technical = buildMonitoringTechnical(form, tierRows);
-  } else if (isGeo) {
-    technical = buildGeologyTechnical(form, tierRows);
+    technical = buildMonitoringTechnical(form, multiplier, form.sensorTierId);
   } else {
-    technical = buildProjectBasedTechnical(form);
+    technical = buildGeologyTechnical(form, multiplier);
   }
 
   const isAgriculture = form.vertical === 'Agriculture';
@@ -1119,7 +1094,7 @@ async function buildProposalDoc(form, executiveSummary, multiplier) {
   return new Document({
     creator: 'Pixxel Analytics Playbook',
     title: `Pixxel Pilot Proposal - ${form.customerName || 'Customer'}`,
-    description: `Pilot proposal for ${form.customerName || 'Customer'} (${form.vertical})`,
+    description: `Pilot proposal for ${form.customerName || 'Customer'} (${pilotProductLabel(form.vertical)})`,
     styles: {
       default: {
         document: {
@@ -1243,78 +1218,127 @@ function FieldRow({ children }) {
   return <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>{children}</div>;
 }
 
-/** Mini pricing table for the sidebar live preview. */
-function PricingPreview({ vertical, multiplier }) {
-  const isMonitoring = MONITORING_VERTICALS.has(vertical);
-  const isGeo = vertical === 'Geology';
-  if (!isMonitoring && !isGeo) return null;
+/** Live IaaS band preview — matches product Pricing tabs. */
+function PricingPreview({
+  vertical,
+  regionalMultiplier,
+  sensorTierId,
+  earlyAdopterId,
+  aoiBandIndex,
+  aoiKm2,
+}) {
+  const iaas = getScaledIaasPricing(vertical, regionalMultiplier);
+  if (!iaas) return null;
 
-  const rows = calcTierPrices(vertical, multiplier);
+  const feeMult = computeProposalFeeMultiplier({
+    vertical,
+    regionalMultiplier,
+    sensorTierId,
+    earlyAdopterId,
+  });
+  const onTopMult = feeMult.sensor * feeMult.earlyAdopter;
+  const selectedIndex = Number(aoiBandIndex) || 0;
+  const quote = quoteSelectedAoiBand({
+    vertical,
+    bandIndex: selectedIndex,
+    km2: aoiKm2,
+    regionalMultiplier,
+    sensorTierId,
+    earlyAdopterId,
+  });
+
   const thStyle = {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: "'IBM Plex Mono', ui-monospace, monospace",
-    letterSpacing: 1.5,
+    letterSpacing: 1.2,
     textTransform: 'uppercase',
     color: 'var(--on-navy)',
     background: 'var(--navy)',
     padding: '6px 8px',
-    textAlign: 'center',
+    textAlign: 'left',
     borderBottom: '1px solid var(--gray2)',
-    whiteSpace: 'nowrap',
   };
-  const tdStyle = { padding: '6px 8px', fontSize: 13, color: 'var(--text)', textAlign: 'center', borderBottom: '1px solid var(--gray2)' };
-  const tdLabel = { ...tdStyle, textAlign: 'left', fontFamily: "'IBM Plex Mono', ui-monospace, monospace", fontSize: 12, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: 1 };
+  const tdStyle = {
+    padding: '6px 8px',
+    fontSize: 12,
+    color: 'var(--text)',
+    borderBottom: '1px solid var(--gray2)',
+    verticalAlign: 'top',
+    lineHeight: 1.45,
+  };
 
   return (
     <div style={{ overflowX: 'auto', marginTop: 4 }}>
+      <div style={{ fontSize: 11, color: 'var(--gray)', marginBottom: 8, lineHeight: 1.45 }}>
+        {iaas.headline}
+        {feeMult.combined !== 1 && (
+          <span style={{ color: 'var(--cyan)' }}>
+            {' '}
+            · {feeMult.combined.toFixed(2)}× effective (regional × sensor × early adopter)
+          </span>
+        )}
+      </div>
+      {quote?.effectiveAmount != null && (
+        <div
+          style={{
+            fontSize: 12,
+            color: 'var(--white)',
+            background: 'var(--navy)',
+            border: '1px solid var(--cyan)',
+            padding: '10px 12px',
+            marginBottom: 10,
+            lineHeight: 1.45,
+          }}
+        >
+          <strong style={{ color: 'var(--cyan)' }}>Selected AOI:</strong> {quote.bandLabel}
+          {quote.km2Used != null && (
+            <span style={{ color: 'var(--gray)' }}>
+              {' '}
+              · {quote.km2Used.toLocaleString('en-US')} km²
+              {quote.km2IsEstimate ? ' (midpoint estimate)' : ''}
+            </span>
+          )}
+          <br />
+          <strong style={{ color: 'var(--cyan)' }}>Indicative IaaS fee:</strong>{' '}
+          {formatProposalUsd(quote.effectiveAmount)}
+        </div>
+      )}
       <table style={{ width: '100%', borderCollapse: 'collapse', background: 'var(--bg3)' }}>
         <thead>
           <tr>
-            <th style={{ ...thStyle, textAlign: 'left' }}></th>
-            {rows.map((r) => <th key={r.tier} style={thStyle}>{r.tier}</th>)}
+            {iaas.headers.map((h) => (
+              <th key={h} style={thStyle}>{h}</th>
+            ))}
           </tr>
         </thead>
         <tbody>
-          {!isGeo && (
-            <tr>
-              <td style={tdLabel}>Hyperspectral</td>
-              {rows.map((r) => (
-                <td key={r.tier} style={{ ...tdStyle, fontWeight: 600, color: 'var(--cyan)' }}>
-                  {fmtUsd(r.hsiMsi, r.prefix)}
+          {iaas.rows.map(([band, fee], index) => {
+            const adjusted = onTopMult === 1 ? fee : scaleFeeString(fee, onTopMult);
+            const isSelected = index === selectedIndex;
+            const rowBg = isSelected ? 'rgba(0, 212, 255, 0.08)' : undefined;
+            return (
+              <tr key={band} style={{ background: rowBg }}>
+                <td
+                  style={{
+                    ...tdStyle,
+                    color: isSelected ? 'var(--cyan)' : 'var(--white)',
+                    fontWeight: 600,
+                    borderLeft: isSelected ? '3px solid var(--cyan)' : undefined,
+                  }}
+                >
+                  {band}
                 </td>
-              ))}
-            </tr>
-          )}
-          {isGeo && (
-            <tr>
-              <td style={tdLabel}>Price</td>
-              {rows.map((r) => (
-                <td key={r.tier} style={{ ...tdStyle, fontWeight: 600, color: 'var(--cyan)' }}>
-                  {fmtUsd(r.hsiMsi, r.prefix)}
-                </td>
-              ))}
-            </tr>
-          )}
-          {!isGeo && (
-            <tr>
-              <td style={{ ...tdLabel, background: 'var(--bg2)' }}>MSI Analytics</td>
-              {rows.map((r) => (
-                <td key={r.tier} style={{ ...tdStyle, background: 'var(--bg2)', color: 'var(--gray)' }}>
-                  {fmtUsd(r.msiOnly, r.prefix)}
-                </td>
-              ))}
-            </tr>
-          )}
-          <tr>
-            <td style={tdLabel}>AOI</td>
-            {rows.map((r) => <td key={r.tier} style={{ ...tdStyle, fontSize: 13 }}>{r.aoi}</td>)}
-          </tr>
-          <tr>
-            <td style={{ ...tdLabel, background: 'var(--bg2)' }}>Firefly</td>
-            {rows.map((r) => <td key={r.tier} style={{ ...tdStyle, background: 'var(--bg2)', fontSize: 13 }}>{r.hsiTasks}</td>)}
-          </tr>
+                <td style={{ ...tdStyle, color: 'var(--cyan)', fontWeight: 600 }}>{adjusted}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
+      {iaas.formulaNote && (
+        <p style={{ fontSize: 11, color: 'var(--gray)', margin: '8px 0 0', lineHeight: 1.45 }}>
+          {iaas.formulaNote}
+        </p>
+      )}
     </div>
   );
 }
@@ -1327,8 +1351,12 @@ function buildInitialForm() {
     contactName: '',
     dealNotes: '',
     vertical: 'Agriculture',
+    sensorTierId: 'hsi',
     aoiDescription: '',
+    aoiBandIndex: 0,
+    aoiKm2: '',
     regionalTierId: 't1',
+    earlyAdopterId: 'none',
     proposalDate: todayIsoDate(),
     startDate: '',
     salesName: '',
@@ -1339,7 +1367,7 @@ function buildInitialForm() {
 
 /* ─── Main component ──────────────────────────────────────────────────────── */
 
-export default function PilotProposalGenerator() {
+export default function PilotProposalGenerator({ navigate }) {
   const [form, setForm] = useState(buildInitialForm);
   const [executiveSummary, setExecutiveSummary] = useState('');
   const [hasGenerated, setHasGenerated] = useState(false);
@@ -1356,14 +1384,15 @@ export default function PilotProposalGenerator() {
     const warnings = [];
     if (!form.customerName.trim()) errors.push('Customer name is required.');
     if (!form.contactName.trim()) errors.push('Primary contact is required.');
-    if (!form.vertical) errors.push('Select a vertical.');
+    if (!form.vertical) errors.push('Select a product.');
     if (!form.proposalDate) errors.push('Proposal date is required.');
     if (!form.salesName.trim()) errors.push('Sales rep name is required.');
     if (!form.salesEmail.trim()) errors.push('Sales rep email is required.');
-    if (form.vertical === 'Defense & Intelligence')
+    if (form.earlyAdopterId === 'design-partner') {
       warnings.push(
-        'Defense & Intelligence engagements require security review before scoping: confirm with analytics, CCO, and legal before sending this proposal.'
+        'Design partner discount (20% off) requires CCO approval before the proposal is sent.'
       );
+    }
     return { errors, warnings, ok: errors.length === 0 };
   }, [form]);
 
@@ -1405,17 +1434,41 @@ export default function PilotProposalGenerator() {
       <div className="eyebrow">Commercial · Pilot proposal generator</div>
       <h1 className="section-title">Pilot proposal generator.</h1>
       <p className="section-sub">
-        Fill in deal context, vertical, and regional pricing band. The tool builds a deterministic
-        executive summary and packages a Pixxel-branded <code>.docx</code> proposal with MSI Analytics
-        and Hyperspectral product scope (separate pilot products), engagement tiers (Basic, Standard,
-        Enterprise), and the pricing table for the selected vertical. Customer name is substituted
-        throughout, including Exhibit A.
+        Fill in deal context, product (TRACE, SWIPE, or SCOPE), sensor tier, and regional pricing
+        band. The tool builds a deterministic executive summary and packages a Pixxel-branded{' '}
+        <code>.docx</code> proposal using the same <strong>Insights-as-a-Service</strong> and{' '}
+        <strong>Aurora subscription</strong> pricing framework as each product&apos;s Pricing tab.
+        Customer name is substituted throughout, including Exhibit A.
       </p>
 
       <Callout type="warn" label="Internal · indicative">
-        All pricing reflects the current Pilot Revenue Model (V2). Final fees, scope, and HSI
-        availability are confirmed in the scoping call before contract signing. Do not share this
-        tool with customers.
+        All pricing reflects the playbook v3 pilot model. Final fees, scope, and HSI availability are
+        confirmed in the scoping call before contract signing. Do not share this tool with customers.
+      </Callout>
+
+      <Callout type="info" label="Not for contract-based programs">
+        Defense &amp; intelligence, mining lifecycle, forestry, and other bespoke or multi-vertical
+        engagements are not generated here. Use{' '}
+        {navigate ? (
+          <button
+            type="button"
+            onClick={() => navigate('bespoke-projects')}
+            style={{
+              padding: 0,
+              border: 'none',
+              background: 'none',
+              color: 'var(--cyan)',
+              cursor: 'pointer',
+              font: 'inherit',
+              textDecoration: 'underline',
+            }}
+          >
+            Bespoke projects &amp; pipeline
+          </button>
+        ) : (
+          'Bespoke projects & pipeline'
+        )}{' '}
+        for sales process and scoping guidance on those deals.
       </Callout>
 
       <div
@@ -1458,20 +1511,97 @@ export default function PilotProposalGenerator() {
             </Field>
           </FormGroup>
 
-          <FormGroup title="Vertical">
-            <Field label="Vertical" required>
-              <select style={selectStyle} value={form.vertical} onChange={update('vertical')}>
-                {VERTICALS.map((v) => (
-                  <option key={v} value={v}>{v}</option>
+          <FormGroup title="Product">
+            <Field label="Product" required>
+              <select
+                style={selectStyle}
+                value={form.vertical}
+                onChange={(e) => {
+                  setForm((prev) => ({
+                    ...prev,
+                    vertical: e.target.value,
+                    aoiBandIndex: 0,
+                    aoiKm2: '',
+                    sensorTierId: 'hsi',
+                  }));
+                }}
+              >
+                {PILOT_PRODUCTS.map((p) => (
+                  <option key={p.key} value={p.key}>{p.label}</option>
                 ))}
               </select>
             </Field>
           </FormGroup>
 
+          {MONITORING_VERTICALS.has(form.vertical) && (
+            <FormGroup title="Sensor tier">
+              <Field
+                label="Sensor tier"
+                required
+                hint="Applies the product-page sensor multiplier to IaaS fees (MSI 0.80×, Firefly VNIR 1.0×)."
+              >
+                <select
+                  style={selectStyle}
+                  value={form.sensorTierId}
+                  onChange={update('sensorTierId')}
+                >
+                  {SENSOR_TIER_OPTIONS.filter(
+                    (o) => !o.disabledFor?.includes(form.vertical)
+                  ).map((o) => (
+                    <option key={o.id} value={o.id}>{o.label}</option>
+                  ))}
+                </select>
+              </Field>
+            </FormGroup>
+          )}
+
           <FormGroup title="AOI">
             <Field
+              label="AOI size band"
+              required
+              hint="IaaS engagement fee band from the product Pricing tab. Drives the indicative quote in the preview and proposal."
+            >
+              <select
+                style={selectStyle}
+                value={form.aoiBandIndex}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    aoiBandIndex: Number(e.target.value),
+                    aoiKm2: '',
+                  }))
+                }
+              >
+                {getAoiBandOptions(form.vertical).map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.label} — {b.listFee}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            {(() => {
+              const band = getAoiBandOptions(form.vertical)[form.aoiBandIndex];
+              if (!band || band.isFlat || band.isCustom) return null;
+              return (
+                <Field
+                  label="AOI area (km²)"
+                  hint="For formula bands: enter actual km² for an exact fee. Leave blank to use the band midpoint as an estimate."
+                >
+                  <input
+                    style={inputStyle}
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={form.aoiKm2}
+                    onChange={update('aoiKm2')}
+                    placeholder="e.g. 850"
+                  />
+                </Field>
+              );
+            })()}
+            <Field
               label="AOI description (optional)"
-              hint='Used in the executive summary and §4.2. E.g. "banana and pineapple plantations across Philippines and Sri Lanka"'
+              hint='Geographic context for the executive summary and §4.2. E.g. "banana and pineapple plantations across Philippines and Sri Lanka"'
             >
               <input
                 style={inputStyle}
@@ -1486,7 +1616,7 @@ export default function PilotProposalGenerator() {
             <Field
               label="Regional pricing tier"
               required
-              hint="Multiplier applied to all tier prices in the proposal."
+              hint="World Bank income-tier multiplier on list fees."
             >
               <select
                 style={selectStyle}
@@ -1495,6 +1625,20 @@ export default function PilotProposalGenerator() {
               >
                 {REGIONAL_MULTIPLIERS.map((m) => (
                   <option key={m.id} value={m.id}>{m.label}</option>
+                ))}
+              </select>
+            </Field>
+            <Field
+              label="Early adopter discount"
+              hint="Stacks with regional and sensor-tier multipliers per product Pricing tab."
+            >
+              <select
+                style={selectStyle}
+                value={form.earlyAdopterId}
+                onChange={update('earlyAdopterId')}
+              >
+                {EARLY_ADOPTER_OPTIONS.map((o) => (
+                  <option key={o.id} value={o.id}>{o.label}</option>
                 ))}
               </select>
             </Field>
@@ -1574,28 +1718,47 @@ export default function PilotProposalGenerator() {
                 marginBottom: 12,
               }}
             >
-              <Sparkles size={12} /> Live pricing: {form.vertical}
+              <Sparkles size={12} /> Live pricing: {pilotProductLabel(form.vertical)}
             </div>
-            <PricingPreview vertical={form.vertical} multiplier={multiplier} />
-            {(form.vertical === 'Mining Lifecycle' || form.vertical === 'Defense & Intelligence') && (
-              <p style={{ fontSize: 12, color: 'var(--gray)', margin: '8px 0 0', lineHeight: 1.4 }}>
-                Project-based: pricing by discussion at contract signing.
-              </p>
-            )}
+            <PricingPreview
+              vertical={form.vertical}
+              regionalMultiplier={multiplier}
+              sensorTierId={form.sensorTierId}
+              earlyAdopterId={form.earlyAdopterId}
+              aoiBandIndex={form.aoiBandIndex}
+              aoiKm2={form.aoiKm2}
+            />
             <div
               style={{
                 marginTop: 10,
                 paddingTop: 10,
                 borderTop: '1px solid var(--gray2)',
-                fontSize: 13,
+                fontSize: 12,
                 color: 'var(--gray)',
                 fontFamily: "'IBM Plex Mono', ui-monospace, monospace",
+                lineHeight: 1.5,
               }}
             >
-              Regional ×{' '}
-              <span style={{ color: 'var(--text)' }}>
-                {REGIONAL_MULTIPLIERS.find((m) => m.id === form.regionalTierId)?.value.toFixed(2)}×
-              </span>
+              {(() => {
+                const m = computeProposalFeeMultiplier({
+                  vertical: form.vertical,
+                  regionalMultiplier: multiplier,
+                  sensorTierId: form.sensorTierId,
+                  earlyAdopterId: form.earlyAdopterId,
+                });
+                return (
+                  <>
+                    Effective ×{' '}
+                    <span style={{ color: 'var(--text)' }}>{m.combined.toFixed(2)}</span>
+                    <span style={{ display: 'block', marginTop: 4, fontSize: 11 }}>
+                      regional {m.regional.toFixed(2)}×
+                      {MONITORING_VERTICALS.has(form.vertical) && ` · sensor ${m.sensor.toFixed(2)}×`}
+                      {' · early adopter '}
+                      {m.earlyAdopter.toFixed(2)}×
+                    </span>
+                  </>
+                );
+              })()}
             </div>
           </div>
 
