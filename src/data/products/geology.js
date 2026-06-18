@@ -48,6 +48,30 @@ export const geologyProduct = {
     ],
     northStar:
       'SCOPE is the operational entry point. NEXUS is where it is headed \u2014 a persistent intelligence cube per belt, full-archive semantic query, and compounding spectral memory across campaigns.',
+    outputLayers: [
+      {
+        layers: [
+          {
+            name: 'Mineral classification',
+            desc: 'SAM + MTMF mineral class and abundance per pixel (goethite, hematite, jarosite).',
+          },
+          { name: 'Alteration halos', desc: 'Iron-oxide alteration and hydrothermal halo mapping.' },
+          {
+            name: 'REE proxy',
+            desc: 'Nd continuum-removal band depth — relative exploration proxy, not assay or grade.',
+          },
+          { name: 'Structural framework', desc: 'MNF edge magnitude, lineaments, and lithological contrast.' },
+          {
+            name: 'Prospectivity',
+            desc: 'Fused 0–1 exploration score with ranked target polygons and layer breakdown.',
+          },
+          {
+            name: 'Pixel inspector',
+            desc: 'Point-query JSON: classification, spectral scores, REE depths, fusion contribution.',
+          },
+        ],
+      },
+    ],
   },
 
   claims: {

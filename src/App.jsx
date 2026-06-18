@@ -14,6 +14,7 @@ import PilotProposalGenerator from './sections/PilotProposalGenerator.jsx';
 import CommercialRequests from './sections/CommercialRequests.jsx';
 import GroundResearch from './sections/GroundResearch.jsx';
 import BespokeProjects from './sections/BespokeProjects.jsx';
+import NextStepsTemp from './sections/NextStepsTemp.jsx';
 import Resources from './sections/Resources.jsx';
 import { seed, CLAIMS_VERSION } from './data/seed.js';
 import {
@@ -46,6 +47,7 @@ const sectionMap = {
   water: WaterProduct,
   'ground-research': GroundResearch,
   'bespoke-projects': BespokeProjects,
+  'next-steps-temp': NextStepsTemp,
   'commercial-requests': CommercialRequests,
   resources: Resources,
   quoting: PilotProposalGenerator,

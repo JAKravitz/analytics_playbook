@@ -7,6 +7,7 @@ import ProductApiSchemaView from '../../components/ProductApiSchemaView.jsx';
 import { sseProduct } from '../../data/products/sse.js';
 import LensWhitePaper from './LensWhitePaper.jsx';
 import ProductPricingView from '../../components/ProductPricingView.jsx';
+import ProductOutputLayers from '../../components/ProductOutputLayers.jsx';
 
 const VIEWS = [
   { id: 'landing', label: 'Overview' },
@@ -154,6 +155,8 @@ function LandingView({ product }) {
           {p}
         </p>
       ))}
+
+      <ProductOutputLayers outputLayers={landing.outputLayers} accent={product.color} />
 
       <SectionHeader label="How it is sold" accent={product.color} />
       <div className="card-grid grid-3" style={{ marginBottom: 20 }}>

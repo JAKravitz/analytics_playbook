@@ -6,6 +6,7 @@ import Card from '../../components/Card.jsx';
 import ProductApiSchemaView from '../../components/ProductApiSchemaView.jsx';
 import { agricultureProduct } from '../../data/products/agriculture.js';
 import ProductPricingView from '../../components/ProductPricingView.jsx';
+import ProductOutputLayers from '../../components/ProductOutputLayers.jsx';
 import TraceWhitePaper from './TraceWhitePaper.jsx';
 import { monoStyle } from '../../styles/typography.js';
 
@@ -123,6 +124,8 @@ function LandingView({ product }) {
           {p}
         </p>
       ))}
+
+      <ProductOutputLayers outputLayers={landing.outputLayers} accent={product.color} />
 
       <SectionHeader label="How it is sold" accent={product.color} />
       <div className="split-2" style={{ marginBottom: 20 }}>

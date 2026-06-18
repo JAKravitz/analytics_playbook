@@ -57,6 +57,77 @@ export const sseProduct = {
     ],
     northStar:
       'LENS is how an archive becomes searchable. NEXUS is where it sits \u2014 the intelligence cube is persistent memory, LENS is the query layer, and every new acquisition compounds both.',
+    outputLayers: [
+      {
+        title: 'Search',
+        subtitle: 'Query by reference image, patch, object, or natural-language phrase — scoped to entitled archive or AOI.',
+        layers: [
+          {
+            name: 'Similarity search',
+            desc: 'Ranked scenes, patches, or objects similar to a reference input.',
+            status: 'semi-operational',
+          },
+          {
+            name: 'Text search',
+            desc: 'Natural-language query mapped to embedding space → ranked matches.',
+            status: 'semi-operational',
+          },
+          {
+            name: 'Object search',
+            desc: 'Ranked discrete entities (facilities, waterbodies, canopy patches) in the index.',
+            status: 'semi-operational',
+          },
+        ],
+      },
+      {
+        title: 'Change detection · SpotDiff',
+        subtitle: 'Category-specific land-use change between temporal image pairs.',
+        layers: [
+          {
+            name: 'Change mask',
+            desc: 'Predicted change mask for a semantic class between T₀ and T₁.',
+            status: 'semi-operational',
+          },
+          {
+            name: 'Similarity map',
+            desc: 'Dense per-pixel embedding similarity between T₀ and T₁.',
+            status: 'semi-operational',
+          },
+          {
+            name: 'Label propagation',
+            desc: 'Instance masks propagated from a single reference polygon.',
+            status: 'in-development',
+          },
+        ],
+      },
+      {
+        title: 'Anomaly detection',
+        subtitle: 'SSE-powered semantic outlier ranking — V3 roadmap.',
+        layers: [
+          {
+            name: 'Archive anomaly scan',
+            desc: 'Outlier patches and scenes vs the entitled archive embedding index.',
+            status: 'roadmap',
+          },
+          {
+            name: 'Reference anomaly scan',
+            desc: 'Regions diverging from a supplied reference “normal” embedding.',
+            status: 'roadmap',
+          },
+        ],
+      },
+      {
+        title: 'Hosted embeddings',
+        subtitle: 'GeoFM Embeddings API (beta) — metered encode units over archive or AOI.',
+        layers: [
+          {
+            name: 'GeoFM embeddings',
+            desc: 'Vectors from DINOv3, Ollmo-earth, Tesserra, or Prithvi over entitled imagery.',
+            status: 'roadmap',
+          },
+        ],
+      },
+    ],
   },
 
   /** Version roadmap (ported from the old SemanticSearchEngine page). */

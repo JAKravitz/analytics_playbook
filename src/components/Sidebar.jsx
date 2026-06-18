@@ -28,6 +28,7 @@ const groups = [
       { id: 'commercial-requests', label: 'Analytics ticket request' },
       { id: 'quoting', label: 'Pilot Proposal Generator' },
       { id: 'resources', label: 'Resources' },
+      { id: 'next-steps-temp', label: 'Next steps (temp)' },
     ],
   },
 ];

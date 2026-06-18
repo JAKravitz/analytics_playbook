@@ -50,6 +50,29 @@ export const waterProduct = {
     ],
     northStar:
       'SWIPE is the operational entry point. NEXUS is where it is headed \u2014 a persistent intelligence cube per waterbody, full-archive semantic query over bloom and constituent history, and compounding water intelligence across seasons.',
+    outputLayers: [
+      {
+        layers: [
+          { name: 'Water-leaving reflectance', desc: 'SWIPE-corrected, analysis-ready reflectance rasters.' },
+          {
+            name: 'Optical constituents',
+            desc: 'Chl-a, phycocyanin, CDOM, TSM, and turbidity with per-pixel uncertainty.',
+          },
+          {
+            name: 'Harmful algal blooms',
+            desc: 'Phycocyanin retrieval, bloom extent, and phytoplankton carbon where signal supports.',
+          },
+          {
+            name: 'Inherent optical properties',
+            desc: 'Absorption and backscatter decomposition; attenuation where signal allows.',
+          },
+          {
+            name: 'Non-optical proxies',
+            desc: 'Dissolved oxygen, pH, and ammonia estimates fused with MicroClim — model outputs, not direct measurements.',
+          },
+        ],
+      },
+    ],
   },
 
   claims: {

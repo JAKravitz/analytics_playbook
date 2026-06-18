@@ -51,6 +51,26 @@ export const agricultureProduct = {
     ],
     northStar:
       'NEXUS is the north star \u2014 a persistent intelligence cube per field with semantic query across seasons. TRACE feeds that vision with trait and index layers, but TRACE itself is API delivery today: no cube persistence, no SSE integration, no end-to-end workflow. Position it as the physics layer customers build on.',
+    outputLayers: [
+      {
+        layers: [
+          { name: 'Farm boundaries', desc: 'Per-field polygons, persistent IDs, and area (ha).' },
+          { name: 'Crop classification', desc: 'Crop / variety class per field with confidence score.' },
+          { name: 'Phenology', desc: 'Growth stage placement and cycle statistics per field.' },
+          { name: 'Gap-filled NDVI', desc: 'Cloud-interpolated season trajectory per field.' },
+          { name: 'Narrowband indices', desc: 'NDRE, MCARI, CWSI, SIF, and PSRI per acquisition date.' },
+          {
+            name: 'PROSAIL traits',
+            desc: 'LAI, chlorophyll, brown pigments, dry matter, canopy water, carotenoids, and leaf nitrogen.',
+          },
+          {
+            name: 'Embeddings classification',
+            desc: 'Label-sparse crop typing via spectral embeddings.',
+            status: 'in-development',
+          },
+        ],
+      },
+    ],
   },
 
   claims: {

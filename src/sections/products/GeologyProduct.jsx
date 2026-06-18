@@ -7,6 +7,7 @@ import ProductApiSchemaView from '../../components/ProductApiSchemaView.jsx';
 import { geologyProduct } from '../../data/products/geology.js';
 import GeologyWhitePaper from './GeologyWhitePaper.jsx';
 import ProductPricingView from '../../components/ProductPricingView.jsx';
+import ProductOutputLayers from '../../components/ProductOutputLayers.jsx';
 import { monoStyle } from '../../styles/typography.js';
 
 const VIEWS = [
@@ -123,6 +124,8 @@ function LandingView({ product }) {
           {p}
         </p>
       ))}
+
+      <ProductOutputLayers outputLayers={landing.outputLayers} accent={product.color} />
 
       <SectionHeader label="How it is sold" accent={product.color} />
       <div className="split-2" style={{ marginBottom: 20 }}>
