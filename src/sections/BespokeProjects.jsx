@@ -1,5 +1,6 @@
 import Callout from '../components/Callout.jsx';
 import Card from '../components/Card.jsx';
+import { isSectionDisabled } from '../data/navigation.js';
 
 const PIPELINE_STAGES = [
   {
@@ -191,27 +192,33 @@ export default function BespokeProjects({ navigate }) {
 
       <h2 style={{ marginTop: 32, marginBottom: 12 }}>Related playbook sections</h2>
       <div className="card-grid grid-2">
-        <Card title="Pilot Proposal Generator" accent="var(--cyan)" eyebrow="Fixed-scope pilots">
+        <Card title="Pilot Proposal Generator" accent="var(--gray)" eyebrow="Fixed-scope pilots">
           <p style={{ marginTop: 0 }}>
             Smaller, time-boxed analytical engagements with defined layers and conversion credit
             policy — distinct from multi-year contract monitoring.
           </p>
-          <button
-            type="button"
-            onClick={() => navigate('quoting')}
-            style={{
-              marginTop: 8,
-              padding: 0,
-              border: 'none',
-              background: 'none',
-              color: 'var(--cyan)',
-              fontSize: 13,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
-          >
-            Open Pilot Proposal Generator →
-          </button>
+          {isSectionDisabled('quoting') ? (
+            <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--gray2)', lineHeight: 1.5 }}>
+              Temporarily unavailable while pricing and scope are finalized.
+            </p>
+          ) : (
+            <button
+              type="button"
+              onClick={() => navigate('quoting')}
+              style={{
+                marginTop: 8,
+                padding: 0,
+                border: 'none',
+                background: 'none',
+                color: 'var(--cyan)',
+                fontSize: 13,
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              Open Pilot Proposal Generator →
+            </button>
+          )}
         </Card>
 
         <Card title="Ground research & validation" accent="var(--blue)" eyebrow="Evidence build">

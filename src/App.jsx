@@ -23,6 +23,7 @@ import {
   CATALOG_VERSION,
 } from './data/layersCatalog.js';
 import { storage } from './data/storage.js';
+import { isSectionDisabled } from './data/navigation.js';
 
 const SIDEBAR_COLLAPSED_KEY = 'playbook-sidebar-collapsed';
 
@@ -68,7 +69,10 @@ function parseRouteFromHash() {
     return { section: head, layerSpecId: null, subView: sub || null };
   }
   if (raw === 'aquatic') return { section: 'water', layerSpecId: null, subView: null };
-  if (sectionMap[raw]) return { section: raw, layerSpecId: null, subView: null };
+  if (sectionMap[raw]) {
+    if (isSectionDisabled(raw)) return { section: 'home', layerSpecId: null, subView: null };
+    return { section: raw, layerSpecId: null, subView: null };
+  }
   return { section: 'home', layerSpecId: null, subView: null };
 }
 
@@ -164,12 +168,21 @@ export default function App() {
   }, [sidebarCollapsed]);
 
   useEffect(() => {
-    const onHash = () => setRoute(parseRouteFromHash());
+    const onHash = () => {
+      const raw = (window.location.hash.replace(/^#/, '') || 'home').trim();
+      const head = raw.split('/')[0];
+      if (isSectionDisabled(head)) {
+        window.history.replaceState(null, '', '#home');
+      }
+      setRoute(parseRouteFromHash());
+    };
+    onHash();
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
   const handleSelect = (id) => {
+    if (isSectionDisabled(id)) return;
     setRoute({ section: id, layerSpecId: null, subView: null });
     if (typeof window !== 'undefined') {
       window.history.replaceState(null, '', `#${id}`);

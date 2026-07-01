@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Sun, Moon, PanelLeftClose, PanelLeft } from 'lucide-react';
+import { disabledSectionReason, isSectionDisabled } from '../data/navigation.js';
 
 const groups = [
   {
@@ -87,15 +88,21 @@ export default function Sidebar({
             {filtered.map((g) => (
               <div key={g.label}>
                 <div className="nav-group-label">{g.label}</div>
-                {g.items.map((it) => (
-                  <button
-                    key={it.id}
-                    className={`nav-item${section === it.id ? ' active' : ''}`}
-                    onClick={() => onSelect(it.id)}
-                  >
-                    {it.label}
-                  </button>
-                ))}
+                {g.items.map((it) => {
+                  const disabled = isSectionDisabled(it.id);
+                  return (
+                    <button
+                      key={it.id}
+                      type="button"
+                      className={`nav-item${section === it.id ? ' active' : ''}${disabled ? ' is-disabled' : ''}`}
+                      onClick={() => !disabled && onSelect(it.id)}
+                      disabled={disabled}
+                      title={disabled ? disabledSectionReason(it.id) : undefined}
+                    >
+                      {it.label}
+                    </button>
+                  );
+                })}
               </div>
             ))}
           </nav>
